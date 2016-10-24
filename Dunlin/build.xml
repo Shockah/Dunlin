@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="build" name="Dunlin">
+	<target name="build">
+		<mkdir dir="bin"/>
+		<delete file="../build/Dunlin.jar"/>
+		<jar destfile="../build/Dunlin.jar" filesetmanifest="mergewithoutmain">
+		    <manifest>
+                <attribute name="Main-Class" value="io.shockah.dunlin.App"/>
+                <attribute name="Class-Path" value=". libs/commons-codec-1.9.jar libs/commons-lang3-3.2.1.jar libs/guava-16.0.jar libs/commons-io-2.4.jar libs/jsoup-1.7.3.jar libs/JDA-withDependencies-2.2.1_353.jar libs/ormlite-core-4.49-SNAPSHOT.jar libs/ormlite-jdbc-4.49-SNAPSHOT.jar libs/h2-1.4.192.jar"/>
+            </manifest>
+			<fileset dir="bin"/>
+            <fileset dir="../../io.shockah.json/bin"/>
+		</jar>
+	</target>
+</project>

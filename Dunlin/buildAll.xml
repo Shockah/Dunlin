@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="build" name="Dunlin - All">
+	<target name="build">
+	    <ant useNativeBasedir="true" antfile="build.xml" target="build" />
+	    <ant useNativeBasedir="true" antfile="../../io.shockah.json/build.xml" target="build" />
+		<ant useNativeBasedir="true" antfile="../Plugins/Commands/build.xml" target="build" />
+	</target>
+</project>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="build" name="Dunlin - Commands">
+	<target name="build">
+		<mkdir dir="bin"/>
+		<delete file="../../build/plugins/Commands.jar"/>
+		<jar destfile="../../build/plugins/Commands.jar" filesetmanifest="mergewithoutmain">
+		<fileset dir="bin"/>
+		</jar>
+	</target>
+</project>

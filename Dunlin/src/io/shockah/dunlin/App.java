@@ -40,8 +40,8 @@ public class App extends ListenerAdapter {
 			
 			databaseManager = new DatabaseManager(this);
 			pluginManager = new PluginManager(this);
-			jda = new JDABuilder().setBotToken(config.getObject("api").getString("token")).addListener(this).buildBlocking();
 			
+			jda = new JDABuilder().setBotToken(config.getObject("api").getString("token")).addListener(this).buildBlocking();
 			pluginManager.reload();
 		} catch (Exception e) {
 			throw new UnexpectedException("Failed to initialize.", e);

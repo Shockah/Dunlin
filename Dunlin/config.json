@@ -1,5 +1,8 @@
 {
 	"api": {
 		"token": "Discord API bot token"
+	},
+	"database": {
+		"databasePath": "h2:./db"
 	}
 }
