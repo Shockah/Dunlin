@@ -1,5 +1,7 @@
 package io.shockah.dunlin.groovy;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandResult;
 import net.dv8tion.jda.JDA;
@@ -65,7 +67,7 @@ public class UserGroovySandboxImpl extends GroovySandboxImpl {
 		);
 		
 		addWhitelistedClasses(
-				CommandResult.class, Role.class, Game.class, Emote.class, OnlineStatus.class
+				CommandResult.class, Role.class, Game.class, Emote.class, OnlineStatus.class, URLEncoder.class, URLDecoder.class
 		);
 	}
 }
