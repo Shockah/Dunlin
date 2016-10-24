@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="build" name="Dunlin - Factoids">
+	<target name="build">
+		<mkdir dir="bin"/>
+		<delete file="../../build/plugins/Factoids.jar"/>
+		<jar destfile="../../build/plugins/Factoids.jar" filesetmanifest="mergewithoutmain">
+		<fileset dir="bin"/>
+		</jar>
+	</target>
+</project>

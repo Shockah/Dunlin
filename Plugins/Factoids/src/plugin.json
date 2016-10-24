@@ -1,0 +1,9 @@
+{
+	"packageName": "io.shockah.dunlin.factoids",
+	"baseClass": "io.shockah.dunlin.factoids.FactoidsPlugin",
+	"enabledByDefault": true,
+
+	"name": "Factoids",
+	"author": "Shockah",
+	"description": ""
+}
