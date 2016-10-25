@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="build" name="Dunlin - Permissions">
+	<target name="build">
+		<mkdir dir="bin"/>
+		<delete file="../../build/plugins/Permissions.jar"/>
+		<jar destfile="../../build/plugins/Permissions.jar" filesetmanifest="mergewithoutmain">
+		<fileset dir="bin"/>
+		</jar>
+	</target>
+</project>

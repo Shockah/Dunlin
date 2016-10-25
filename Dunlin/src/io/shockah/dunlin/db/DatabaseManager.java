@@ -224,6 +224,14 @@ public class DatabaseManager implements Closeable {
 			throw new UnexpectedException(e);
 		}
 	}
+	
+	public <T extends DbObject<T>> long count(Class<T> clazz) {
+		try {
+			return getDao(clazz).countOf();
+		} catch (SQLException e) {
+			throw new UnexpectedException(e);
+		}
+	}
 
 	@Override
 	public void close() throws IOException {
