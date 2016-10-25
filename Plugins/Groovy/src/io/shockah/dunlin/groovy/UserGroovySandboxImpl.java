@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandResult;
 import net.dv8tion.jda.JDA;
+import net.dv8tion.jda.MessageHistory;
 import net.dv8tion.jda.OnlineStatus;
 import net.dv8tion.jda.entities.Channel;
 import net.dv8tion.jda.entities.Emote;
@@ -76,6 +77,9 @@ public class UserGroovySandboxImpl extends GroovySandboxImpl {
 		);
 		addWhitelistedMethods(ChannelManager.class,
 				"getChannel"
+		);
+		addWhitelistedMethods(MessageHistory.class,
+				"retrieve", "getRecent"
 		);
 		
 		addWhitelistedPackages(
