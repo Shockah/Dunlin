@@ -2,6 +2,9 @@
 	"packageName": "io.shockah.dunlin.factoids",
 	"baseClass": "io.shockah.dunlin.factoids.FactoidsPlugin",
 	"enabledByDefault": true,
+	"dependsOn": [
+		"io.shockah.dunlin.commands"
+	],
 
 	"name": "Factoids",
 	"author": "Shockah",
