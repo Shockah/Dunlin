@@ -10,6 +10,10 @@ import net.dv8tion.jda.entities.Channel;
 import net.dv8tion.jda.entities.Emote;
 import net.dv8tion.jda.entities.Game;
 import net.dv8tion.jda.entities.Guild;
+import net.dv8tion.jda.entities.Message;
+import net.dv8tion.jda.entities.MessageChannel;
+import net.dv8tion.jda.entities.MessageEmbed;
+import net.dv8tion.jda.entities.MessageType;
 import net.dv8tion.jda.entities.Role;
 import net.dv8tion.jda.entities.TextChannel;
 import net.dv8tion.jda.entities.User;
@@ -40,6 +44,9 @@ public class UserGroovySandboxImpl extends GroovySandboxImpl {
 		addWhitelistedMethods(VoiceChannel.class,
 				"getUserLimit", "getBitrate"
 		);
+		addWhitelistedMethods(MessageChannel.class,
+				"getId", "getJDA", "getPinnedMessages", "getMessageById", "getHistory"
+		);
 		addWhitelistedMethods(Channel.class,
 				"getId", "getName", "getTopic", "getGuild", "getUsers", "getPosition", "getPositionRaw", "checkPermission", "getManager", "getJDA"
 		);
@@ -48,6 +55,15 @@ public class UserGroovySandboxImpl extends GroovySandboxImpl {
 				"getAfkTimeout", "getRegion", "getEmotes", "getUsers", "isMember", "getTextChannels", "getVoiceChannels",
 				"getRoles", "getRoleById", "getRolesForUser", "getColorDeterminantRoleForUser", "getUsersWithRole",
 				"getPublicRole", "getPublicChannel", "getJoinDateForUser", "getManager", "getAudioManager", "getJDA"
+		);
+		addWhitelistedMethods(Message.class,
+				"getId", "getMentionedUsers", "isMentioned", "getMentionedChannels", "getMentionedRoles", "mentionsEveryone",
+				"getTime", "isEdited", "getEditedTimestamp", "getAuthor", "getContent", "getRawContent", "getStrippedContent",
+				"isPrivate", "getChannelId", "getChannel", "getAttachments", "getEmbeds", "getEmotes", "isTTS", "getJDA", "isPinned",
+				"getType"
+		);
+		addWhitelistedMethods(Message.Attachment.class,
+				"getId", "getUrl", "getProxyUrl", "getFileName", "getSize", "getHeight", "getWidth", "isImage"
 		);
 		addWhitelistedMethods(GuildManager.class,
 				"getGuild", "getBans"
@@ -67,7 +83,9 @@ public class UserGroovySandboxImpl extends GroovySandboxImpl {
 		);
 		
 		addWhitelistedClasses(
-				CommandResult.class, Role.class, Game.class, Emote.class, OnlineStatus.class, URLEncoder.class, URLDecoder.class
+				CommandResult.class, URLEncoder.class, URLDecoder.class,
+				Role.class, Game.class, Emote.class, OnlineStatus.class, MessageType.class,
+				MessageEmbed.class, MessageEmbed.Thumbnail.class, MessageEmbed.Provider.class, MessageEmbed.VideoInfo.class
 		);
 	}
 }
