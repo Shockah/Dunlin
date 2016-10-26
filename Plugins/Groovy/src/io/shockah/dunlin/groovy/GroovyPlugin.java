@@ -97,6 +97,7 @@ public class GroovyPlugin extends Plugin {
 					.addStarImports("net.dv8tion.jda")
 					.addStarImports("net.dv8tion.jda.entities")
 					.addStarImports("net.dv8tion.jda.managers")
+					.addStaticStars(Math.class.getName())
 					.addImports(HttpRequest.class.getName())
 					.addImports(CommandCall.class.getName())
 		);
