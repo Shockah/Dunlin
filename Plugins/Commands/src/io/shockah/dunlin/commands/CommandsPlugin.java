@@ -94,6 +94,9 @@ public class CommandsPlugin extends ListenerPlugin {
 	
 	@Override
 	protected void onGenericMessage(GenericMessageEvent e) {
+		if (e.getAuthor() == e.getJDA().getSelfInfo())
+			return;
+		
 		CommandCall call = new CommandCall(e);
 		try {
 			PreparedCommandCall<?, ?> preparedCall = findCommandToCall(e);
