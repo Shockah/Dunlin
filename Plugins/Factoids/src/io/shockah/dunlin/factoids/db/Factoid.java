@@ -6,6 +6,7 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import io.shockah.dunlin.db.DbObject;
+import io.shockah.json.JSONObject;
 
 @DatabaseTable(tableName = "io_shockah_dunlin_factoids_factoid")
 public class Factoid extends DbObject<Factoid> {
@@ -55,5 +56,45 @@ public class Factoid extends DbObject<Factoid> {
 	public Factoid(Dao<Factoid, Integer> dao) {
 		super(dao);
 		date = new Date();
+	}
+	
+	public FactoidStore getStore() {
+		return getDatabaseManager().queryFirst(FactoidStore.class, (builder, where) -> {
+			where.equals(FactoidStore.NAME_COLUMN, name);
+			where.equals(FactoidStore.CONTEXT_COLUMN, context);
+			switch (context) {
+				case Channel:
+					where.equals(FactoidStore.CHANNEL_COLUMN, channel);
+					where.equals(FactoidStore.SERVER_COLUMN, server);
+					break;
+				case Server:
+					where.equals(FactoidStore.SERVER_COLUMN, server);
+					break;
+				default:
+					break;
+			}
+		});
+	}
+	
+	public JSONObject getStoreData() {
+		FactoidStore store = getStore();
+		return store == null ? null : store.data;
+	}
+	
+	public void setStoreData(JSONObject data) {
+		FactoidStore store = getStore();
+		if (store == null) {
+			getDatabaseManager().create(FactoidStore.class, obj -> {
+				obj.name = name;
+				obj.context = context;
+				obj.server = server;
+				obj.channel = channel;
+				obj.data = data;
+			});
+		} else {
+			store.update(obj -> {
+				obj.data = data;
+			});
+		}
 	}
 }
