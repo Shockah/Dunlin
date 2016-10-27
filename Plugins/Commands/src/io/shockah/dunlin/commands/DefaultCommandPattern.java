@@ -15,7 +15,7 @@ public class DefaultCommandPattern extends CommandPattern {
 	@SuppressWarnings("unchecked")
 	@Override
 	public PreparedCommandCall<?, ?> provide(GenericMessageEvent e) throws CommandParseException {
-		String message = e.getMessage().getContent();
+		String message = e.getMessage().getRawContent(); //or getContent, but it strips pings etc.
 		for (String prefix : prefixes) {
 			if (message.startsWith(prefix) && message.length() > prefix.length()) {
 				String[] spl = message.split("\\s");
