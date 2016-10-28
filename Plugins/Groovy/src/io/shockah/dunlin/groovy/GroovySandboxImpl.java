@@ -56,7 +56,11 @@ public class GroovySandboxImpl extends AbstractGroovySandbox {
 		Tuple.class, Tuple2.class
 	).build();
 	
-	private static final Map<Class<?>, List<String>> METHOD_WHITELIST = ImmutableMap.<Class<?>, List<String>>builder().build();
+	private static final Map<Class<?>, List<String>> METHOD_WHITELIST = ImmutableMap.<Class<?>, List<String>>builder().put(
+		Thread.class, ImmutableList.<String>builder().add(
+			"sleep"
+		).build()
+	).build();
 	
 	protected final List<Class<?>> classBlacklist = new ArrayList<>(CLASS_BLACKLIST);
 	protected final Map<Class<?>, List<String>> methodBlacklist = new HashMap<>(METHOD_BLACKLIST);
