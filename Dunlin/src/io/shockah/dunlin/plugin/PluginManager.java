@@ -153,14 +153,14 @@ public class PluginManager {
 	}
 	
 	protected void setupListenerPlugin(ListenerPlugin plugin) {
-		app.getJDA().addEventListener(plugin.listener);
+		app.getListenerManager().add(plugin.listener);
 	}
 	
 	protected void clearListenerPlugins() {
 		plugins.iterate(plugin -> {
 			if (plugin instanceof ListenerPlugin) {
 				ListenerPlugin listenerPlugin = (ListenerPlugin)plugin;
-				app.getJDA().removeEventListener(listenerPlugin.listener);
+				app.getListenerManager().remove(listenerPlugin.listener);
 			}
 		});
 	}

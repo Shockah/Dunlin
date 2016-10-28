@@ -10,9 +10,8 @@ import io.shockah.json.JSONObject;
 import io.shockah.json.JSONParser;
 import net.dv8tion.jda.JDA;
 import net.dv8tion.jda.JDABuilder;
-import net.dv8tion.jda.hooks.ListenerAdapter;
 
-public class App extends ListenerAdapter {
+public class App {
 	public static final Path CONFIG_PATH = Paths.get("config.json");
 	
 	public static void main(String[] args) {
@@ -29,6 +28,7 @@ public class App extends ListenerAdapter {
 	private DatabaseManager databaseManager;
 	private PluginManager pluginManager;
 	private JDA jda;
+	private ThreadedEventListenerManager eventListenerManager;
 	
 	protected Path getConfigPath() {
 		return CONFIG_PATH;
@@ -41,7 +41,8 @@ public class App extends ListenerAdapter {
 			databaseManager = new DatabaseManager(this);
 			pluginManager = new PluginManager(this);
 			
-			jda = new JDABuilder().setBotToken(config.getObject("api").getString("token")).addListener(this).buildBlocking();
+			eventListenerManager = new ThreadedEventListenerManager();
+			jda = new JDABuilder().setBotToken(config.getObject("api").getString("token")).addListener(eventListenerManager).buildBlocking();
 			pluginManager.reload();
 		} catch (Exception e) {
 			throw new UnexpectedException("Failed to initialize.", e);
@@ -74,5 +75,9 @@ public class App extends ListenerAdapter {
 	
 	public JDA getJDA() {
 		return jda;
+	}
+	
+	public ThreadedEventListenerManager getListenerManager() {
+		return eventListenerManager;
 	}
 }
