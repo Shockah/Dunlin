@@ -3,6 +3,7 @@
 	<target name="build">
 	    <ant useNativeBasedir="true" antfile="build.xml" target="build" />
 	    <ant useNativeBasedir="true" antfile="../../io.shockah.json/build.xml" target="build" />
+	    <ant useNativeBasedir="true" antfile="../Plugins/Bot Control/build.xml" target="build" />
 		<ant useNativeBasedir="true" antfile="../Plugins/Commands/build.xml" target="build" />
 		<ant useNativeBasedir="true" antfile="../Plugins/Factoids/build.xml" target="build" />
 		<ant useNativeBasedir="true" antfile="../Plugins/Groovy/build.xml" target="build" />

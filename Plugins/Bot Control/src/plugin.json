@@ -1,0 +1,13 @@
+{
+	"packageName": "io.shockah.dunlin.botcontrol",
+	"baseClass": "io.shockah.dunlin.botcontrol.BotControlPlugin",
+	"enabledByDefault": true,
+	"dependsOn": [
+		"io.shockah.dunlin.commands",
+		"io.shockah.dunlin.permissions"
+	],
+
+	"name": "Commands",
+	"author": "Shockah",
+	"description": ""
+}
