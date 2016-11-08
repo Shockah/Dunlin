@@ -35,7 +35,7 @@ public class FactoidInfoCommand extends NamedCommand<Input, Factoid> {
 			throw new CommandParseException("Not enough arguments.");
 		String[] split = input.split("\\s");
 		
-		Factoid.Context context = plugin.getDefaultContext();
+		Factoid.Context context = null;
 		String name = null;
 		
 		if (split[0].charAt(0) == '@') {

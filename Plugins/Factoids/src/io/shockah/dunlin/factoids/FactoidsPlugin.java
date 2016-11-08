@@ -83,6 +83,9 @@ public class FactoidsPlugin extends Plugin {
 	}
 	
 	public Factoid findActiveFactoid(GenericMessageEvent e, String name, Factoid.Context context) {
+		if (context == null)
+			return findActiveFactoid(e, name);
+		
 		Guild guild = null;
 		TextChannel channel = null;
 		if (e instanceof GenericGuildMessageEvent) {
