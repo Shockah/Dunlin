@@ -9,6 +9,8 @@ import io.shockah.dunlin.plugin.PluginManager;
 import io.shockah.dunlin.util.ReadWriteList;
 import io.shockah.json.JSONList;
 import net.dv8tion.jda.events.message.GenericMessageEvent;
+import net.dv8tion.jda.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.events.message.priv.PrivateMessageReceivedEvent;
 
 public class CommandsPlugin extends ListenerPlugin {
 	protected ReadWriteList<CommandPattern> patterns = new ReadWriteList<>(new ArrayList<>());
@@ -95,6 +97,8 @@ public class CommandsPlugin extends ListenerPlugin {
 	@Override
 	protected void onGenericMessage(GenericMessageEvent e) {
 		if (e.getAuthor() == e.getJDA().getSelfInfo())
+			return;
+		if (!(e instanceof GuildMessageReceivedEvent || e instanceof PrivateMessageReceivedEvent))
 			return;
 		
 		CommandCall call = new CommandCall(e);

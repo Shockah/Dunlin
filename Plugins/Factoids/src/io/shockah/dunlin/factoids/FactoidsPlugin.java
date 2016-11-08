@@ -1,12 +1,14 @@
 package io.shockah.dunlin.factoids;
 
 import java.util.HashMap;
+import io.shockah.dunlin.MessageMedium;
 import io.shockah.dunlin.commands.CommandsPlugin;
 import io.shockah.dunlin.db.DbObject;
 import io.shockah.dunlin.factoids.db.Factoid;
 import io.shockah.dunlin.permissions.PermissionsPlugin;
 import io.shockah.dunlin.plugin.Plugin;
 import io.shockah.dunlin.plugin.PluginManager;
+import io.shockah.dunlin.timedmessages.TimedMessagesPlugin;
 import io.shockah.dunlin.util.ReadWriteMap;
 import net.dv8tion.jda.entities.Guild;
 import net.dv8tion.jda.entities.TextChannel;
@@ -20,6 +22,9 @@ public class FactoidsPlugin extends Plugin {
 	
 	@Dependency("io.shockah.dunlin.permissions")
 	protected Plugin permissionsPlugin;
+	
+	@Dependency("io.shockah.dunlin.timedmessages")
+	protected Plugin timedMessagesPlugin;
 	
 	protected FactoidCommandProvider commandProvider;
 	
@@ -128,5 +133,13 @@ public class FactoidsPlugin extends Plugin {
 		
 		PermissionsPlugin permissionsPlugin = (PermissionsPlugin)this.permissionsPlugin;
 		return permissionsPlugin.permissionGranted(user, this, "global");
+	}
+	
+	protected MessageMedium getMessageMediumForConfirmationMessage(MessageMedium baseMedium, String message) {
+		if (this.timedMessagesPlugin == null)
+			return baseMedium;
+		
+		TimedMessagesPlugin timedMessagesPlugin = (TimedMessagesPlugin)this.timedMessagesPlugin;
+		return timedMessagesPlugin.createTimedMessageMedium(baseMedium, message.length() * 500l);
 	}
 }

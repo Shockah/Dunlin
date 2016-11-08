@@ -1,0 +1,9 @@
+{
+	"packageName": "io.shockah.dunlin.timedmessages",
+	"baseClass": "io.shockah.dunlin.timedmessages.TimedMessagesPlugin",
+	"enabledByDefault": true,
+
+	"name": "Timed Messages",
+	"author": "Shockah",
+	"description": ""
+}

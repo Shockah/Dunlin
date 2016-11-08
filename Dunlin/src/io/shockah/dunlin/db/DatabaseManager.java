@@ -225,6 +225,14 @@ public class DatabaseManager implements Closeable {
 		}
 	}
 	
+	public int delete(DbObject<?> obj) {
+		try {
+			return obj.delete();
+		} catch (SQLException e) {
+			throw new UnexpectedException(e);
+		}
+	}
+	
 	public <T extends DbObject<T>> long count(Class<T> clazz) {
 		try {
 			return getDao(clazz).countOf();

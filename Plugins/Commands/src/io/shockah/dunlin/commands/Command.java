@@ -1,13 +1,10 @@
 package io.shockah.dunlin.commands;
 
-import net.dv8tion.jda.Permission;
-import net.dv8tion.jda.entities.Role;
 import net.dv8tion.jda.events.message.GenericMessageEvent;
-import net.dv8tion.jda.events.message.guild.GuildMessageReceivedEvent;
 
 public abstract class Command<T, R> {
 	public Integer getLineLimit(CommandCall call, T input) {
-		if (call.inputMedium == CommandCall.Medium.Channel) {
+		/*if (call.inputMedium == CommandCall.Medium.Channel) {
 			int maxLines = 5;
 			GuildMessageReceivedEvent guildEvent = (GuildMessageReceivedEvent)call.event;
 			for (Role role : guildEvent.getGuild().getRolesForUser(guildEvent.getAuthor())) {
@@ -17,7 +14,7 @@ public abstract class Command<T, R> {
 				}
 			}
 			return maxLines;
-		}
+		}*/
 		
 		return null;
 	}

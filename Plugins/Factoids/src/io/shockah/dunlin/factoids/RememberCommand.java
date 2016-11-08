@@ -144,7 +144,9 @@ public class RememberCommand extends NamedCommand<Input, Factoid> {
 		
 		//if (call.outputMedium == null)
 		//	call.outputMedium = Medium.Notice;
-		return CommandResult.of(factoid, "Done.");
+		String response = "Done.";
+		call.outputMedium = plugin.getMessageMediumForConfirmationMessage(call.inputMedium, response);
+		return CommandResult.of(factoid, response);
 	}
 	
 	public static final class Input {
