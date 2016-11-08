@@ -89,6 +89,8 @@ public class RememberCommand extends NamedCommand<Input, Factoid> {
 	public CommandResult<Factoid> call(CommandCall call, Input input) {
 		if (!FACTOID_NAME_PATTERN.matcher(input.name).find())
 			throw new IllegalArgumentException("Illegal name.");
+		if (input.context == Factoid.Context.Global && !plugin.hasGlobalFactoidPermission(call.event.getAuthor()))
+			return CommandResult.error("Permission required.");
 		
 		DatabaseManager databaseManager = plugin.manager.app.getDatabaseManager();
 		

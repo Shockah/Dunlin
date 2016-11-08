@@ -4,17 +4,22 @@ import java.util.HashMap;
 import io.shockah.dunlin.commands.CommandsPlugin;
 import io.shockah.dunlin.db.DbObject;
 import io.shockah.dunlin.factoids.db.Factoid;
+import io.shockah.dunlin.permissions.PermissionsPlugin;
 import io.shockah.dunlin.plugin.Plugin;
 import io.shockah.dunlin.plugin.PluginManager;
 import io.shockah.dunlin.util.ReadWriteMap;
 import net.dv8tion.jda.entities.Guild;
 import net.dv8tion.jda.entities.TextChannel;
+import net.dv8tion.jda.entities.User;
 import net.dv8tion.jda.events.message.GenericMessageEvent;
 import net.dv8tion.jda.events.message.guild.GenericGuildMessageEvent;
 
 public class FactoidsPlugin extends Plugin {
 	@Dependency
 	protected CommandsPlugin commandsPlugin;
+	
+	@Dependency("io.shockah.dunlin.permissions")
+	protected Plugin permissionsPlugin;
 	
 	protected FactoidCommandProvider commandProvider;
 	
@@ -115,5 +120,13 @@ public class FactoidsPlugin extends Plugin {
 			}
 			builder.orderBy(DbObject.ID_COLUMN, false);
 		});
+	}
+	
+	protected boolean hasGlobalFactoidPermission(User user) {
+		if (this.permissionsPlugin == null)
+			return true;
+		
+		PermissionsPlugin permissionsPlugin = (PermissionsPlugin)this.permissionsPlugin;
+		return permissionsPlugin.permissionGranted(user, this, "global");
 	}
 }

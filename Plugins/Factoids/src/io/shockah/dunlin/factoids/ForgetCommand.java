@@ -49,6 +49,9 @@ public class ForgetCommand extends NamedCommand<Input, Factoid> {
 
 	@Override
 	public CommandResult<Factoid> call(CommandCall call, Input input) {
+		if (input.context == Factoid.Context.Global && !plugin.hasGlobalFactoidPermission(call.event.getAuthor()))
+			return CommandResult.error("Permission required.");
+		
 		Factoid factoid = plugin.findActiveFactoid(call.event, input.name, input.context);
 		if (factoid != null) {
 			try {
