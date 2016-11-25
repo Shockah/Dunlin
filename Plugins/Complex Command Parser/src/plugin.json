@@ -1,0 +1,12 @@
+{
+	"packageName": "io.shockah.dunlin.complexcommandparser",
+	"baseClass": "io.shockah.dunlin.complexcommandparser.ComplexCommandParserPlugin",
+	"enabledByDefault": true,
+	"dependsOn": [
+		"io.shockah.dunlin.commands"
+	],
+
+	"name": "Complex Command Parser",
+	"author": "Shockah",
+	"description": ""
+}
