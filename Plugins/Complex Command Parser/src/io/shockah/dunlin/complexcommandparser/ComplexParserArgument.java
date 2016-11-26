@@ -170,6 +170,10 @@ public final class ComplexParserArgument {
 	
 	public static enum Type {
 		Flag, Bool, Integer, Decimal, Range, String;
+		
+		public ComplexParserArgument make(boolean multiUse, String name, String... moreNames) {
+			return ComplexParserArgument.make(this, multiUse, name, moreNames);
+		}
 	}
 	
 	public static final class ParseResult {
