@@ -29,6 +29,7 @@ public class ItemCommand extends NamedCommand<List<Func1<Item, Boolean>>, List<I
 		parser.arguments.add(ComplexParserArgument.Type.Flag.make(false, "ranged"));
 		parser.arguments.add(ComplexParserArgument.Type.Flag.make(false, "magic"));
 		parser.arguments.add(ComplexParserArgument.Type.Flag.make(false, "summon"));
+		parser.arguments.add(ComplexParserArgument.Type.Flag.make(false, "thrown"));
 		
 		parser.arguments.add(ComplexParserArgument.Type.Range.make(true, "id"));
 		parser.arguments.add(ComplexParserArgument.Type.Range.make(true, "rare"));
@@ -44,54 +45,79 @@ public class ItemCommand extends NamedCommand<List<Func1<Item, Boolean>>, List<I
 	public List<Func1<Item, Boolean>> parseInput(GenericMessageEvent e, String input) throws CommandParseException {
 		ComplexParserResult result = parser.parse(input);
 		
-		List<Func1<Item, Boolean>> filters = new ArrayList<>();
-		
 		boolean b;
 		Range r;
 		
+		List<Func1<Item, Boolean>> damageTypeFilters = new ArrayList<>();
+		List<Func1<Item, Boolean>> otherFilters = new ArrayList<>();
+		
 		while (b = result.consumeBoolean("accessory")) {
 			final boolean fb = b;
-			filters.add(item -> item.accessory == fb);
+			otherFilters.add(item -> item.accessory == fb);
 		}
 		while (b = result.consumeBoolean("weapon")) {
 			final boolean fb = b;
-			filters.add(item -> (item.damage > 0) == fb);
+			otherFilters.add(item -> (item.damage > 0) == fb);
 		}
+		
 		while (b = result.consumeBoolean("melee")) {
 			final boolean fb = b;
-			filters.add(item -> item.melee == fb);
+			damageTypeFilters.add(item -> item.melee == fb);
 		}
 		while (b = result.consumeBoolean("ranged")) {
 			final boolean fb = b;
-			filters.add(item -> item.ranged == fb);
+			damageTypeFilters.add(item -> item.ranged == fb);
 		}
 		while (b = result.consumeBoolean("magic")) {
 			final boolean fb = b;
-			filters.add(item -> item.magic == fb);
+			damageTypeFilters.add(item -> item.magic == fb);
 		}
 		while (b = result.consumeBoolean("summon")) {
 			final boolean fb = b;
-			filters.add(item -> item.summon == fb);
+			damageTypeFilters.add(item -> item.summon == fb);
+		}
+		while (b = result.consumeBoolean("thrown")) {
+			final boolean fb = b;
+			damageTypeFilters.add(item -> item.thrown == fb);
 		}
 		
 		while ((r = result.consumeRange("id")) != null) {
 			final Range fr = r;
-			filters.add(item -> fr.contains(item.id));
+			otherFilters.add(item -> fr.contains(item.id));
+		}
+		while ((r = result.consumeRange("value")) != null) {
+			final Range fr = r;
+			otherFilters.add(item -> fr.contains(item.value));
 		}
 		while ((r = result.consumeRange("rare")) != null) {
 			final Range fr = r;
-			filters.add(item -> fr.contains(item.rare));
+			otherFilters.add(item -> fr.contains(item.rare));
 		}
 		while ((r = result.consumeRange("damage")) != null) {
 			final Range fr = r;
-			filters.add(item -> fr.contains(item.damage));
+			otherFilters.add(item -> fr.contains(item.damage));
 		}
 		while ((r = result.consumeRange("crit")) != null) {
 			final Range fr = r;
-			filters.add(item -> fr.contains(item.crit));
+			otherFilters.add(item -> fr.contains(item.crit));
 		}
 		
+		List<Func1<Item, Boolean>> filters = new ArrayList<>();
+		if (!damageTypeFilters.isEmpty())
+			filters.add(buildORFilter(damageTypeFilters));
+		filters.addAll(otherFilters);
+		
 		return filters;
+	}
+	
+	private Func1<Item, Boolean> buildORFilter(List<Func1<Item, Boolean>> subfilters) {
+		return item -> {
+			for (Func1<Item, Boolean> subfilter : subfilters) {
+				if (subfilter.call(item))
+					return true;
+			}
+			return false;
+		};
 	}
 
 	@Override

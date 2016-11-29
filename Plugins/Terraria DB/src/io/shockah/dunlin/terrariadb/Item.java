@@ -11,4 +11,6 @@ public final class Item {
 	public boolean ranged;
 	public boolean magic;
 	public boolean summon;
+	public boolean thrown;
+	public int value;
 }
