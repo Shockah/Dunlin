@@ -15,7 +15,7 @@ public abstract class MessageMedium {
 		
 		@Override
 		public void sendMessage(String message) {
-			channel.sendMessage(message);
+			channel.sendMessage(message).queue();
 		}
 
 		@Override
@@ -33,7 +33,7 @@ public abstract class MessageMedium {
 		
 		@Override
 		public void sendMessage(String message) {
-			user.getPrivateChannel().sendMessage(message);
+			user.getPrivateChannel().sendMessage(message).queue();
 		}
 
 		@Override

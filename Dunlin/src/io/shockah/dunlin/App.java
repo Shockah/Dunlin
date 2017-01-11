@@ -17,6 +17,9 @@ public class App {
 	public static final Path CONFIG_PATH = Paths.get("config.json");
 	
 	public static void main(String[] args) {
+		Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+			throwable.printStackTrace();
+		});
 		/*System.setProperty("org.slf4j.simpleLogger.logFile", "System.out");
 		System.setProperty("org.slf4j.simpleLogger.showDateTime", "true");
 		System.setProperty("org.slf4j.simpleLogger.dateTimeFormat", "[yyyy-MM-dd HH:mm:ss]");

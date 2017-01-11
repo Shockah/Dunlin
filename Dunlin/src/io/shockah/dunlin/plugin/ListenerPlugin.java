@@ -251,7 +251,7 @@ public abstract class ListenerPlugin extends Plugin {
 		@Override
 		public void onGenericEvent(Event event) {
 			try {
-				super.onEvent(event);
+				super.onGenericEvent(event);
 				plugin.onGenericEvent(event);
 			} catch (Exception e) {
 				e.printStackTrace();
