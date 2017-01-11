@@ -10,11 +10,11 @@ import io.shockah.dunlin.plugin.Plugin;
 import io.shockah.dunlin.plugin.PluginManager;
 import io.shockah.dunlin.timedmessages.TimedMessagesPlugin;
 import io.shockah.dunlin.util.ReadWriteMap;
-import net.dv8tion.jda.entities.Guild;
-import net.dv8tion.jda.entities.TextChannel;
-import net.dv8tion.jda.entities.User;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
-import net.dv8tion.jda.events.message.guild.GenericGuildMessageEvent;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.guild.GenericGuildMessageEvent;
 
 public class FactoidsPlugin extends Plugin {
 	@Dependency

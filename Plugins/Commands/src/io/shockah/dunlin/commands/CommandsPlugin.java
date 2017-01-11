@@ -3,14 +3,14 @@ package io.shockah.dunlin.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 import io.shockah.dunlin.DelegatePassthroughException;
-import io.shockah.dunlin.UnexpectedException;
 import io.shockah.dunlin.plugin.ListenerPlugin;
 import io.shockah.dunlin.plugin.PluginManager;
 import io.shockah.dunlin.util.ReadWriteList;
 import io.shockah.json.JSONList;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
-import net.dv8tion.jda.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.events.message.priv.PrivateMessageReceivedEvent;
+import io.shockah.util.UnexpectedException;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
 
 public class CommandsPlugin extends ListenerPlugin {
 	protected ReadWriteList<CommandPattern> patterns = new ReadWriteList<>(new ArrayList<>());
@@ -96,7 +96,7 @@ public class CommandsPlugin extends ListenerPlugin {
 	
 	@Override
 	protected void onGenericMessage(GenericMessageEvent e) {
-		if (e.getAuthor() == e.getJDA().getSelfInfo())
+		if (e.getAuthor() == e.getJDA().getSelfUser())
 			return;
 		if (!(e instanceof GuildMessageReceivedEvent || e instanceof PrivateMessageReceivedEvent))
 			return;

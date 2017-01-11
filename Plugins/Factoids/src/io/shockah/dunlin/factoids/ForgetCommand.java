@@ -1,13 +1,13 @@
 package io.shockah.dunlin.factoids;
 
-import io.shockah.dunlin.UnexpectedException;
 import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandParseException;
 import io.shockah.dunlin.commands.CommandResult;
 import io.shockah.dunlin.commands.NamedCommand;
 import io.shockah.dunlin.factoids.ForgetCommand.Input;
 import io.shockah.dunlin.factoids.db.Factoid;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
+import io.shockah.util.UnexpectedException;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 
 public class ForgetCommand extends NamedCommand<Input, Factoid> {
 	private final FactoidsPlugin plugin;

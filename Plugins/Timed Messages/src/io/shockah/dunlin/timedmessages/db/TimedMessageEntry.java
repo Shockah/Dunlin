@@ -6,10 +6,12 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import io.shockah.dunlin.db.DbObject;
 import io.shockah.dunlin.timedmessages.TimedMessagesPlugin;
-import net.dv8tion.jda.JDA;
-import net.dv8tion.jda.entities.Message;
-import net.dv8tion.jda.entities.TextChannel;
-import net.dv8tion.jda.entities.User;
+import io.shockah.util.UnexpectedException;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 @DatabaseTable(tableName = "io_shockah_dunlin_timedmessages_timedmessageentry")
 public class TimedMessageEntry extends DbObject<TimedMessageEntry> {
@@ -48,20 +50,24 @@ public class TimedMessageEntry extends DbObject<TimedMessageEntry> {
 	}
 	
 	public void remove(JDA jda) {
-		if (this.channel != null) {
-			TextChannel channel = jda.getTextChannelById(this.channel);
-			if (channel != null) {
-				Message message = channel.getMessageById(this.message);
-				if (message != null)
-					message.deleteMessage();
+		try {
+			if (this.channel != null) {
+				TextChannel channel = jda.getTextChannelById(this.channel);
+				if (channel != null) {
+					Message message = channel.getMessageById(this.message).block();
+					if (message != null)
+						message.deleteMessage();
+				}
+			} else if (this.user != null) {
+				User user = jda.getUserById(this.user);
+				if (user != null) {
+					Message message = user.getPrivateChannel().getMessageById(this.message).block();
+					if (message != null)
+						message.deleteMessage();
+				}
 			}
-		} else if (this.user != null) {
-			User user = jda.getUserById(this.user);
-			if (user != null) {
-				Message message = user.getPrivateChannel().getMessageById(this.message);
-				if (message != null)
-					message.deleteMessage();
-			}
+		} catch (RateLimitedException e) {
+			throw new UnexpectedException(e);
 		}
 		
 		getDatabaseManager().delete(this);

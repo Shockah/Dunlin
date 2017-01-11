@@ -9,10 +9,10 @@ import io.shockah.dunlin.commands.NamedCommand;
 import io.shockah.dunlin.db.DatabaseManager;
 import io.shockah.dunlin.factoids.RememberCommand.Input;
 import io.shockah.dunlin.factoids.db.Factoid;
-import net.dv8tion.jda.entities.Guild;
-import net.dv8tion.jda.entities.TextChannel;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
-import net.dv8tion.jda.events.message.guild.GenericGuildMessageEvent;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.guild.GenericGuildMessageEvent;
 
 public class RememberCommand extends NamedCommand<Input, Factoid> {
 	private static final Pattern FACTOID_NAME_PATTERN = Pattern.compile("\\w\\S*");

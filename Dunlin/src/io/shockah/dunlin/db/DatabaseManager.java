@@ -21,11 +21,11 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.TableUtils;
 import io.shockah.dunlin.App;
-import io.shockah.dunlin.UnexpectedException;
 import io.shockah.json.JSONObject;
 import io.shockah.json.JSONParser;
 import io.shockah.json.JSONPrettyPrinter;
 import io.shockah.skylark.func.Action1;
+import io.shockah.util.UnexpectedException;
 
 public class DatabaseManager implements Closeable {
 	public static final Path TABLE_VERSIONS_PATH = Paths.get("tableVersions.json");

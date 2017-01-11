@@ -6,7 +6,7 @@ import io.shockah.dunlin.commands.CommandProvider;
 import io.shockah.dunlin.commands.CommandResult;
 import io.shockah.dunlin.commands.NamedCommand;
 import io.shockah.dunlin.factoids.db.Factoid;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 
 public class FactoidCommandProvider extends CommandProvider {
 	protected final FactoidsPlugin plugin;

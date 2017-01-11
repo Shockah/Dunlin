@@ -1,6 +1,6 @@
 package io.shockah.dunlin.commands;
 
-import net.dv8tion.jda.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 
 public class ChainCommand<T, R> extends Command<T, R> {
 	private final Command<?, ?>[] commands;

@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import com.j256.ormlite.stmt.QueryBuilder;
-import io.shockah.dunlin.UnexpectedException;
 import io.shockah.dunlin.db.DatabaseManager;
 import io.shockah.dunlin.permissions.db.UserGroup;
 import io.shockah.dunlin.permissions.db.UserGroupChannelPermission;
@@ -15,11 +14,12 @@ import io.shockah.dunlin.permissions.db.UserGroupRole;
 import io.shockah.dunlin.permissions.db.UserGroupUser;
 import io.shockah.dunlin.plugin.Plugin;
 import io.shockah.dunlin.plugin.PluginManager;
-import net.dv8tion.jda.Permission;
-import net.dv8tion.jda.entities.Guild;
-import net.dv8tion.jda.entities.Role;
-import net.dv8tion.jda.entities.TextChannel;
-import net.dv8tion.jda.entities.User;
+import io.shockah.util.UnexpectedException;
+import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 
 public class PermissionsPlugin extends Plugin {
 	public PermissionsPlugin(PluginManager manager, Info info) {
@@ -45,7 +45,7 @@ public class PermissionsPlugin extends Plugin {
 			Set<UserGroup> userGroups = new HashSet<>();
 			
 			if (guild != null) {
-				for (Role role : channel.getGuild().getRolesForUser(user)) {
+				for (Role role : channel.getGuild().getMember(user).getRoles()) {
 					QueryBuilder<UserGroupRole, Integer> qbRole = databaseManager.getDao(UserGroupRole.class, Integer.class).queryBuilder();
 					qbRole.where().eq(UserGroupRole.ROLE_COLUMN, role.getId());
 					
@@ -56,7 +56,7 @@ public class PermissionsPlugin extends Plugin {
 			
 			if (channel != null) {
 				for (Permission permission : Permission.values()) {
-					if (channel.checkPermission(user, permission)) {
+					if (channel.getGuild().getMember(user).hasPermission(permission)) {
 						QueryBuilder<UserGroupChannelPermission, Integer> qbChannelPermission = databaseManager.getDao(UserGroupChannelPermission.class, Integer.class).queryBuilder();
 						qbChannelPermission.where().eq(UserGroupChannelPermission.PERMISSION_COLUMN, permission);
 						

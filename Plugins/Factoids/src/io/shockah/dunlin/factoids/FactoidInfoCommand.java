@@ -12,7 +12,7 @@ import io.shockah.dunlin.commands.NamedCommand;
 import io.shockah.dunlin.factoids.FactoidInfoCommand.Input;
 import io.shockah.dunlin.factoids.db.Factoid;
 import io.shockah.dunlin.util.TimeDuration;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 
 public class FactoidInfoCommand extends NamedCommand<Input, Factoid> {
 	private final FactoidsPlugin plugin;

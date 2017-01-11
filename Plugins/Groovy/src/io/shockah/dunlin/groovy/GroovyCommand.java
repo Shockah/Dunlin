@@ -6,8 +6,8 @@ import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandParseException;
 import io.shockah.dunlin.commands.CommandResult;
 import io.shockah.dunlin.commands.NamedCommand;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
-import net.dv8tion.jda.events.message.guild.GenericGuildMessageEvent;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.guild.GenericGuildMessageEvent;
 
 public class GroovyCommand extends NamedCommand<String, Object> {
 	protected final GroovyPlugin plugin;

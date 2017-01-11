@@ -4,11 +4,11 @@ import java.sql.SQLException;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import io.shockah.dunlin.UnexpectedException;
 import io.shockah.dunlin.db.DbObject;
-import net.dv8tion.jda.entities.Guild;
-import net.dv8tion.jda.entities.Role;
-import net.dv8tion.jda.entities.User;
+import io.shockah.util.UnexpectedException;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.User;
 
 @DatabaseTable(tableName = "io_shockah_dunlin_permissions_usergrouproles")
 public class UserGroupRole extends DbObject<UserGroupRole> {
@@ -55,7 +55,7 @@ public class UserGroupRole extends DbObject<UserGroupRole> {
 	}
 	
 	public boolean matches(User user, Guild guild) {
-		for (Role role : guild.getRolesForUser(user)) {
+		for (Role role : guild.getMember(user).getRoles()) {
 			if (matches(role))
 				return true;
 		}

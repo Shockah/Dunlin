@@ -3,7 +3,7 @@ package io.shockah.dunlin.botcontrol;
 import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandResult;
 import io.shockah.dunlin.commands.NamedCommand;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 
 public class ReloadPluginsCommand extends NamedCommand<Void, String> {
 	private final BotControlPlugin plugin;

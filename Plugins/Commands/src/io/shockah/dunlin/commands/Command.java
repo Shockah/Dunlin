@@ -1,6 +1,6 @@
 package io.shockah.dunlin.commands;
 
-import net.dv8tion.jda.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 
 public abstract class Command<T, R> {
 	public Integer getLineLimit(CommandCall call, T input) {

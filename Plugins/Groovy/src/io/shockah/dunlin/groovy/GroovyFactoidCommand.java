@@ -12,8 +12,8 @@ import io.shockah.dunlin.factoids.AbstractFactoidCommand;
 import io.shockah.dunlin.factoids.db.Factoid;
 import io.shockah.json.JSONObject;
 import io.shockah.json.JSONPrinter;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
-import net.dv8tion.jda.events.message.guild.GenericGuildMessageEvent;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.guild.GenericGuildMessageEvent;
 
 public class GroovyFactoidCommand<T, R> extends AbstractFactoidCommand<T, R> {
 	public final GroovyPlugin plugin;
