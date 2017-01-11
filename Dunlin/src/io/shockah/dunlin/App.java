@@ -8,8 +8,9 @@ import io.shockah.dunlin.db.DatabaseManager;
 import io.shockah.dunlin.plugin.PluginManager;
 import io.shockah.json.JSONObject;
 import io.shockah.json.JSONParser;
-import net.dv8tion.jda.JDA;
-import net.dv8tion.jda.JDABuilder;
+import net.dv8tion.jda.core.AccountType;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.JDABuilder;
 
 public class App {
 	public static final Path CONFIG_PATH = Paths.get("config.json");
@@ -42,7 +43,7 @@ public class App {
 			pluginManager = new PluginManager(this);
 			
 			eventListenerManager = new ThreadedEventListenerManager();
-			jda = new JDABuilder().setBotToken(config.getObject("api").getString("token")).addListener(eventListenerManager).buildBlocking();
+			jda = new JDABuilder(AccountType.BOT).setToken(config.getObject("api").getString("token")).addListener(eventListenerManager).buildBlocking();
 			pluginManager.reload();
 		} catch (Exception e) {
 			throw new UnexpectedException("Failed to initialize.", e);

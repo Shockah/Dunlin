@@ -1,7 +1,7 @@
 package io.shockah.dunlin;
 
-import net.dv8tion.jda.entities.TextChannel;
-import net.dv8tion.jda.entities.User;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 
 public abstract class MessageMedium {
 	public abstract void sendMessage(String message);
