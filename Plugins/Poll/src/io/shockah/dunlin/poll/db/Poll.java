@@ -132,7 +132,7 @@ public class Poll extends DbObject<Poll> {
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append(String.format("**Poll** *%s* ended!", name));
-		sb.append("\n**Results:**");
+		sb.append("\n\n**Results:**");
 		
 		for (VoteResult result : voteResults) {
 			sb.append(String.format("\n%s: %d", result, result.voters.size()));
