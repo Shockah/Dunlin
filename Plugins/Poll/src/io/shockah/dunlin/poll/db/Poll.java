@@ -96,7 +96,9 @@ public class Poll extends DbObject<Poll> {
 		}
 		if (voteResults.isEmpty()) {
 			for (MessageReaction reaction : message.getReactions()) {
-				voteResults.add(new VoteResult(reaction.getEmote().getEmote().getAsMention(), null));
+				ReactionEmote emote = reaction.getEmote();
+				String emoteString = emote.isEmote() ? emote.getEmote().getAsMention() : emote.getName();
+				voteResults.add(new VoteResult(emoteString, null));
 			}
 		}
 		
