@@ -26,6 +26,9 @@ public class ArgumentSchema {
 		
 		for (int i = 0; i < lines.length; i++) {
 			String line = lines[i];
+			if (line.isEmpty())
+				continue;
+			
 			Matcher m = ARGUMENT_PATTERN.matcher(line);
 			if (m.find()) {
 				String argName = m.group(1).toLowerCase();

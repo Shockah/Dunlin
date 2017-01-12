@@ -9,6 +9,7 @@
 		<ant useNativeBasedir="true" antfile="../Plugins/Factoids/build.xml" target="build" />
 		<ant useNativeBasedir="true" antfile="../Plugins/Groovy/build.xml" target="build" />
 		<ant useNativeBasedir="true" antfile="../Plugins/Permissions/build.xml" target="build" />
+		<ant useNativeBasedir="true" antfile="../Plugins/Poll/build.xml" target="build" />
 		<ant useNativeBasedir="true" antfile="../Plugins/Timed Messages/build.xml" target="build" />
 	</target>
 </project>

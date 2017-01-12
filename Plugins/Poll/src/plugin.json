@@ -1,0 +1,13 @@
+{
+	"packageName": "io.shockah.dunlin.poll",
+	"baseClass": "io.shockah.dunlin.poll.PollPlugin",
+	"enabledByDefault": true,
+	"dependsOn": [
+		"io.shockah.dunlin.commands",
+		"io.shockah.dunlin.argparser"
+	],
+
+	"name": "Poll",
+	"author": "Shockah",
+	"description": ""
+}
