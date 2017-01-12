@@ -1,0 +1,12 @@
+{
+	"packageName": "io.shockah.dunlin.argparser",
+	"baseClass": "io.shockah.dunlin.argparser.ArgumentParserPlugin",
+	"enabledByDefault": true,
+	"dependsOn": [
+		"io.shockah.dunlin.commands"
+	],
+
+	"name": "Argument Parser",
+	"author": "Shockah",
+	"description": ""
+}
