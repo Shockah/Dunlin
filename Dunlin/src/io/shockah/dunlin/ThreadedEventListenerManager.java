@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import io.shockah.dunlin.util.ReadWriteList;
-import net.dv8tion.jda.events.Event;
-import net.dv8tion.jda.hooks.EventListener;
+import net.dv8tion.jda.core.events.Event;
+import net.dv8tion.jda.core.hooks.EventListener;
 
 public class ThreadedEventListenerManager extends ReadWriteList<EventListener> implements EventListener {
 	private ExecutorService threadPool;

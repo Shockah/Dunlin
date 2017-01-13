@@ -2,9 +2,10 @@ package io.shockah.dunlin.commands;
 
 import java.util.List;
 import io.shockah.dunlin.MessageMedium;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
-import net.dv8tion.jda.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.events.message.priv.PrivateMessageReceivedEvent;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
 
 public final class CommandCall {
 	public final GenericMessageEvent event;
@@ -34,5 +35,13 @@ public final class CommandCall {
 			medium = inputMedium;
 		
 		medium.sendMessage(line);
+	}
+	
+	public void respond(Message message) {
+		MessageMedium medium = outputMedium;
+		if (medium == null)
+			medium = inputMedium;
+		
+		medium.sendMessage(message);
 	}
 }

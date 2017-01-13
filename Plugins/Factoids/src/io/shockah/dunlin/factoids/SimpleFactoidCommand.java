@@ -3,13 +3,14 @@ package io.shockah.dunlin.factoids;
 import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandParseException;
 import io.shockah.dunlin.commands.CommandResult;
+import io.shockah.dunlin.commands.ValueCommandResult;
 import io.shockah.dunlin.factoids.db.Factoid;
-import net.dv8tion.jda.entities.Guild;
-import net.dv8tion.jda.entities.SelfInfo;
-import net.dv8tion.jda.entities.TextChannel;
-import net.dv8tion.jda.entities.User;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
-import net.dv8tion.jda.events.message.guild.GenericGuildMessageEvent;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.SelfUser;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.guild.GenericGuildMessageEvent;
 
 public class SimpleFactoidCommand extends AbstractFactoidCommand<String, String> {
 	public SimpleFactoidCommand(Factoid factoid) {
@@ -17,7 +18,7 @@ public class SimpleFactoidCommand extends AbstractFactoidCommand<String, String>
 	}
 	
 	@Override
-	public String prepareChainedCallInput(GenericMessageEvent e, CommandResult<String> previousResult) {
+	public String prepareChainedCallInput(GenericMessageEvent e, ValueCommandResult<String> previousResult) {
 		return previousResult.toString();
 	}
 	
@@ -31,7 +32,7 @@ public class SimpleFactoidCommand extends AbstractFactoidCommand<String, String>
 		String output = factoid.raw;
 		input = input == null ? "" : input;
 		User user = call.event.getAuthor();
-		SelfInfo bot = call.event.getJDA().getSelfInfo();
+		SelfUser bot = call.event.getJDA().getSelfUser();
 		
 		Guild guild = null;
 		TextChannel channel = null;
@@ -43,13 +44,13 @@ public class SimpleFactoidCommand extends AbstractFactoidCommand<String, String>
 		
 		output = output.replaceAll("(?iu)\\%(input|inp)\\%", input);
 		output = output.replaceAll("(?iu)\\%(userid|senderid)\\%", user.getId());
-		output = output.replaceAll("(?iu)\\%(username|sendername)\\%", user.getUsername());
+		output = output.replaceAll("(?iu)\\%(username|sendername)\\%", user.getName());
 		output = output.replaceAll("(?iu)\\%(usermention|sendermention)\\%", user.getAsMention());
 		output = output.replaceAll("(?iu)\\%botid\\%", bot.getId());
-		output = output.replaceAll("(?iu)\\%botname\\%", bot.getUsername());
+		output = output.replaceAll("(?iu)\\%botname\\%", bot.getName());
 		output = output.replaceAll("(?iu)\\%botmention\\%", bot.getAsMention());
 		output = output.replaceAll("(?iu)\\%(inputoruserid|ioruid)\\%", input.isEmpty() ? user.getId() : input);
-		output = output.replaceAll("(?iu)\\%(inputorusername|ioruname)\\%", input.isEmpty() ? user.getUsername() : input);
+		output = output.replaceAll("(?iu)\\%(inputorusername|ioruname)\\%", input.isEmpty() ? user.getName() : input);
 		output = output.replaceAll("(?iu)\\%(inputorusermention|iorumention)\\%", input.isEmpty() ? user.getAsMention() : input);
 		
 		if (guild != null) {
@@ -63,6 +64,6 @@ public class SimpleFactoidCommand extends AbstractFactoidCommand<String, String>
 			output = output.replaceAll("(?iu)\\%(channelmention|chanmention)\\%", channel.getAsMention());
 		}
 		
-		return CommandResult.of(output);
+		return new ValueCommandResult<>(output);
 	}
 }

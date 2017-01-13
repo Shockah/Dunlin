@@ -1,95 +1,128 @@
 package io.shockah.dunlin.groovy;
 
+import java.awt.Color;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandResult;
-import net.dv8tion.jda.JDA;
-import net.dv8tion.jda.MessageHistory;
-import net.dv8tion.jda.OnlineStatus;
-import net.dv8tion.jda.entities.Channel;
-import net.dv8tion.jda.entities.Emote;
-import net.dv8tion.jda.entities.Game;
-import net.dv8tion.jda.entities.Guild;
-import net.dv8tion.jda.entities.Message;
-import net.dv8tion.jda.entities.MessageChannel;
-import net.dv8tion.jda.entities.MessageEmbed;
-import net.dv8tion.jda.entities.MessageType;
-import net.dv8tion.jda.entities.Role;
-import net.dv8tion.jda.entities.TextChannel;
-import net.dv8tion.jda.entities.User;
-import net.dv8tion.jda.entities.VoiceChannel;
-import net.dv8tion.jda.managers.AudioManager;
-import net.dv8tion.jda.managers.ChannelManager;
-import net.dv8tion.jda.managers.GuildManager;
-import net.dv8tion.jda.managers.RoleManager;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.OnlineStatus;
+import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.Region;
+import net.dv8tion.jda.core.entities.Channel;
+import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.EmbedType;
+import net.dv8tion.jda.core.entities.Emote;
+import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.GuildVoiceState;
+import net.dv8tion.jda.core.entities.IMentionable;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.MessageType;
+import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.core.entities.VoiceState;
+import net.dv8tion.jda.core.managers.Presence;
+import net.dv8tion.jda.core.requests.RestAction;
 
 public class UserGroovySandboxImpl extends GroovySandboxImpl {
 	public UserGroovySandboxImpl() {
 		super();
 		
-		addBlacklistedMethods(CommandCall.class,
-				"respond"
-		);
-		
-		addWhitelistedMethods(JDA.class,
-				"getUsers", "getUserById", "getGuildById", "getTextChannelById", "getVoiceChannelById", "getSelfInfo", "getEmoteById", "getAudioManager"
-		);
-		addWhitelistedMethods(User.class,
-				"getId", "getUsername", "getDiscriminator", "getAsMention", "getAvatarId", "getAvatarUrl",
-				"getDefaultAvatarId", "getDefaultAvatarUrl", "getCurrentGame", "getOnlineStatus", "isBot", "getJDA"
-		);
-		addWhitelistedMethods(TextChannel.class,
-				"getAsMention"
-		);
-		addWhitelistedMethods(VoiceChannel.class,
-				"getUserLimit", "getBitrate"
-		);
-		addWhitelistedMethods(MessageChannel.class,
-				"getId", "getJDA", "getPinnedMessages", "getMessageById", "getHistory"
-		);
-		addWhitelistedMethods(Channel.class,
-				"getId", "getName", "getTopic", "getGuild", "getUsers", "getPosition", "getPositionRaw", "checkPermission", "getManager", "getJDA"
-		);
-		addWhitelistedMethods(Guild.class,
-				"getId", "getName", "getIconId", "getIconUrl", "getAfkChannelId", "getOwnerId", "getOwner",
-				"getAfkTimeout", "getRegion", "getEmotes", "getUsers", "isMember", "getTextChannels", "getVoiceChannels",
-				"getRoles", "getRoleById", "getRolesForUser", "getColorDeterminantRoleForUser", "getUsersWithRole",
-				"getPublicRole", "getPublicChannel", "getJoinDateForUser", "getManager", "getAudioManager", "getJDA"
-		);
-		addWhitelistedMethods(Message.class,
-				"getId", "getMentionedUsers", "isMentioned", "getMentionedChannels", "getMentionedRoles", "mentionsEveryone",
-				"getTime", "isEdited", "getEditedTimestamp", "getAuthor", "getContent", "getRawContent", "getStrippedContent",
-				"isPrivate", "getChannelId", "getChannel", "getAttachments", "getEmbeds", "getEmotes", "isTTS", "getJDA", "isPinned",
-				"getType"
-		);
-		addWhitelistedMethods(Message.Attachment.class,
-				"getId", "getUrl", "getProxyUrl", "getFileName", "getSize", "getHeight", "getWidth", "isImage"
-		);
-		addWhitelistedMethods(GuildManager.class,
-				"getGuild", "getBans"
-		);
-		addWhitelistedMethods(AudioManager.class,
-				"getConnectedChannel", "isConnected", "getConnectTimeout"
-		);
-		addWhitelistedMethods(RoleManager.class,
-				"getRole"
-		);
-		addWhitelistedMethods(ChannelManager.class,
-				"getChannel"
-		);
-		addWhitelistedMethods(MessageHistory.class,
-				"retrieve", "getRecent"
+		addWhitelistedClasses(
+			CommandResult.class, URLEncoder.class, URLDecoder.class,
+			Color.class
 		);
 		
 		addWhitelistedPackages(
-				"io.shockah.dunlin.commands"
+			"io.shockah.dunlin.commands"
+		);
+		addBlacklistedMethods(CommandCall.class,
+			"respond"
 		);
 		
 		addWhitelistedClasses(
-				CommandResult.class, URLEncoder.class, URLDecoder.class,
-				Role.class, Game.class, Emote.class, OnlineStatus.class, MessageType.class,
-				MessageEmbed.class, MessageEmbed.Thumbnail.class, MessageEmbed.Provider.class, MessageEmbed.VideoInfo.class
+			OnlineStatus.class, Game.class, Game.GameType.class, Guild.VerificationLevel.class, Guild.NotificationLevel.class,
+			Guild.MFALevel.class, Permission.class, Guild.Timeout.class, Region.class, ChannelType.class, MessageType.class,
+			MessageEmbed.class, EmbedType.class, MessageEmbed.Thumbnail.class, MessageEmbed.Provider.class, MessageEmbed.AuthorInfo.class,
+			MessageEmbed.VideoInfo.class, MessageEmbed.Footer.class, MessageEmbed.ImageInfo.class, MessageEmbed.Field.class
+		);
+		addWhitelistedMethods(RestAction.class,
+			"block"
+		);
+		addWhitelistedMethods(JDA.class,
+			"getUsers", "getUserById", "getUsersByName",
+			/*"getGuilds", */"getGuildById", "getGuildsByName",
+			//"getTextChannels", "getTextChannelById", "getTextChannelsByName",
+			//"getVoiceChannels", "getVoiceChannelById", "getVoiceChannelByName",
+			//"getPrivateChannels", "getPrivateChannelById",
+			//"getEmotes", "getEmotesByName", "getEmoteById",
+			"getSelfUser", "getPresence"
+		);
+		addWhitelistedMethods(Presence.class,
+			"getJDA", "getStatus", "getGame", "isIdle"
+		);
+		addWhitelistedMethods(User.class,
+			"getJDA", "getName", "getDiscriminator", "isBot", "getAvatarId", "getAvatarUrl",
+			"getDefaultAvatarId", "getDefaultAvatarUrl", "getEffectiveAvatarUrl"
+		);
+		addWhitelistedMethods(IMentionable.class,
+			"getAsMention"
+		);
+		addWhitelistedMethods(Guild.class,
+			"getJDA", "getName", "getIconId",
+			"getIconUrl", "getSplashId", "getSplashUrl",
+			"getAfkChannel", "getOwner", "getAfkTimeout", "getRegion",
+			"isMember", "getSelfMember", "getMember", "getMemberById",
+			"getMembers", "getMembersByName", "getMembersByNickname", "getMembersByEffectiveName",
+			"getMembersWithRoles", "getMembersWithRoles",
+			"getTextChannelById", "getTextChannels", "getTextChannelsByName", "getPublicChannel",
+			"getVoiceChannelById", "getVoiceChannels", "getVoiceChannelsByName",
+			"getRoleById", "getRoles", "getRolesByName", "getPublicRole",
+			"getEmoteById", "getEmotes", "getEmotesByName",
+			"getVerificationLevel", "getDefaultNotificationLevel", "getRequiredMFALevel"
+		);
+		addWhitelistedMethods(Emote.class,
+			"getJDA", "getGuild", "getRoles", "getName", "isManaged", "getImageUrl", "getAsMention", "canInteract"
+		);
+		addWhitelistedMethods(Role.class,
+			"getJDA", "getPosition", "getName", "isManaged", "isHoisted", "isMentionable",
+			"getPermissions", "getColor", "hasPermission", "getGuild"
+		);
+		addWhitelistedMethods(Member.class,
+			"getJDA", "getUser", "getGuild", "getJoinDate", "getVoiceState", "getGame", "getOnlineStatus",
+			"getNickname", "getEffectiveName", "getRoles", "getColor", "getPermissions", "hasPermission", "isOwner"
+		);
+		addWhitelistedMethods(GuildVoiceState.class,
+			"isMuted", "isDeafened", "isGuildMuted", "isGuildDeafened", "isSuppressed", "getChannel", "getGuild", "getMember", "inVoiceChannel"
+		);
+		addWhitelistedMethods(VoiceState.class,
+			"getJDA", "isSelfMuted", "isSelfDeafened"
+		);
+		addWhitelistedMethods(VoiceChannel.class,
+			"getJDA", "getUserLimit", "getBitrate"
+		);
+		addWhitelistedMethods(Channel.class,
+			"getJDA", "getName", "getGuild", "getMembers", "getPosition"
+		);
+		addWhitelistedMethods(TextChannel.class,
+			"getTopic", "canTalk"
+		);
+		addWhitelistedMethods(MessageChannel.class,
+			"getJDA", "getName", "getType", "getMessageById", "getPinnedMessages"
+		);
+		addWhitelistedMethods(Message.class,
+			"getJDA", "getMentionedUsers", "isMentioned", "getMentionedChannels", "getMentionedRoles", "isTTS", "isPinned", "getType",
+			"mentionsEveryone", "isEdited", "getEditedTime", "getAuthor", "getContent", "getRawContent", "getStrippedContent",
+			"getChannel", "getTextChannel", "getGuild", "getAttachments", "getEmbeds", "getEmotes", "getReactions"
+		);
+		addWhitelistedMethods(Message.Attachment.class,
+			"getId", "getUrl", "getProxyUrl", "getFileName", "getSize", "getHeight", "getWidth", "isImage"
 		);
 	}
 }

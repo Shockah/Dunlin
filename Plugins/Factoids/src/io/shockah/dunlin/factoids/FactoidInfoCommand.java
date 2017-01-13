@@ -9,10 +9,11 @@ import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandParseException;
 import io.shockah.dunlin.commands.CommandResult;
 import io.shockah.dunlin.commands.NamedCommand;
+import io.shockah.dunlin.commands.ValueCommandResult;
 import io.shockah.dunlin.factoids.FactoidInfoCommand.Input;
 import io.shockah.dunlin.factoids.db.Factoid;
 import io.shockah.dunlin.util.TimeDuration;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 
 public class FactoidInfoCommand extends NamedCommand<Input, Factoid> {
 	private final FactoidsPlugin plugin;
@@ -32,7 +33,7 @@ public class FactoidInfoCommand extends NamedCommand<Input, Factoid> {
 	@Override
 	public Input parseInput(GenericMessageEvent e, String input) throws CommandParseException {
 		if (input.isEmpty())
-			throw new CommandParseException("Not enough arguments.");
+			throw new CommandParseException("Not enough arguments.", true);
 		String[] split = input.split("\\s");
 		
 		Factoid.Context context = null;
@@ -42,7 +43,7 @@ public class FactoidInfoCommand extends NamedCommand<Input, Factoid> {
 			String contextName = split[0].substring(1);
 			context = Factoid.Context.valueOf(contextName);
 			if (context == null)
-				throw new CommandParseException(String.format("Invalid factoid context: %s", contextName));
+				throw new CommandParseException(String.format("Invalid factoid context: %s", contextName), true);
 			
 			name = split[1];
 		} else {
@@ -57,7 +58,7 @@ public class FactoidInfoCommand extends NamedCommand<Input, Factoid> {
 		Factoid factoid = plugin.findActiveFactoid(call.event, input.name, input.context);
 		
 		if (factoid == null) {
-			return CommandResult.of(null, "Factoid doesn't exist.");
+			return new ValueCommandResult<>(null, "Factoid doesn't exist.");
 		} else {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -69,7 +70,7 @@ public class FactoidInfoCommand extends NamedCommand<Input, Factoid> {
 			));
 			lines.add(String.format("Source: %s", factoid.raw));
 			lines.add(String.format("User: %s", plugin.manager.app.getJDA().getUserById(factoid.user).getAsMention()));
-			return CommandResult.of(factoid, Joiner.on("\n").join(lines));
+			return new ValueCommandResult<>(factoid, Joiner.on("\n").join(lines));
 		}
 	}
 	

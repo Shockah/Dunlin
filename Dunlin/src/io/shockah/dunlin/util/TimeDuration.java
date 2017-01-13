@@ -9,16 +9,32 @@ public final class TimeDuration {
 	public static final Pattern TIME_DURATION_TOKEN_PATTERN = Pattern.compile("(\\d+)([smhdw])", Pattern.CASE_INSENSITIVE);
 	
 	public static String format(Date date) {
-		return format(date, new Date());
+		return format(date, true);
+	}
+	
+	public static String format(Date date, boolean clampNegative) {
+		return format(date, new Date(), clampNegative);
 	}
 	
 	public static String format(Date date1, Date date2) {
-		return formatMiliseconds(date2.getTime() - date1.getTime());
+		return format(date1, date2, true);
+	}
+	
+	public static String format(Date date1, Date date2, boolean clampNegative) {
+		return formatMiliseconds(date2.getTime() - date1.getTime(), clampNegative);
 	}
 	
 	public static String formatSeconds(int s) {
-		if (s <= 0)
-			return "0s";
+		return formatSeconds(s, true);
+	}
+	
+	public static String formatSeconds(int s, boolean clampNegative) {
+		if (s < 0) {
+			if (clampNegative)
+				return "0s";
+			else
+				s = -s;
+		}
 		
 		int m = s / 60;
 		s %= 60;
@@ -74,7 +90,11 @@ public final class TimeDuration {
 	}
 	
 	public static String formatMiliseconds(long ms) {
-		return formatSeconds((int)(ms / 1000l));
+		return formatMiliseconds(ms, true);
+	}
+	
+	public static String formatMiliseconds(long ms, boolean clampNegative) {
+		return formatSeconds((int)(ms / 1000l), clampNegative);
 	}
 	
 	private TimeDuration() {

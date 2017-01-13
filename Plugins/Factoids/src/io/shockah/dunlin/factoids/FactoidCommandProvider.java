@@ -4,9 +4,10 @@ import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandParseException;
 import io.shockah.dunlin.commands.CommandProvider;
 import io.shockah.dunlin.commands.CommandResult;
+import io.shockah.dunlin.commands.ErrorCommandResult;
 import io.shockah.dunlin.commands.NamedCommand;
 import io.shockah.dunlin.factoids.db.Factoid;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 
 public class FactoidCommandProvider extends CommandProvider {
 	protected final FactoidsPlugin plugin;
@@ -31,7 +32,7 @@ public class FactoidCommandProvider extends CommandProvider {
 
 				@Override
 				public CommandResult<Void> call(CommandCall call, Void input) {
-					return CommandResult.error(String.format("Unknown factoid type %s.", factoid.type));
+					return new ErrorCommandResult<>(String.format("Unknown factoid type %s.", factoid.type));
 				}
 			};
 		}

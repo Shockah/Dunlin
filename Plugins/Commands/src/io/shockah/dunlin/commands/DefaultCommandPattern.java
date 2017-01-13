@@ -2,7 +2,7 @@ package io.shockah.dunlin.commands;
 
 import java.util.ArrayList;
 import io.shockah.dunlin.util.ReadWriteList;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 
 public class DefaultCommandPattern extends CommandPattern {
 	private final String[] prefixes;

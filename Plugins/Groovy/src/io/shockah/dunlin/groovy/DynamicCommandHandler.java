@@ -4,12 +4,15 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import groovy.lang.GroovyObjectSupport;
-import io.shockah.dunlin.UnexpectedException;
 import io.shockah.dunlin.commands.Command;
 import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandResult;
+import io.shockah.dunlin.commands.ErrorCommandResult;
+import io.shockah.dunlin.commands.ExceptionCommandResult;
+import io.shockah.dunlin.commands.ValueCommandResult;
 import io.shockah.skylark.func.Func1;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
+import io.shockah.util.UnexpectedException;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 
 public class DynamicCommandHandler extends GroovyObjectSupport implements Map<String, Func1<Object, Object>> {
 	protected final GroovyPlugin plugin;
@@ -54,9 +57,14 @@ public class DynamicCommandHandler extends GroovyObjectSupport implements Map<St
 				throw new UnexpectedException(e);
 			}
 			CommandResult<Object> result = objectCommand.call(new CommandCall(event), actualInput);
-			if (result.error != null)
-				throw new UnexpectedException(result.error);
-			return result.value;
+			if (result instanceof ExceptionCommandResult<?>)
+				throw new UnexpectedException(((ExceptionCommandResult<?>)result).exception);
+			else if (result instanceof ErrorCommandResult<?>)
+				throw new UnexpectedException(((ErrorCommandResult<?>)result).description);
+			else if (result instanceof ValueCommandResult<?>)
+				return ((ValueCommandResult<?>)result).value;
+			else
+				throw new ClassCastException(String.format("Unknown CommandResult subclass %s.", result.getClass().getName()));
 		};
 	}
 

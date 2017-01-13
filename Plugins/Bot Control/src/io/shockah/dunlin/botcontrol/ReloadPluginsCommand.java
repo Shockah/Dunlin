@@ -2,8 +2,10 @@ package io.shockah.dunlin.botcontrol;
 
 import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandResult;
+import io.shockah.dunlin.commands.ErrorCommandResult;
 import io.shockah.dunlin.commands.NamedCommand;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
+import io.shockah.dunlin.commands.ValueCommandResult;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 
 public class ReloadPluginsCommand extends NamedCommand<Void, String> {
 	private final BotControlPlugin plugin;
@@ -23,11 +25,11 @@ public class ReloadPluginsCommand extends NamedCommand<Void, String> {
 		//if (call.outputMedium == null)
 		//	call.outputMedium = CommandCall.Medium.Private;
 		if (!plugin.permissionsPlugin.permissionGranted(call.event.getAuthor(), plugin, names[0]))
-			return CommandResult.error("Permission required.");
+			return new ErrorCommandResult<>("Permission required.");
 		
 		plugin.manager.reload();
 		//if (call.outputMedium == null)
 		//	call.outputMedium = CommandCall.Medium.Notice;
-		return CommandResult.of("Done.");
+		return new ValueCommandResult<>("Done.");
 	}
 }

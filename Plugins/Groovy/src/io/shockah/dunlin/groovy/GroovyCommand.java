@@ -5,9 +5,11 @@ import java.util.Map;
 import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandParseException;
 import io.shockah.dunlin.commands.CommandResult;
+import io.shockah.dunlin.commands.ExceptionCommandResult;
 import io.shockah.dunlin.commands.NamedCommand;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
-import net.dv8tion.jda.events.message.guild.GenericGuildMessageEvent;
+import io.shockah.dunlin.commands.ValueCommandResult;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.guild.GenericGuildMessageEvent;
 
 public class GroovyCommand extends NamedCommand<String, Object> {
 	protected final GroovyPlugin plugin;
@@ -33,9 +35,9 @@ public class GroovyCommand extends NamedCommand<String, Object> {
 				variables.put("server", guildMessageEvent.getGuild());
 				variables.put("channel", guildMessageEvent.getChannel());
 			}
-			return CommandResult.of(plugin.getShell(variables, new UserGroovySandboxImpl(), call.event).evaluate(input));
+			return new ValueCommandResult<>(plugin.getShell(variables, new UserGroovySandboxImpl(), call.event).evaluate(input));
 		} catch (Exception e) {
-			return CommandResult.error(e.getMessage());
+			return new ExceptionCommandResult<>(e);
 		}
 	}
 }

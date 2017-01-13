@@ -21,7 +21,7 @@ import io.shockah.dunlin.plugin.PluginManager;
 import io.shockah.json.JSONList;
 import io.shockah.json.JSONObject;
 import io.shockah.skylark.func.Func1;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 
 public class GroovyPlugin extends Plugin {
 	public static final int TIMEOUT = 30;

@@ -1,13 +1,15 @@
 package io.shockah.dunlin.factoids;
 
-import io.shockah.dunlin.UnexpectedException;
 import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandParseException;
 import io.shockah.dunlin.commands.CommandResult;
+import io.shockah.dunlin.commands.ErrorCommandResult;
 import io.shockah.dunlin.commands.NamedCommand;
+import io.shockah.dunlin.commands.ValueCommandResult;
 import io.shockah.dunlin.factoids.ForgetCommand.Input;
 import io.shockah.dunlin.factoids.db.Factoid;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
+import io.shockah.util.UnexpectedException;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 
 public class ForgetCommand extends NamedCommand<Input, Factoid> {
 	private final FactoidsPlugin plugin;
@@ -27,7 +29,7 @@ public class ForgetCommand extends NamedCommand<Input, Factoid> {
 	@Override
 	public Input parseInput(GenericMessageEvent e, String input) throws CommandParseException {
 		if (input.isEmpty())
-			throw new CommandParseException("Not enough arguments.");
+			throw new CommandParseException("Not enough arguments.", true);
 		String[] split = input.split("\\s");
 		
 		Factoid.Context context = plugin.getDefaultContext();
@@ -37,7 +39,7 @@ public class ForgetCommand extends NamedCommand<Input, Factoid> {
 			String contextName = split[0].substring(1);
 			context = Factoid.Context.valueOf(contextName);
 			if (context == null)
-				throw new CommandParseException(String.format("Invalid factoid context: %s", contextName));
+				throw new CommandParseException(String.format("Invalid factoid context: %s", contextName), true);
 			
 			name = split[1];
 		} else {
@@ -50,7 +52,7 @@ public class ForgetCommand extends NamedCommand<Input, Factoid> {
 	@Override
 	public CommandResult<Factoid> call(CommandCall call, Input input) {
 		if (input.context == Factoid.Context.Global && !plugin.hasGlobalFactoidPermission(call.event.getAuthor()))
-			return CommandResult.error("Permission required.");
+			return new ErrorCommandResult<>("Permission required.");
 		
 		Factoid factoid = plugin.findActiveFactoid(call.event, input.name, input.context);
 		if (factoid != null) {
@@ -64,7 +66,7 @@ public class ForgetCommand extends NamedCommand<Input, Factoid> {
 		
 		//if (call.outputMedium == null)
 		//	call.outputMedium = Medium.Notice;
-		return CommandResult.of(factoid, factoid == null ? "Factoid doesn't exist." : "Forgot: " + factoid.raw);
+		return new ValueCommandResult<>(factoid, factoid == null ? "Factoid doesn't exist." : "Forgot: " + factoid.raw);
 	}
 	
 	public static final class Input {

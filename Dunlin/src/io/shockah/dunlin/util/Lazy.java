@@ -2,8 +2,8 @@ package io.shockah.dunlin.util;
 
 import org.apache.commons.lang3.concurrent.ConcurrentException;
 import org.apache.commons.lang3.concurrent.LazyInitializer;
-import io.shockah.dunlin.UnexpectedException;
 import io.shockah.skylark.func.Func0;
+import io.shockah.util.UnexpectedException;
 
 public class Lazy<T> extends LazyInitializer<T> {
 	public static <R> Lazy<R> of(Func0<R> func) {

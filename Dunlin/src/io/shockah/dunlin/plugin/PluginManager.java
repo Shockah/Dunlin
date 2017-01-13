@@ -13,11 +13,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.commons.io.IOUtils;
 import io.shockah.dunlin.App;
-import io.shockah.dunlin.UnexpectedException;
 import io.shockah.dunlin.util.FileUtils;
 import io.shockah.dunlin.util.ReadWriteList;
 import io.shockah.json.JSONObject;
 import io.shockah.json.JSONParser;
+import io.shockah.util.UnexpectedException;
 
 public class PluginManager {
 	public static final Path LIBS_PATH = Paths.get("libs");

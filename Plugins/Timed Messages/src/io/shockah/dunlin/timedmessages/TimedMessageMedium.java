@@ -4,9 +4,12 @@ import java.util.Date;
 import io.shockah.dunlin.MessageMedium;
 import io.shockah.dunlin.timedmessages.db.TimedMessageEntry;
 import io.shockah.skylark.func.Action1;
-import net.dv8tion.jda.entities.Message;
-import net.dv8tion.jda.entities.TextChannel;
-import net.dv8tion.jda.entities.User;
+import io.shockah.util.UnexpectedException;
+import net.dv8tion.jda.core.MessageBuilder;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 public abstract class TimedMessageMedium extends MessageMedium {
 	protected final TimedMessagesPlugin plugin;
@@ -44,12 +47,21 @@ public abstract class TimedMessageMedium extends MessageMedium {
 		
 		@Override
 		public void sendMessage(String message) {
-			Message messageObj = channel.sendMessage(message);
-			if (messageObj != null) {
-				plugin.schedule(createEntry(obj -> {
-					obj.channel = channel.getId();
-					obj.message = messageObj.getId();
-				}));
+			sendMessage(new MessageBuilder().append(message).build());
+		}
+		
+		@Override
+		public void sendMessage(Message message) {
+			try {
+				Message messageObj = channel.sendMessage(message).block();
+				if (messageObj != null) {
+					plugin.schedule(createEntry(obj -> {
+						obj.channel = channel.getId();
+						obj.message = messageObj.getId();
+					}));
+				}
+			} catch (RateLimitedException e) {
+				throw new UnexpectedException(e);
 			}
 		}
 
@@ -69,12 +81,21 @@ public abstract class TimedMessageMedium extends MessageMedium {
 		
 		@Override
 		public void sendMessage(String message) {
-			Message messageObj = user.getPrivateChannel().sendMessage(message);
-			if (messageObj != null) {
-				plugin.schedule(createEntry(obj -> {
-					obj.user = user.getId();
-					obj.message = messageObj.getId();
-				}));
+			sendMessage(new MessageBuilder().append(message).build());
+		}
+		
+		@Override
+		public void sendMessage(Message message) {
+			try {
+				Message messageObj = user.getPrivateChannel().sendMessage(message).block();
+				if (messageObj != null) {
+					plugin.schedule(createEntry(obj -> {
+						obj.user = user.getId();
+						obj.message = messageObj.getId();
+					}));
+				}
+			} catch (RateLimitedException e) {
+				throw new UnexpectedException(e);
 			}
 		}
 

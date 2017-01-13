@@ -1,6 +1,6 @@
 package io.shockah.dunlin.commands;
 
-import net.dv8tion.jda.events.message.GenericMessageEvent;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 
 public class ToStringCommand extends NamedCommand<Object, String> {
 	public ToStringCommand() {
@@ -18,6 +18,6 @@ public class ToStringCommand extends NamedCommand<Object, String> {
 
 	@Override
 	public CommandResult<String> call(CommandCall call, Object input) {
-		return CommandResult.of(input.toString());
+		return new ValueCommandResult<>(input.toString());
 	}
 }
