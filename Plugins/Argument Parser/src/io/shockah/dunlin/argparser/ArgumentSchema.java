@@ -34,7 +34,7 @@ public class ArgumentSchema {
 				String argName = m.group(1).toLowerCase();
 				ArgumentType argType = arguments.get(argName);
 				if (argType == null)
-					throw new CommandParseException(String.format("Invalid argument: %s", line));
+					throw new CommandParseException(String.format("Invalid argument: %s", line), true);
 				
 				StringBuilder valBuilder = new StringBuilder(m.group(2));
 				if (argType == ArgumentType.String || argType == ArgumentType.StringList) {
@@ -61,14 +61,14 @@ public class ArgumentSchema {
 					list.add(val);
 				} else {
 					if (args.containsKey(argName))
-						throw new CommandParseException(String.format("Duplicate argument: %s", line));
+						throw new CommandParseException(String.format("Duplicate argument: %s", line), true);
 					args.put(argName, val);
 				}
 			} else {
 				if (hasUnnamedValue)
 					args.put("", StringUtils.join(lines, "\n", i, lines.length));
 				else
-					throw new CommandParseException(String.format("Invalid argument: %s", line));
+					throw new CommandParseException(String.format("Invalid argument: %s", line), true);
 				break;
 			}
 		}

@@ -29,7 +29,7 @@ public class ForgetCommand extends NamedCommand<Input, Factoid> {
 	@Override
 	public Input parseInput(GenericMessageEvent e, String input) throws CommandParseException {
 		if (input.isEmpty())
-			throw new CommandParseException("Not enough arguments.");
+			throw new CommandParseException("Not enough arguments.", true);
 		String[] split = input.split("\\s");
 		
 		Factoid.Context context = plugin.getDefaultContext();
@@ -39,7 +39,7 @@ public class ForgetCommand extends NamedCommand<Input, Factoid> {
 			String contextName = split[0].substring(1);
 			context = Factoid.Context.valueOf(contextName);
 			if (context == null)
-				throw new CommandParseException(String.format("Invalid factoid context: %s", contextName));
+				throw new CommandParseException(String.format("Invalid factoid context: %s", contextName), true);
 			
 			name = split[1];
 		} else {
