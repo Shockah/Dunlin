@@ -55,7 +55,7 @@ public class PollCommand extends NamedCommand<PollCommand.Input, Poll> {
 		Map<String, Object> args = schema.parse(input);
 		if (args.containsKey("options")) {
 			if (args.containsKey("option"))
-				throw new CommandParseException("Use either 'options' or multiple 'option' arguments.");
+				throw new CommandParseException("Use either 'options' or multiple 'option' arguments.", true);
 			
 			args.put("option", Arrays.asList(((String)args.get("options")).split("\\s")));
 			args.remove("options");
