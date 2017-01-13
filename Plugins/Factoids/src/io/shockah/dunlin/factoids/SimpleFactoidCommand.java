@@ -3,6 +3,7 @@ package io.shockah.dunlin.factoids;
 import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandParseException;
 import io.shockah.dunlin.commands.CommandResult;
+import io.shockah.dunlin.commands.ValueCommandResult;
 import io.shockah.dunlin.factoids.db.Factoid;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.SelfUser;
@@ -17,7 +18,7 @@ public class SimpleFactoidCommand extends AbstractFactoidCommand<String, String>
 	}
 	
 	@Override
-	public String prepareChainedCallInput(GenericMessageEvent e, CommandResult<String> previousResult) {
+	public String prepareChainedCallInput(GenericMessageEvent e, ValueCommandResult<String> previousResult) {
 		return previousResult.toString();
 	}
 	
@@ -63,6 +64,6 @@ public class SimpleFactoidCommand extends AbstractFactoidCommand<String, String>
 			output = output.replaceAll("(?iu)\\%(channelmention|chanmention)\\%", channel.getAsMention());
 		}
 		
-		return CommandResult.of(output);
+		return new ValueCommandResult<>(output);
 	}
 }

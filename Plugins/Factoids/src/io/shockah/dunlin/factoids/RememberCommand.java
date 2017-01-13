@@ -5,7 +5,9 @@ import java.util.regex.Pattern;
 import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandParseException;
 import io.shockah.dunlin.commands.CommandResult;
+import io.shockah.dunlin.commands.ErrorCommandResult;
 import io.shockah.dunlin.commands.NamedCommand;
+import io.shockah.dunlin.commands.ValueCommandResult;
 import io.shockah.dunlin.db.DatabaseManager;
 import io.shockah.dunlin.factoids.RememberCommand.Input;
 import io.shockah.dunlin.factoids.db.Factoid;
@@ -35,7 +37,7 @@ public class RememberCommand extends NamedCommand<Input, Factoid> {
 	public Input parseInput(GenericMessageEvent e, String input) throws CommandParseException {
 		String[] split = input.split("\\s");
 		if (split.length < 2)
-			throw new CommandParseException("Not enough arguments.");
+			throw new CommandParseException("Not enough arguments.", true);
 		
 		Factoid.Context context = null;
 		String typeName = null;
@@ -50,12 +52,12 @@ public class RememberCommand extends NamedCommand<Input, Factoid> {
 					String contextName = arg.substring(1);
 					context = Factoid.Context.valueOf(contextName);
 					if (context == null)
-						throw new CommandParseException(String.format("Invalid factoid context: %s", contextName));
+						throw new CommandParseException(String.format("Invalid factoid context: %s", contextName), true);
 				} else if (typeName == null && arg.charAt(0) == '#') {
 					typeName = arg.substring(1);
 					FactoidType type = plugin.getType(typeName);
 					if (type == null)
-						throw new CommandParseException(String.format("Invalid factoid type: %s", typeName));
+						throw new CommandParseException(String.format("Invalid factoid type: %s", typeName), true);
 				} else {
 					name = arg;
 				}
@@ -70,7 +72,7 @@ public class RememberCommand extends NamedCommand<Input, Factoid> {
 		}
 		
 		if (name == null || raw == null)
-			throw new CommandParseException("Not enough arguments.");
+			throw new CommandParseException("Not enough arguments.", true);
 		
 		if (context == null)
 			context = plugin.getDefaultContext();
@@ -88,9 +90,9 @@ public class RememberCommand extends NamedCommand<Input, Factoid> {
 	@Override
 	public CommandResult<Factoid> call(CommandCall call, Input input) {
 		if (!FACTOID_NAME_PATTERN.matcher(input.name).find())
-			throw new IllegalArgumentException("Illegal name.");
+			return new ErrorCommandResult<>("Illegal name.");
 		if (input.context == Factoid.Context.Global && !plugin.hasGlobalFactoidPermission(call.event.getAuthor()))
-			return CommandResult.error("Permission required.");
+			return new ErrorCommandResult<>("Permission required.");
 		
 		DatabaseManager databaseManager = plugin.manager.app.getDatabaseManager();
 		
@@ -122,7 +124,7 @@ public class RememberCommand extends NamedCommand<Input, Factoid> {
 		if (input.append) {
 			Factoid currentFactoid = plugin.findActiveFactoid(call.event, input.name, input.context);
 			if (currentFactoid == null)
-				return CommandResult.error("Factoid doesn't exist.");
+				return new ErrorCommandResult<>("Factoid doesn't exist.");
 			
 			raw = String.format("%s\n%s", currentFactoid.raw, input.raw);
 			currentFactoid.update(obj -> {
@@ -146,7 +148,7 @@ public class RememberCommand extends NamedCommand<Input, Factoid> {
 		//	call.outputMedium = Medium.Notice;
 		String response = "Done.";
 		call.outputMedium = plugin.getMessageMediumForConfirmationMessage(call.inputMedium, response);
-		return CommandResult.of(factoid, response);
+		return new ValueCommandResult<>(factoid, response);
 	}
 	
 	public static final class Input {

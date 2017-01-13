@@ -19,7 +19,7 @@ public abstract class Command<T, R> {
 		return null;
 	}
 	
-	public T prepareChainedCallInput(GenericMessageEvent e, CommandResult<T> previousResult) {
+	public T prepareChainedCallInput(GenericMessageEvent e, ValueCommandResult<T> previousResult) {
 		return previousResult.value;
 	}
 	

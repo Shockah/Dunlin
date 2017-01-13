@@ -8,6 +8,8 @@ import groovy.lang.Tuple;
 import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandParseException;
 import io.shockah.dunlin.commands.CommandResult;
+import io.shockah.dunlin.commands.ExceptionCommandResult;
+import io.shockah.dunlin.commands.ValueCommandResult;
 import io.shockah.dunlin.factoids.AbstractFactoidCommand;
 import io.shockah.dunlin.factoids.db.Factoid;
 import io.shockah.json.JSONObject;
@@ -62,10 +64,10 @@ public class GroovyFactoidCommand<T, R> extends AbstractFactoidCommand<T, R> {
 			if (result instanceof Tuple) {
 				Tuple tuple = (Tuple)result;
 				if (tuple.size() == 2)
-					return (CommandResult<R>)CommandResult.of(tuple.get(0), tuple.get(1).toString());
+					return (CommandResult<R>)new ValueCommandResult<>(tuple.get(0), tuple.get(1).toString());
 			}
 			
-			CommandResult<R> ret = (CommandResult<R>)CommandResult.of(result);
+			CommandResult<R> ret = (CommandResult<R>)new ValueCommandResult<>(result);
 			JSONObject newStoreData = (JSONObject)plugin.turnIntoJSONValue(shell.getVariable("store"));
 			
 			String jsonNew = newStoreData == null ? null : printer.toString(newStoreData);
@@ -74,7 +76,7 @@ public class GroovyFactoidCommand<T, R> extends AbstractFactoidCommand<T, R> {
 			
 			return ret;
 		} catch (Exception e) {
-			return CommandResult.error(e.getMessage());
+			return new ExceptionCommandResult<>(e);
 		}
 	}
 }

@@ -5,6 +5,7 @@ import io.shockah.dunlin.MessageMedium;
 import io.shockah.dunlin.timedmessages.db.TimedMessageEntry;
 import io.shockah.skylark.func.Action1;
 import io.shockah.util.UnexpectedException;
+import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -46,6 +47,11 @@ public abstract class TimedMessageMedium extends MessageMedium {
 		
 		@Override
 		public void sendMessage(String message) {
+			sendMessage(new MessageBuilder().append(message).build());
+		}
+		
+		@Override
+		public void sendMessage(Message message) {
 			try {
 				Message messageObj = channel.sendMessage(message).block();
 				if (messageObj != null) {
@@ -75,6 +81,11 @@ public abstract class TimedMessageMedium extends MessageMedium {
 		
 		@Override
 		public void sendMessage(String message) {
+			sendMessage(new MessageBuilder().append(message).build());
+		}
+		
+		@Override
+		public void sendMessage(Message message) {
 			try {
 				Message messageObj = user.getPrivateChannel().sendMessage(message).block();
 				if (messageObj != null) {

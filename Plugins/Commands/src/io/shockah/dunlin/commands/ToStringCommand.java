@@ -18,6 +18,6 @@ public class ToStringCommand extends NamedCommand<Object, String> {
 
 	@Override
 	public CommandResult<String> call(CommandCall call, Object input) {
-		return CommandResult.of(input.toString());
+		return new ValueCommandResult<>(input.toString());
 	}
 }

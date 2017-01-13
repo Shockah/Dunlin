@@ -14,7 +14,10 @@ import io.shockah.dunlin.argparser.ArgumentType;
 import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandParseException;
 import io.shockah.dunlin.commands.CommandResult;
+import io.shockah.dunlin.commands.ErrorCommandResult;
+import io.shockah.dunlin.commands.ExceptionCommandResult;
 import io.shockah.dunlin.commands.NamedCommand;
+import io.shockah.dunlin.commands.ValueCommandResult;
 import io.shockah.dunlin.db.DatabaseManager;
 import io.shockah.dunlin.poll.db.Poll;
 import io.shockah.dunlin.poll.db.PollOption;
@@ -82,10 +85,10 @@ public class PollCommand extends NamedCommand<PollCommand.Input, Poll> {
 	@Override
 	public CommandResult<Poll> call(CommandCall call, Input input) {
 		if (!(call.event instanceof GenericGuildMessageEvent))
-			return CommandResult.error("This command can only be called in server text channels.");
+			return new ErrorCommandResult<>("This command can only be called in server text channels.");
 		
 		if (input.date.getTime() - new Date().getTime() < 1000l * 9l)
-			return CommandResult.error("Can't create a poll shorter than 10 seconds.");
+			return new ErrorCommandResult<>("Can't create a poll shorter than 10 seconds.");
 		
 		try {
 			GenericGuildMessageEvent event = (GenericGuildMessageEvent)call.event;
@@ -119,9 +122,9 @@ public class PollCommand extends NamedCommand<PollCommand.Input, Poll> {
 				throw new UnexpectedException(e);
 			}
 			poll.finishOrSchedule(plugin);
-			return CommandResult.of(poll, null);
+			return new ValueCommandResult<>(poll, "");
 		} catch (RateLimitedException e) {
-			return CommandResult.error(e.getMessage());
+			return new ExceptionCommandResult<>(e);
 		}
 	}
 	

@@ -1,10 +1,13 @@
 package io.shockah.dunlin;
 
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
 public abstract class MessageMedium {
 	public abstract void sendMessage(String message);
+	
+	public abstract void sendMessage(Message message);
 	
 	public static class Channel extends MessageMedium implements ChannelMessageMedium {
 		public final TextChannel channel;
@@ -15,6 +18,11 @@ public abstract class MessageMedium {
 		
 		@Override
 		public void sendMessage(String message) {
+			channel.sendMessage(message).queue();
+		}
+		
+		@Override
+		public void sendMessage(Message message) {
 			channel.sendMessage(message).queue();
 		}
 
@@ -33,6 +41,11 @@ public abstract class MessageMedium {
 		
 		@Override
 		public void sendMessage(String message) {
+			user.getPrivateChannel().sendMessage(message).queue();
+		}
+		
+		@Override
+		public void sendMessage(Message message) {
 			user.getPrivateChannel().sendMessage(message).queue();
 		}
 

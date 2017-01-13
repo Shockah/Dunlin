@@ -1,13 +1,13 @@
 package io.shockah.dunlin.commands;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import io.shockah.dunlin.DelegatePassthroughException;
 import io.shockah.dunlin.plugin.ListenerPlugin;
 import io.shockah.dunlin.plugin.PluginManager;
 import io.shockah.dunlin.util.ReadWriteList;
 import io.shockah.json.JSONList;
 import io.shockah.util.UnexpectedException;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
@@ -85,7 +85,7 @@ public class CommandsPlugin extends ListenerPlugin {
 			});
 		} catch (DelegatePassthroughException ex) {
 			if (ex.getCause() instanceof CommandParseException)
-				throw new CommandParseException(ex.getCause());
+				throw new CommandParseException(ex.getCause().getMessage(), ex.getCause().getCause(), ((CommandParseException)ex.getCause()).onlyMessage);
 			throw new UnexpectedException(ex);
 		}
 	}
@@ -108,12 +108,15 @@ public class CommandsPlugin extends ListenerPlugin {
 				return;
 			
 			CommandResult<?> value = preparedCall.call(call);
-			String output = value.toString();
+			Message message = value.getMessage();
 			
-			if (output != null)
-				call.respond(output);
+			if (message != null)
+				call.respond(message);
 		} catch (CommandParseException ex) {
-			call.respond(Arrays.asList(new String[] { ex.getMessage() }));
+			if (ex.onlyMessage)
+				call.respond(new ErrorCommandResult<Void>(ex.getMessage()).getMessage());
+			else
+				call.respond(new ExceptionCommandResult<Void>(ex).getMessage());
 		}
 	}
 }

@@ -9,6 +9,7 @@ import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandParseException;
 import io.shockah.dunlin.commands.CommandResult;
 import io.shockah.dunlin.commands.NamedCommand;
+import io.shockah.dunlin.commands.ValueCommandResult;
 import io.shockah.dunlin.factoids.FactoidInfoCommand.Input;
 import io.shockah.dunlin.factoids.db.Factoid;
 import io.shockah.dunlin.util.TimeDuration;
@@ -57,7 +58,7 @@ public class FactoidInfoCommand extends NamedCommand<Input, Factoid> {
 		Factoid factoid = plugin.findActiveFactoid(call.event, input.name, input.context);
 		
 		if (factoid == null) {
-			return CommandResult.of(null, "Factoid doesn't exist.");
+			return new ValueCommandResult<>(null, "Factoid doesn't exist.");
 		} else {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -69,7 +70,7 @@ public class FactoidInfoCommand extends NamedCommand<Input, Factoid> {
 			));
 			lines.add(String.format("Source: %s", factoid.raw));
 			lines.add(String.format("User: %s", plugin.manager.app.getJDA().getUserById(factoid.user).getAsMention()));
-			return CommandResult.of(factoid, Joiner.on("\n").join(lines));
+			return new ValueCommandResult<>(factoid, Joiner.on("\n").join(lines));
 		}
 	}
 	
