@@ -1,137 +1,76 @@
 package io.shockah.dunlin.terrariadb;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import org.apache.commons.lang3.StringUtils;
 import io.shockah.dunlin.commands.CommandCall;
 import io.shockah.dunlin.commands.CommandParseException;
 import io.shockah.dunlin.commands.CommandResult;
+import io.shockah.dunlin.commands.ErrorCommandResult;
 import io.shockah.dunlin.commands.NamedCommand;
-import io.shockah.dunlin.complexcommandparser.ComplexParser;
-import io.shockah.dunlin.complexcommandparser.ComplexParserArgument;
-import io.shockah.dunlin.complexcommandparser.ComplexParserResult;
-import io.shockah.dunlin.complexcommandparser.Range;
-import io.shockah.skylark.func.Func1;
-import net.dv8tion.jda.events.message.GenericMessageEvent;
+import io.shockah.dunlin.commands.ValueMessageEmbedCommandResult;
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 
-public class ItemCommand extends NamedCommand<List<Func1<Item, Boolean>>, List<Item>> {
+public class ItemCommand extends NamedCommand<ItemCommand.Input, Item> {
 	private final TerrariaDBPlugin plugin;
-	private final ComplexParser parser = new ComplexParser();
 	
 	public ItemCommand(TerrariaDBPlugin plugin) {
-		super("items", "item");
+		super("titem");
 		this.plugin = plugin;
-		
-		parser.arguments.add(ComplexParserArgument.Type.Flag.make(false, "accessory"));
-		parser.arguments.add(ComplexParserArgument.Type.Flag.make(false, "weapon"));
-		parser.arguments.add(ComplexParserArgument.Type.Flag.make(false, "melee"));
-		parser.arguments.add(ComplexParserArgument.Type.Flag.make(false, "ranged"));
-		parser.arguments.add(ComplexParserArgument.Type.Flag.make(false, "magic"));
-		parser.arguments.add(ComplexParserArgument.Type.Flag.make(false, "summon"));
-		parser.arguments.add(ComplexParserArgument.Type.Flag.make(false, "thrown"));
-		
-		parser.arguments.add(ComplexParserArgument.Type.Range.make(true, "id"));
-		parser.arguments.add(ComplexParserArgument.Type.Range.make(true, "rare"));
-		parser.arguments.add(ComplexParserArgument.Type.Range.make(true, "damage"));
-		parser.arguments.add(ComplexParserArgument.Type.Range.make(true, "crit"));
-		
-		parser.arguments.add(ComplexParserArgument.Type.String.make(true, "exactname"));
-		parser.arguments.add(ComplexParserArgument.Type.String.make(true, "regexname"));
-		parser.arguments.add(ComplexParserArgument.Type.String.make(true, "name", "fuzzyname"));
+	}
+	
+	@Override
+	public Input parseInput(GenericMessageEvent e, String input) throws CommandParseException {
+		try {
+			return new IDInput(Integer.parseInt(input));
+		} catch (NumberFormatException ex) {
+			//TODO: by fuzzy name
+			throw new IllegalArgumentException();
+		}
 	}
 
 	@Override
-	public List<Func1<Item, Boolean>> parseInput(GenericMessageEvent e, String input) throws CommandParseException {
-		ComplexParserResult result = parser.parse(input);
+	public CommandResult<Item> call(CommandCall call, Input input) {
+		Item item = input.find(plugin.getItems());
+		if (item == null)
+			return new ErrorCommandResult<>(String.format("No item matching '%s' found.", input));
 		
-		boolean b;
-		Range r;
+		EmbedBuilder embed = new EmbedBuilder();
+		embed.setTitle(String.format("#%d %s", item.id, item.name));
+		embed.setThumbnail("http://tapi.axxim.net/req/terrariaid/Item_757.png");
 		
-		List<Func1<Item, Boolean>> damageTypeFilters = new ArrayList<>();
-		List<Func1<Item, Boolean>> otherFilters = new ArrayList<>();
+		if (item.tooltip.length != 0)
+			embed.setDescription(StringUtils.join(item.tooltip, "\n"));
 		
-		while (b = result.consumeBoolean("accessory")) {
-			final boolean fb = b;
-			otherFilters.add(item -> item.accessory == fb);
-		}
-		while (b = result.consumeBoolean("weapon")) {
-			final boolean fb = b;
-			otherFilters.add(item -> (item.damage > 0) == fb);
-		}
-		
-		while (b = result.consumeBoolean("melee")) {
-			final boolean fb = b;
-			damageTypeFilters.add(item -> item.melee == fb);
-		}
-		while (b = result.consumeBoolean("ranged")) {
-			final boolean fb = b;
-			damageTypeFilters.add(item -> item.ranged == fb);
-		}
-		while (b = result.consumeBoolean("magic")) {
-			final boolean fb = b;
-			damageTypeFilters.add(item -> item.magic == fb);
-		}
-		while (b = result.consumeBoolean("summon")) {
-			final boolean fb = b;
-			damageTypeFilters.add(item -> item.summon == fb);
-		}
-		while (b = result.consumeBoolean("thrown")) {
-			final boolean fb = b;
-			damageTypeFilters.add(item -> item.thrown == fb);
+		if (item.damage > 0) {
+			embed.addField(item.getDamageTypeName(), String.valueOf(item.damage), true);
+			embed.addField("Critical chance", String.format("%d%%", item.crit + 4), true);
 		}
 		
-		while ((r = result.consumeRange("id")) != null) {
-			final Range fr = r;
-			otherFilters.add(item -> fr.contains(item.id));
-		}
-		while ((r = result.consumeRange("value")) != null) {
-			final Range fr = r;
-			otherFilters.add(item -> fr.contains(item.value));
-		}
-		while ((r = result.consumeRange("rare")) != null) {
-			final Range fr = r;
-			otherFilters.add(item -> fr.contains(item.rare));
-		}
-		while ((r = result.consumeRange("damage")) != null) {
-			final Range fr = r;
-			otherFilters.add(item -> fr.contains(item.damage));
-		}
-		while ((r = result.consumeRange("crit")) != null) {
-			final Range fr = r;
-			otherFilters.add(item -> fr.contains(item.crit));
-		}
+		embed.addField("Value", item.getFormattedValue(), true);
 		
-		List<Func1<Item, Boolean>> filters = new ArrayList<>();
-		if (!damageTypeFilters.isEmpty())
-			filters.add(buildORFilter(damageTypeFilters));
-		filters.addAll(otherFilters);
-		
-		return filters;
-	}
-	
-	private Func1<Item, Boolean> buildORFilter(List<Func1<Item, Boolean>> subfilters) {
-		return item -> {
-			for (Func1<Item, Boolean> subfilter : subfilters) {
-				if (subfilter.call(item))
-					return true;
-			}
-			return false;
-		};
+		return new ValueMessageEmbedCommandResult<>(item, embed.build());
 	}
 
-	@Override
-	public CommandResult<List<Item>> call(CommandCall call, List<Func1<Item, Boolean>> input) {
-		Stream<Item> items = plugin.getItems().stream();
-		for (Func1<Item, Boolean> f : input) {
-			items = items.filter(item -> f.call(item));
-		}
-		
-		List<Item> filtered = items.collect(Collectors.toList());
-		return CommandResult.of(filtered, formatMessage(filtered));
+	public static abstract class Input {
+		public abstract Item find(List<Item> items);
 	}
 	
-	private String formatMessage(List<Item> items) {
-		return items.toString(); //TODO: proper implementation
+	public static class IDInput extends Input {
+		public final int id;
+		
+		public IDInput(int id) {
+			this.id = id;
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("ID: %d", id);
+		}
+
+		@Override
+		public Item find(List<Item> items) {
+			return items.stream().filter(item -> item.id == id).limit(1).findFirst().orElse(null);
+		}
 	}
 }

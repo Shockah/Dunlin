@@ -4,7 +4,7 @@
 	"enabledByDefault": true,
 	"dependsOn": [
 		"io.shockah.dunlin.commands",
-		"io.shockah.dunlin.complexcommandparser"
+		"io.shockah.dunlin.argparser"
 	],
 
 	"name": "Terraria DB",

@@ -24,6 +24,15 @@ public class TerrariaDBPlugin extends ListenerPlugin {
 		commandsPlugin.addNamedCommands(
 			itemCommand = new ItemCommand(this)
 		);
+		
+		Item item = new Item();
+		item.id = 1;
+		item.name = "Test Sword";
+		item.melee = true;
+		item.damage = 50;
+		item.tooltip = new String[] { "'It's made out of fire!'" };
+		item.value = 98765432;
+		items.add(item);
 	}
 	
 	@Override

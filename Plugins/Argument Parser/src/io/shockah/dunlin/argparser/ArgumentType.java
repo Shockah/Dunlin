@@ -7,8 +7,12 @@ import java.util.List;
 import io.shockah.dunlin.commands.CommandParseException;
 
 public enum ArgumentType {
-	Bool, Number, Decimal, String,
-	BoolList(true), NumberList(true), DecimalList(true), StringList(true);
+	Bool, BoolList(true),
+	Number, NumberList(true),
+	Decimal, DecimalList(true),
+	String, StringList(true),
+	IntRange, IntRangeList(true),
+	DoubleRange, DoubleRangeList(true);
 	
 	private static final List<String> trueValues = Arrays.asList(new String[] { "1", "true", "t", "yes", "y" });
 	private static final List<String> falseValues = Arrays.asList(new String[] { "0", "false", "f", "no", "n" });
@@ -50,6 +54,14 @@ public enum ArgumentType {
 			}
 			case String: case StringList: {
 				return input;
+			}
+			case IntRange: case IntRangeList: {
+				//TODO:
+				throw new UnsupportedOperationException();
+			}
+			case DoubleRange: case DoubleRangeList: {
+				//TODO:
+				throw new UnsupportedOperationException();
 			}
 		}
 		throw new IllegalStateException();
