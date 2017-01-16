@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import io.shockah.dunlin.db.DatabaseManager;
 import io.shockah.dunlin.plugin.PluginManager;
 import io.shockah.json.JSONObject;
 import io.shockah.json.JSONParser;
@@ -30,7 +29,6 @@ public class App {
 	}
 	
 	private JSONObject config;
-	private DatabaseManager databaseManager;
 	private PluginManager pluginManager;
 	private JDA jda;
 	private ThreadedEventListenerManager eventListenerManager;
@@ -43,7 +41,6 @@ public class App {
 		try {
 			loadConfig(getConfigPath());
 			
-			databaseManager = new DatabaseManager(this);
 			pluginManager = new PluginManager(this);
 			
 			eventListenerManager = new ThreadedEventListenerManager();
@@ -51,14 +48,6 @@ public class App {
 			pluginManager.reload();
 		} catch (Exception e) {
 			throw new UnexpectedException("Failed to initialize.", e);
-		}
-		
-		try {
-			if (databaseManager != null) {
-				databaseManager.close();
-			}
-		} catch (Exception e) {
-			throw new UnexpectedException("Failed to deinitialize.", e);
 		}
 	}
 	
@@ -68,10 +57,6 @@ public class App {
 	
 	public JSONObject getConfig() {
 		return config;
-	}
-	
-	public DatabaseManager getDatabaseManager() {
-		return databaseManager;
 	}
 	
 	public PluginManager getPluginManager() {

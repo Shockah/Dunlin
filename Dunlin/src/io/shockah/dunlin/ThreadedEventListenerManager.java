@@ -3,7 +3,7 @@ package io.shockah.dunlin;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import io.shockah.dunlin.util.ReadWriteList;
+import io.shockah.util.ReadWriteList;
 import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.hooks.EventListener;
 
