@@ -3,7 +3,7 @@
   <groupId>io.shockah</groupId>
   <artifactId>dunlin.settings</artifactId>
   <version>1.0</version>
-  <name>Dunlin | Settings</name>
+  <name>Dunlin - Settings</name>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <resources>
