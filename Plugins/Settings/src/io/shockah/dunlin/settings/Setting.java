@@ -38,15 +38,7 @@ public abstract class Setting<T> {
 		return defaultValue;
 	}
 	
-	public final void set(T value, Scope scope, TextChannel channel) {
-		//TODO:
-		throw new UnsupportedOperationException();
-	}
+	public abstract void set(T value, Scope scope, TextChannel channel);
 	
-	public final T get(Scope scope, TextChannel channel) {
-		//TODO:
-		throw new UnsupportedOperationException();
-	}
-	
-	protected abstract T convert(Object o);
+	public abstract T get(Scope scope, TextChannel channel);
 }
