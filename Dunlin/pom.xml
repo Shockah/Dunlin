@@ -82,5 +82,26 @@
   		<artifactId>ebean-querybean</artifactId>
   		<version>9.3.1</version>
   	</dependency>
+  	<dependency>
+  		<groupId>io.shockah</groupId>
+  		<artifactId>io.shockah.util</artifactId>
+  		<version>1.0</version>
+  		<scope>system</scope>
+  		<systemPath>${project.basedir}/../../io.shockah.util/target/io.shockah.util-1.0.jar</systemPath>
+  	</dependency>
+  	<dependency>
+  		<groupId>io.shockah</groupId>
+  		<artifactId>io.shockah.json</artifactId>
+  		<version>1.0</version>
+  		<scope>system</scope>
+  		<systemPath>${project.basedir}/../../io.shockah.json/target/io.shockah.json-1.0.jar</systemPath>
+  	</dependency>
+  	<dependency>
+  		<groupId>io.shockah</groupId>
+  		<artifactId>io.shockah.plugin</artifactId>
+  		<version>1.0</version>
+  		<scope>system</scope>
+  		<systemPath>${project.basedir}/../../io.shockah.plugin/target/io.shockah.plugin-1.0.jar</systemPath>
+  	</dependency>
   </dependencies>
 </project>

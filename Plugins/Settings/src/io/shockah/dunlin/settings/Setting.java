@@ -38,7 +38,10 @@ public abstract class Setting<T> {
 		return defaultValue;
 	}
 	
-	public abstract void set(T value, Scope scope, TextChannel channel);
+	public void set(T value, Scope scope, TextChannel channel) {
+		settingsPlugin.getSettingsObjectForWriting(scope, channel, plugin).put(name, value);
+		settingsPlugin.onSettingChange(this);
+	}
 	
 	public abstract T get(Scope scope, TextChannel channel);
 }

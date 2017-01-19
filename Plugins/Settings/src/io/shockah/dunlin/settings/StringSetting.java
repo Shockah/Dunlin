@@ -14,12 +14,6 @@ public final class StringSetting extends Setting<String> {
 	}
 
 	@Override
-	public void set(String value, Scope scope, TextChannel channel) {
-		settingsPlugin.getSettingsObjectForWriting(scope, channel, plugin).put(name, value);
-		settingsPlugin.onSettingChange(this);
-	}
-
-	@Override
 	public String get(Scope scope, TextChannel channel) {
 		try {
 			return settingsPlugin.getSettingsObjectForReading(scope, channel, plugin).getString(name);

@@ -14,12 +14,6 @@ public final class IntSetting extends Setting<Integer> {
 	}
 
 	@Override
-	public void set(Integer value, Scope scope, TextChannel channel) {
-		settingsPlugin.getSettingsObjectForWriting(scope, channel, plugin).put(name, value);
-		settingsPlugin.onSettingChange(this);
-	}
-
-	@Override
 	public Integer get(Scope scope, TextChannel channel) {
 		try {
 			return settingsPlugin.getSettingsObjectForReading(scope, channel, plugin).getInt(name);
