@@ -8,8 +8,8 @@ import io.shockah.dunlin.commands.NamedCommand;
 import io.shockah.dunlin.commands.ValueCommandResult;
 import io.shockah.dunlin.factoids.ForgetCommand.Input;
 import io.shockah.dunlin.factoids.db.Factoid;
-import io.shockah.util.UnexpectedException;
 import net.dv8tion.jda.core.events.message.GenericMessageEvent;
+import pl.shockah.util.UnexpectedException;
 
 public class ForgetCommand extends NamedCommand<Input, Factoid> {
 	private final FactoidsPlugin plugin;

@@ -9,7 +9,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.misc.BaseDaoEnabled;
 import io.shockah.skylark.func.Action1;
-import io.shockah.util.UnexpectedException;
+import pl.shockah.util.UnexpectedException;
 
 public class DbObject<T> extends BaseDaoEnabled<T, Integer> {
 	public static final String ID_COLUMN = "id";

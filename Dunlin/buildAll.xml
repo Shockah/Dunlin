@@ -2,7 +2,7 @@
 <project default="build" name="Dunlin - All">
 	<target name="build">
 	    <ant useNativeBasedir="true" antfile="build.xml" target="build" />
-	    <ant useNativeBasedir="true" antfile="../../io.shockah.json/build.xml" target="build" />
+	    <!-- <ant useNativeBasedir="true" antfile="../../pl.shockah.json/build.xml" target="build" /> -->
 	    <ant useNativeBasedir="true" antfile="../Plugins/Argument Parser/build.xml" target="build" />
 	    <ant useNativeBasedir="true" antfile="../Plugins/Bot Control/build.xml" target="build" />
 		<ant useNativeBasedir="true" antfile="../Plugins/Commands/build.xml" target="build" />

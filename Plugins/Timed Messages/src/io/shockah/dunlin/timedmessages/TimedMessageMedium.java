@@ -4,12 +4,12 @@ import java.util.Date;
 import io.shockah.dunlin.MessageMedium;
 import io.shockah.dunlin.timedmessages.db.TimedMessageEntry;
 import io.shockah.skylark.func.Action1;
-import io.shockah.util.UnexpectedException;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
+import pl.shockah.util.UnexpectedException;
 
 public abstract class TimedMessageMedium extends MessageMedium {
 	protected final TimedMessagesPlugin plugin;

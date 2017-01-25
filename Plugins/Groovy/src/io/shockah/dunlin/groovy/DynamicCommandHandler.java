@@ -11,8 +11,8 @@ import io.shockah.dunlin.commands.ErrorCommandResult;
 import io.shockah.dunlin.commands.ExceptionCommandResult;
 import io.shockah.dunlin.commands.ValueCommandResult;
 import io.shockah.skylark.func.Func1;
-import io.shockah.util.UnexpectedException;
 import net.dv8tion.jda.core.events.message.GenericMessageEvent;
+import pl.shockah.util.UnexpectedException;
 
 public class DynamicCommandHandler extends GroovyObjectSupport implements Map<String, Func1<Object, Object>> {
 	protected final GroovyPlugin plugin;

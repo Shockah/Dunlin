@@ -14,12 +14,12 @@ import io.shockah.dunlin.permissions.db.UserGroupRole;
 import io.shockah.dunlin.permissions.db.UserGroupUser;
 import io.shockah.dunlin.plugin.Plugin;
 import io.shockah.dunlin.plugin.PluginManager;
-import io.shockah.util.UnexpectedException;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+import pl.shockah.util.UnexpectedException;
 
 public class PermissionsPlugin extends Plugin {
 	public PermissionsPlugin(PluginManager manager, Info info) {

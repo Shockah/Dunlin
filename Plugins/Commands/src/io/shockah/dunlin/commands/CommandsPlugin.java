@@ -6,11 +6,11 @@ import io.shockah.dunlin.plugin.ListenerPlugin;
 import io.shockah.dunlin.plugin.PluginManager;
 import io.shockah.dunlin.util.ReadWriteList;
 import io.shockah.json.JSONList;
-import io.shockah.util.UnexpectedException;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent;
+import pl.shockah.util.UnexpectedException;
 
 public class CommandsPlugin extends ListenerPlugin {
 	protected ReadWriteList<CommandPattern> patterns = new ReadWriteList<>(new ArrayList<>());

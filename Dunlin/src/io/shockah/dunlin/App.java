@@ -8,10 +8,10 @@ import io.shockah.dunlin.db.DatabaseManager;
 import io.shockah.dunlin.plugin.PluginManager;
 import io.shockah.json.JSONObject;
 import io.shockah.json.JSONParser;
-import io.shockah.util.UnexpectedException;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import pl.shockah.util.UnexpectedException;
 
 public class App {
 	public static final Path CONFIG_PATH = Paths.get("config.json");

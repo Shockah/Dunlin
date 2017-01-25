@@ -5,7 +5,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import io.shockah.dunlin.db.DbObject;
-import io.shockah.util.UnexpectedException;
+import pl.shockah.util.UnexpectedException;
 
 @DatabaseTable(tableName = "io_shockah_dunlin_poll_polloption")
 public class PollOption extends DbObject<PollOption> {
