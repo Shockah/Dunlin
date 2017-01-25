@@ -8,9 +8,9 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import io.shockah.dunlin.db.DbObject;
-import io.shockah.util.UnexpectedException;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
+import pl.shockah.util.UnexpectedException;
 
 @DatabaseTable(tableName = "io_shockah_dunlin_permissions_usergroups")
 public class UserGroup extends DbObject<UserGroup> {

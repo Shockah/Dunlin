@@ -7,7 +7,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.Where;
-import io.shockah.util.UnexpectedException;
+import pl.shockah.util.UnexpectedException;
 
 public final class WhereBuilder {
 	public static enum Operator {

@@ -5,10 +5,10 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import io.shockah.dunlin.db.DbObject;
-import io.shockah.util.UnexpectedException;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+import pl.shockah.util.UnexpectedException;
 
 @DatabaseTable(tableName = "io_shockah_dunlin_permissions_usergroupchannelpermissions")
 public class UserGroupChannelPermission extends DbObject<UserGroupChannelPermission> {

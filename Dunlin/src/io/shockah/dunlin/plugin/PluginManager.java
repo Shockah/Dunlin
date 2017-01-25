@@ -17,7 +17,7 @@ import io.shockah.dunlin.util.FileUtils;
 import io.shockah.dunlin.util.ReadWriteList;
 import io.shockah.json.JSONObject;
 import io.shockah.json.JSONParser;
-import io.shockah.util.UnexpectedException;
+import pl.shockah.util.UnexpectedException;
 
 public class PluginManager {
 	public static final Path LIBS_PATH = Paths.get("libs");

@@ -22,11 +22,11 @@ import io.shockah.dunlin.db.DatabaseManager;
 import io.shockah.dunlin.poll.db.Poll;
 import io.shockah.dunlin.poll.db.PollOption;
 import io.shockah.dunlin.util.TimeDuration;
-import io.shockah.util.UnexpectedException;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 import net.dv8tion.jda.core.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
+import pl.shockah.util.UnexpectedException;
 
 public class PollCommand extends NamedCommand<PollCommand.Input, Poll> {
 	public static final long DEFAULT_DURATION = 1000l * 60l * 5l; //5 minutes

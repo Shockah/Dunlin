@@ -46,7 +46,7 @@ public class GroovySandboxImpl extends AbstractGroovySandbox {
 	private static final List<String> PACKAGE_WHITELIST = ImmutableList.<String>builder().add(
 		"io.shockah.json",
 		"java.math", "java.text", "java.util", "java.time",
-		"groovy.json"
+		"groovy.json", "org.codehaus.groovy.runtime"
 	).build();
 	
 	private static final List<Class<?>> CLASS_WHITELIST = ImmutableList.<Class<?>>builder().add(

@@ -12,7 +12,6 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import io.shockah.dunlin.db.DbObject;
 import io.shockah.dunlin.poll.PollPlugin;
-import io.shockah.util.UnexpectedException;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageReaction;
@@ -20,6 +19,7 @@ import net.dv8tion.jda.core.entities.MessageReaction.ReactionEmote;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
+import pl.shockah.util.UnexpectedException;
 
 @DatabaseTable(tableName = "io_shockah_dunlin_poll_poll")
 public class Poll extends DbObject<Poll> {

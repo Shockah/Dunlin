@@ -25,7 +25,7 @@ import io.shockah.json.JSONObject;
 import io.shockah.json.JSONParser;
 import io.shockah.json.JSONPrettyPrinter;
 import io.shockah.skylark.func.Action1;
-import io.shockah.util.UnexpectedException;
+import pl.shockah.util.UnexpectedException;
 
 public class DatabaseManager implements Closeable {
 	public static final Path TABLE_VERSIONS_PATH = Paths.get("tableVersions.json");
