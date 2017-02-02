@@ -1,2 +1,6 @@
-/build/*
-/*/bin/*
+/*/bin/
+/*/*/bin/
+/*/build/
+/*/*/build/
+/*/.gradle/
+/*/*/.gradle/
