@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
-import io.shockah.json.JSONObject;
+import pl.shockah.json.JSONObject;
 
 public class Plugin {
 	public final PluginManager manager;

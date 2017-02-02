@@ -6,7 +6,7 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import io.shockah.dunlin.db.DbObject;
-import io.shockah.json.JSONObject;
+import pl.shockah.json.JSONObject;
 
 @DatabaseTable(tableName = "io_shockah_dunlin_factoids_factoid")
 public class Factoid extends DbObject<Factoid> {

@@ -10,7 +10,7 @@
             </manifest>
 			<fileset dir="bin"/>
 			<fileset dir="../../pl.shockah.util/bin"/>
-            <fileset dir="../../io.shockah.json/bin"/>
+            <fileset dir="../../pl.shockah.json/bin"/>
 		</jar>
 	</target>
 </project>

@@ -18,10 +18,10 @@ import io.shockah.dunlin.factoids.FactoidType;
 import io.shockah.dunlin.factoids.FactoidsPlugin;
 import io.shockah.dunlin.plugin.Plugin;
 import io.shockah.dunlin.plugin.PluginManager;
-import io.shockah.json.JSONList;
-import io.shockah.json.JSONObject;
 import io.shockah.skylark.func.Func1;
 import net.dv8tion.jda.core.events.message.GenericMessageEvent;
+import pl.shockah.json.JSONList;
+import pl.shockah.json.JSONObject;
 
 public class GroovyPlugin extends Plugin {
 	public static final int TIMEOUT = 30;

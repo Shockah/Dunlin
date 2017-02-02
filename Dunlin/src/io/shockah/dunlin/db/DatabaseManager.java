@@ -21,10 +21,10 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.TableUtils;
 import io.shockah.dunlin.App;
-import io.shockah.json.JSONObject;
-import io.shockah.json.JSONParser;
-import io.shockah.json.JSONPrettyPrinter;
 import io.shockah.skylark.func.Action1;
+import pl.shockah.json.JSONObject;
+import pl.shockah.json.JSONParser;
+import pl.shockah.json.JSONPrettyPrinter;
 import pl.shockah.util.UnexpectedException;
 
 public class DatabaseManager implements Closeable {

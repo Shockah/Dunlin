@@ -15,8 +15,8 @@ import org.apache.commons.io.IOUtils;
 import io.shockah.dunlin.App;
 import io.shockah.dunlin.util.FileUtils;
 import io.shockah.dunlin.util.ReadWriteList;
-import io.shockah.json.JSONObject;
-import io.shockah.json.JSONParser;
+import pl.shockah.json.JSONObject;
+import pl.shockah.json.JSONParser;
 import pl.shockah.util.UnexpectedException;
 
 public class PluginManager {

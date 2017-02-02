@@ -5,9 +5,9 @@ import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.field.types.BaseDataType;
 import com.j256.ormlite.support.DatabaseResults;
-import io.shockah.json.JSONObject;
-import io.shockah.json.JSONParser;
-import io.shockah.json.JSONPrinter;
+import pl.shockah.json.JSONObject;
+import pl.shockah.json.JSONParser;
+import pl.shockah.json.JSONPrinter;
 
 public class JSONObjectPersister extends BaseDataType {
 	public JSONObjectPersister() {
