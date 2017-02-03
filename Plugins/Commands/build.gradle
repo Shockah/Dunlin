@@ -17,4 +17,5 @@ repositories {
 
 dependencies {
 	compile project(':Dunlin')
+	compile project(':Dunlin - Settings')
 }

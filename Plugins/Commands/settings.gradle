@@ -20,3 +20,6 @@ rootProject.name = 'Dunlin - Commands'
 
 include ':Dunlin'
 project(':Dunlin').projectDir = new File(settingsDir, '../../Dunlin')
+
+include ':Dunlin - Settings'
+project(':Dunlin - Settings').projectDir = new File(settingsDir, '../Settings')
