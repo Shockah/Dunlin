@@ -19,7 +19,7 @@ public class PluginManager extends pl.shockah.plugin.PluginManager<Plugin> {
 		super.onPluginLoad(plugin);
 		
 		if (plugin instanceof ListenerPlugin)
-			app.getListenerManager().add(((ListenerPlugin)plugin).listener);
+			app.getInstanceManager().eventListenerManager.add(((ListenerPlugin)plugin).listener);
 	}
 	
 	@Override
@@ -27,6 +27,6 @@ public class PluginManager extends pl.shockah.plugin.PluginManager<Plugin> {
 		super.onPluginUnload(plugin);
 		
 		if (plugin instanceof ListenerPlugin)
-			app.getListenerManager().remove(((ListenerPlugin)plugin).listener);
+			app.getInstanceManager().eventListenerManager.remove(((ListenerPlugin)plugin).listener);
 	}
 }

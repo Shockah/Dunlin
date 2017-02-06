@@ -5,9 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.security.auth.login.LoginException;
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.json.JSONObject;
@@ -31,8 +28,7 @@ public class App {
 	
 	private JSONObject config;
 	private PluginManager pluginManager;
-	private JDA jda;
-	private ThreadedEventListenerManager eventListenerManager;
+	private InstanceManager instanceManager;
 	
 	protected Path getConfigPath() {
 		return CONFIG_PATH;
@@ -51,13 +47,13 @@ public class App {
 	
 	private void initialize() throws IOException {
 		loadConfig(getConfigPath());
+		instanceManager = new InstanceManager(this);
 		pluginManager = new PluginManager(this);
 	}
 	
 	private void main() throws LoginException, IllegalArgumentException, RateLimitedException {
-		eventListenerManager = new ThreadedEventListenerManager();
 		pluginManager.reload();
-		new JDABuilder(AccountType.BOT).setToken(config.getObject("api").getString("token")).addListener(eventListenerManager).buildAsync();
+		instanceManager.connect(config.getObject("api").getInt("shards", 1));
 	}
 	
 	private void deinitialize() {
@@ -75,11 +71,7 @@ public class App {
 		return pluginManager;
 	}
 	
-	public JDA getJDA() {
-		return jda;
-	}
-	
-	public ThreadedEventListenerManager getListenerManager() {
-		return eventListenerManager;
+	public InstanceManager getInstanceManager() {
+		return instanceManager;
 	}
 }
