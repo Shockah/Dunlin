@@ -1,0 +1,9 @@
+{
+	"packageName": "pl.shockah.dunlin.consoleoutput",
+	"baseClass": "pl.shockah.dunlin.consoleoutput.ConsoleOutputPlugin",
+	"enabledByDefault": true,
+
+	"name": "Console Output",
+	"author": "Shockah",
+	"description": ""
+}

@@ -10,14 +10,13 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.core.entities.TextChannel;
 import pl.shockah.dunlin.Scope;
-import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.json.JSONObject;
 import pl.shockah.json.JSONParser;
 import pl.shockah.json.JSONPrettyPrinter;
 
-public class SettingsPlugin extends ListenerPlugin {
+public class SettingsPlugin extends Plugin {
 	public static final Path SETTINGS_PATH = Paths.get("pluginSettings.json");
 	public static final TimeUnit DELAY_UNIT = TimeUnit.SECONDS;
 	public static final long DELAY_UNITS = 3;
