@@ -1,6 +1,7 @@
 plugins {
 	id 'java'
-	id "com.github.kt3k.ebean.enhance" version "3.0.0"
+	id 'com.github.kt3k.ebean.enhance' version '3.0.0'
+	id 'com.github.johnrengelman.shadow' version '1.2.4'
 }
 
 sourceCompatibility = 1.8

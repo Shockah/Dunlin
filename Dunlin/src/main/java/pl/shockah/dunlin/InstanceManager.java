@@ -37,6 +37,6 @@ public class InstanceManager {
 			builder = createBuilder();
 		else
 			builder = createBuilder(shard, shards);
-		builder.buildAsync();
+		instances.add(builder.buildAsync());
 	}
 }
