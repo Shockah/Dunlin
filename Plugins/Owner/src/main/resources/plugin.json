@@ -1,12 +1,13 @@
 {
-	"packageName": "pl.shockah.dunlin.commands",
-	"baseClass": "pl.shockah.dunlin.commands.CommandsPlugin",
+	"packageName": "pl.shockah.dunlin.owner",
+	"baseClass": "pl.shockah.dunlin.owner.OwnerPlugin",
 	"enabledByDefault": true,
 	"dependsOn": [
-		"pl.shockah.dunlin.settings"
+		"pl.shockah.dunlin.commands",
+		"pl.shockah.dunlin.permissions"
 	],
 
-	"name": "Commands",
+	"name": "Owner",
 	"author": "Shockah",
 	"description": ""
 }

@@ -17,6 +17,4 @@ repositories {
 
 dependencies {
 	compile project(':Dunlin')
-	compile project(':Dunlin - Commands')
-	compile project(':Dunlin - Permissions')
 }

@@ -1,0 +1,9 @@
+{
+	"packageName": "pl.shockah.dunlin.permissions",
+	"baseClass": "pl.shockah.dunlin.permissions.PermissionsPlugin",
+	"enabledByDefault": true,
+
+	"name": "Permissions",
+	"author": "Shockah",
+	"description": ""
+}
