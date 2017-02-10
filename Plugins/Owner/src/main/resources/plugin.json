@@ -1,0 +1,12 @@
+{
+	"packageName": "pl.shockah.dunlin.commands",
+	"baseClass": "pl.shockah.dunlin.commands.CommandsPlugin",
+	"enabledByDefault": true,
+	"dependsOn": [
+		"pl.shockah.dunlin.settings"
+	],
+
+	"name": "Commands",
+	"author": "Shockah",
+	"description": ""
+}

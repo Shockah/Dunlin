@@ -1,0 +1,21 @@
+plugins {
+	id 'java'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+	jcenter()
+	maven {
+		url "https://plugins.gradle.org/m2/"
+	}
+	maven {
+		url 'https://jitpack.io'
+	}
+}
+
+dependencies {
+	compile project(':Dunlin')
+	compile project(':Dunlin - Commands')
+}

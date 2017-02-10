@@ -27,7 +27,8 @@ dependencies {
 	
 	//Database / ORM
 	compile group: 'com.h2database', name: 'h2', version: '1.4.193'
-	compile group: 'org.avaje', name: 'ebean', version: '2.8.1'
+	compile group: 'io.ebean', name: 'ebean', version: '10.1.1'
+	compile group: 'io.ebean', name: 'ebean-querybean', version: '10.1.1'
 	
 	//Utils
 	compile 'com.github.kevinsawicki:http-request:6.0'
