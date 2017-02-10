@@ -1,16 +1,16 @@
 package pl.shockah.dunlin.commands;
 
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.dv8tion.jda.core.entities.Message;
-import pl.shockah.util.ReadWriteList;
+import pl.shockah.util.ReadWriteSet;
 
-public class DefaultCommandPattern<T extends NamedCommand<?, ?>> extends CommandPattern<T> {
+public class DefaultCommandPattern extends CommandPattern<NamedCommand<?, ?>> {
 	public static final String PARAMETERIZED_PATTERN = "^[%s](.*?)(?:\\s(.*))$";
 	
-	private final CommandsPlugin plugin;
-	protected final ReadWriteList<NamedCommandProvider<?, ?>> namedCommandProviders = new ReadWriteList<>(new ArrayList<>());
+	final CommandsPlugin plugin;
+	protected final ReadWriteSet<NamedCommandProvider<?, ?>> namedCommandProviders = new ReadWriteSet<>(new LinkedHashSet<>());
 	
 	public DefaultCommandPattern(CommandsPlugin plugin) {
 		this.plugin = plugin;
@@ -26,32 +26,32 @@ public class DefaultCommandPattern<T extends NamedCommand<?, ?>> extends Command
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public T getCommand(Message message) {
+	public CommandPatternMatch<NamedCommand<?, ?>> getCommand(Message message) {
 		String commandName = null;
-		//String input = null;
+		String input = null;
 		String content = message.getRawContent();
 		for (String prefix : plugin.prefixesSetting.get(message).split("\\s")) {
 			Matcher m = Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix)).matcher(content);
 			if (m.find()) {
 				commandName = m.group(1);
-				//input = m.group(2);
+				input = m.group(2);
 				break;
 			}
 		}
 		
 		final String f_commandName = commandName;
-		return namedCommandProviders.firstResult(provider -> {
-			return (T)provider.provide(f_commandName);
+		NamedCommand<?, ?> command = namedCommandProviders.firstResult(provider -> {
+			return (NamedCommand<?, ?>)provider.provide(f_commandName);
 		});
+		return command != null ? new CommandPatternMatch<>(command, input) : null;
 	}
 	
-	public void register(NamedCommandProvider<?, ?> namedCommandProvider) {
+	public void registerNamedCommandProvider(NamedCommandProvider<?, ?> namedCommandProvider) {
 		namedCommandProviders.add(namedCommandProvider);
 	}
 	
-	public void unregister(NamedCommandProvider<?, ?> namedCommandProvider) {
+	public void unregisterNamedCommandProvider(NamedCommandProvider<?, ?> namedCommandProvider) {
 		namedCommandProviders.remove(namedCommandProvider);
 	}
 }

@@ -1,15 +1,27 @@
 package pl.shockah.dunlin.commands;
 
+import java.util.LinkedHashSet;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import pl.shockah.dunlin.commands.result.CommandResult;
+import pl.shockah.dunlin.commands.result.ErrorCommandResult;
+import pl.shockah.dunlin.commands.result.ValueCommandResult;
 import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.dunlin.settings.SettingsPlugin;
 import pl.shockah.dunlin.settings.StringSetting;
+import pl.shockah.util.ReadWriteSet;
 
 public class CommandsPlugin extends ListenerPlugin {
 	@Dependency
 	private SettingsPlugin settingsPlugin;
 	
 	protected StringSetting prefixesSetting;
+	
+	protected final ReadWriteSet<CommandPattern<? extends Command<Object, Object>>> patterns = new ReadWriteSet<>(new LinkedHashSet<>());
+	protected DefaultCommandPattern defaultCommandPattern;
+	protected ChainCommandPattern chainCommandPattern;
+	protected DefaultNamedCommandProvider defaultNamedCommandProvider;
 	
 	public CommandsPlugin(PluginManager manager, Info info) {
 		super(manager, info);
@@ -18,5 +30,64 @@ public class CommandsPlugin extends ListenerPlugin {
 	@Override
 	protected void onLoad() {
 		prefixesSetting = new StringSetting(settingsPlugin, this, "prefixes", ".");
+		
+		defaultCommandPattern = new DefaultCommandPattern(this);
+		chainCommandPattern = new ChainCommandPattern(defaultCommandPattern);
+		registerPattern(chainCommandPattern);
+		registerPattern(defaultCommandPattern);
+		
+		defaultNamedCommandProvider = new DefaultNamedCommandProvider();
+		registerNamedCommandProvider(defaultNamedCommandProvider);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void registerPattern(CommandPattern<? extends Command<?, ?>> pattern) {
+		patterns.add((CommandPattern<? extends Command<Object, Object>>)pattern);
+	}
+	
+	public void unregisterPattern(CommandPattern<? extends Command<?, ?>> pattern) {
+		patterns.remove(pattern);
+	}
+	
+	public void registerNamedCommandProvider(NamedCommandProvider<?, ?> namedCommandProvider) {
+		defaultCommandPattern.registerNamedCommandProvider(namedCommandProvider);
+	}
+	
+	public void unregisterNamedCommandProvider(NamedCommandProvider<?, ?> namedCommandProvider) {
+		defaultCommandPattern.unregisterNamedCommandProvider(namedCommandProvider);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void registerNamedCommand(NamedCommand<?, ?> namedCommand) {
+		defaultNamedCommandProvider.registerNamedCommand((NamedCommand<Object, Object>)namedCommand);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void unregisterNamedCommand(NamedCommand<?, ?> namedCommand) {
+		defaultNamedCommandProvider.unregisterNamedCommand((NamedCommand<Object, Object>)namedCommand);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void onMessageReceived(MessageReceivedEvent event) {
+		Message message = event.getMessage();
+		patterns.iterate((pattern, iterator) -> {
+			if (pattern.matches(message)) {
+				CommandPatternMatch<Command<Object, Object>> commandPatternMatch = (CommandPatternMatch<Command<Object, Object>>)pattern.getCommand(message);
+				if (commandPatternMatch != null) {
+					CommandResult<Object> input = commandPatternMatch.command.parseInput(message, commandPatternMatch.textInput);
+					if (input instanceof ErrorCommandResult<?>) {
+						respond(event, input.getMessage());
+					} else if (input instanceof ValueCommandResult<?>) {
+						CommandResult<Object> output = commandPatternMatch.command.execute(message, ((ValueCommandResult<?>)input).get());
+						respond(event, output.getMessage());
+					}
+				}
+			}
+		});
+	}
+	
+	protected void respond(MessageReceivedEvent event, Message response) {
+		event.getChannel().sendMessage(response).queue();
 	}
 }

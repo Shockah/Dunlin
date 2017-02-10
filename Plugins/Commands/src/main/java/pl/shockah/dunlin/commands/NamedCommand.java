@@ -1,6 +1,6 @@
 package pl.shockah.dunlin.commands;
 
-public class NamedCommand<Input, Output> extends Command<Input, Output> {
+public abstract class NamedCommand<Input, Output> extends Command<Input, Output> {
 	public final String[] names;
 	
 	public NamedCommand(String name, String... altNames) {
