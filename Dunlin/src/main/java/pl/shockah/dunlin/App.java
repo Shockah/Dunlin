@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.security.auth.login.LoginException;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
+import pl.shockah.dunlin.db.DatabaseManager;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.json.JSONObject;
 import pl.shockah.json.JSONParser;
@@ -29,6 +30,7 @@ public class App {
 	private JSONObject config;
 	private PluginManager pluginManager;
 	private InstanceManager instanceManager;
+	private DatabaseManager databaseManager;
 	
 	protected Path getConfigPath() {
 		return CONFIG_PATH;
@@ -49,6 +51,7 @@ public class App {
 		loadConfig(getConfigPath());
 		instanceManager = new InstanceManager(this);
 		pluginManager = new PluginManager(this);
+		databaseManager = new DatabaseManager(this);
 	}
 	
 	private void main() throws LoginException, IllegalArgumentException, RateLimitedException {
@@ -73,5 +76,9 @@ public class App {
 	
 	public InstanceManager getInstanceManager() {
 		return instanceManager;
+	}
+	
+	public DatabaseManager getDatabaseManager() {
+		return databaseManager;
 	}
 }

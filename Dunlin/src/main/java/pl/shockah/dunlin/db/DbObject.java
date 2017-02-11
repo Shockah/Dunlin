@@ -9,7 +9,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.misc.BaseDaoEnabled;
 import pl.shockah.util.func.Action1;
-import pl.shockah.util.UnexpectedException;
 
 public class DbObject<T> extends BaseDaoEnabled<T, Integer> {
 	@DatabaseField(generatedId = true, columnName = ID)
@@ -50,7 +49,15 @@ public class DbObject<T> extends BaseDaoEnabled<T, Integer> {
 			func.call((T)this);
 			update();
 		} catch (Exception e) {
-			throw new UnexpectedException(e);
+			throw new DatabaseException(e);
+		}
+	}
+	
+	public int refresh() {
+		try {
+			return super.refresh();
+		} catch (Exception e) {
+			throw new DatabaseException(e);
 		}
 	}
 	

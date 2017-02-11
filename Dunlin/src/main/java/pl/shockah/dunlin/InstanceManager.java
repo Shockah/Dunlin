@@ -7,6 +7,7 @@ import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import pl.shockah.util.ReadWriteList;
 
@@ -52,5 +53,9 @@ public class InstanceManager {
 				return instances.get(0);
 			return instances.get(new BigInteger(guildId).shiftRight(22).mod(BigInteger.valueOf(instances.size())).intValue());
 		}).getGuildById(guildId);
+	}
+	
+	public User getUserById(String userId) {
+		return instances.firstResult(jda -> jda.getUserById(userId));
 	}
 }

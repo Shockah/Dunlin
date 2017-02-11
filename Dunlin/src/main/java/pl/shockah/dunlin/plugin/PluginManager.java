@@ -2,7 +2,7 @@ package pl.shockah.dunlin.plugin;
 
 import pl.shockah.dunlin.App;
 
-public class PluginManager extends pl.shockah.plugin.PluginManager<Plugin> {
+public class PluginManager extends pl.shockah.plugin.PluginManager<PluginManager, Plugin> {
 	public final App app;
 	
 	public PluginManager(App app) {

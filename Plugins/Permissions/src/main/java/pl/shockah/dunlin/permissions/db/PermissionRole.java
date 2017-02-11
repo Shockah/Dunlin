@@ -1,4 +1,4 @@
-package pl.shockah.dunlin.permissions.entity;
+package pl.shockah.dunlin.permissions.db;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
@@ -9,7 +9,7 @@ import pl.shockah.dunlin.InstanceManager;
 import pl.shockah.dunlin.db.DbObject;
 import pl.shockah.dunlin.db.DbObject.TableVersion;
 
-@DatabaseTable(tableName = "pl_shockah_dunlin_permissions_entity_PermissionRole")
+@DatabaseTable(tableName = "pl_shockah_dunlin_permissions_db_PermissionRole")
 @TableVersion(1)
 public class PermissionRole extends DbObject<PermissionRole> {
 	@DatabaseField(columnName = GUILD_ID, canBeNull = false)
@@ -24,7 +24,7 @@ public class PermissionRole extends DbObject<PermissionRole> {
 	private PermissionGroup group;
 	public static final String GROUP = "group";
 	
-	@Deprecated
+	@Deprecated //ORMLite-only
 	PermissionRole() {
 		super();
 	}
@@ -47,6 +47,16 @@ public class PermissionRole extends DbObject<PermissionRole> {
 	
 	public void setRoleId(String roleId) {
 		this.roleId = roleId;
+	}
+	
+	public PermissionGroup getGroup() {
+		if (group != null)
+			group.refresh();
+		return group;
+	}
+	
+	public void setGroup(PermissionGroup group) {
+		this.group = group;
 	}
 	
 	public Role getRole(InstanceManager manager) {
