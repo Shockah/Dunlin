@@ -1,10 +1,12 @@
 package pl.shockah.dunlin;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import javax.security.auth.login.LoginException;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import pl.shockah.util.ReadWriteList;
 
@@ -38,5 +40,15 @@ public class InstanceManager {
 		else
 			builder = createBuilder(shard, shards);
 		instances.add(builder.buildAsync());
+	}
+	
+	/*public Guild getGuildById(String guildId) {
+		return instances.firstResult(jda -> jda.getGuildById(guildId));
+	}*/
+	
+	public Guild getGuildById(String guildId) {
+		return instances.readOperation(instances -> {
+			return instances.get(new BigInteger(guildId).shiftRight(22).mod(BigInteger.valueOf(instances.size())).intValue());
+		}).getGuildById(guildId);
 	}
 }

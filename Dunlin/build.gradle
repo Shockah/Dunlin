@@ -1,6 +1,5 @@
 plugins {
 	id 'java'
-	id 'com.github.kt3k.ebean.enhance' version '3.0.0'
 	id 'com.github.johnrengelman.shadow' version '1.2.4'
 }
 
@@ -27,10 +26,10 @@ dependencies {
 	
 	//Database / ORM
 	compile group: 'com.h2database', name: 'h2', version: '1.4.193'
-	compile group: 'io.ebean', name: 'ebean', version: '10.1.1'
-	compile group: 'io.ebean', name: 'ebean-querybean', version: '10.1.1'
+	compile group: 'com.j256.ormlite', name: 'ormlite-core', version: '5.0'
+	compile group: 'com.j256.ormlite', name: 'ormlite-jdbc', version: '5.0'
 	
 	//Utils
-	compile 'com.github.kevinsawicki:http-request:6.0'
+	//compile 'com.github.kevinsawicki:http-request:6.0' //let's try Unirest instead, it's included with JDA
 	compile group: 'org.jsoup', name: 'jsoup', version: '1.10.2'
 }

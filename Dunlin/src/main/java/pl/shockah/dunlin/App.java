@@ -4,11 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Properties;
 import javax.security.auth.login.LoginException;
-import io.ebean.EbeanServer;
-import io.ebean.EbeanServerFactory;
-import io.ebean.config.ServerConfig;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.json.JSONObject;
@@ -55,22 +51,7 @@ public class App {
 		pluginManager = new PluginManager(this);
 	}
 	
-	private EbeanServer createServer() {
-		ServerConfig config = new ServerConfig();
-		config.setName("db");
-		
-		Properties props = new Properties();
-		props.putAll(this.config.getObject("database"));
-		config.loadFromProperties(props);
-		
-		config.setDefaultServer(true);
-		config.setRegister(true);
-		
-		return EbeanServerFactory.create(config);
-	}
-	
 	private void main() throws LoginException, IllegalArgumentException, RateLimitedException {
-		createServer();
 		pluginManager.reload();
 		instanceManager.connect(config.getObject("api").getInt("shards", 1));
 	}
