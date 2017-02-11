@@ -48,6 +48,8 @@ public class InstanceManager {
 	
 	public Guild getGuildById(String guildId) {
 		return instances.readOperation(instances -> {
+			if (instances.size() == 1)
+				return instances.get(0);
 			return instances.get(new BigInteger(guildId).shiftRight(22).mod(BigInteger.valueOf(instances.size())).intValue());
 		}).getGuildById(guildId);
 	}
