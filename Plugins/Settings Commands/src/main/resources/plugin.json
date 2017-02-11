@@ -1,0 +1,9 @@
+{
+	"packageName": "pl.shockah.dunlin.settings.commands",
+	"baseClass": "pl.shockah.dunlin.settings.commands.SettingsCommandsPlugin",
+	"enabledByDefault": true,
+
+	"name": "Settings Commands",
+	"author": "Shockah",
+	"description": ""
+}

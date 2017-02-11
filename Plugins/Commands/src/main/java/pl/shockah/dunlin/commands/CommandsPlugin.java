@@ -5,7 +5,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ErrorCommandResult;
-import pl.shockah.dunlin.commands.result.ValueCommandResult;
+import pl.shockah.dunlin.commands.result.ParseCommandResult;
 import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.dunlin.settings.SettingsPlugin;
@@ -78,8 +78,8 @@ public class CommandsPlugin extends ListenerPlugin {
 					CommandResult<Object> input = commandPatternMatch.command.parseInput(message, commandPatternMatch.textInput);
 					if (input instanceof ErrorCommandResult<?>) {
 						respond(event, input.getMessage());
-					} else if (input instanceof ValueCommandResult<?>) {
-						CommandResult<Object> output = commandPatternMatch.command.execute(message, ((ValueCommandResult<?>)input).get());
+					} else if (input instanceof ParseCommandResult<?>) {
+						CommandResult<Object> output = commandPatternMatch.command.execute(message, ((ParseCommandResult<?>)input).get());
 						respond(event, output.getMessage());
 					}
 				}

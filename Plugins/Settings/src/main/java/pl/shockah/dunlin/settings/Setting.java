@@ -10,12 +10,18 @@ public abstract class Setting<T> {
 	public final Plugin plugin;
 	public final String name;
 	public final T defaultValue;
+	public final boolean isPrivate;
 	
 	Setting(SettingsPlugin settingsPlugin, Plugin plugin, String name, T defaultValue) {
+		this(settingsPlugin, plugin, name, defaultValue, false);
+	}
+	
+	Setting(SettingsPlugin settingsPlugin, Plugin plugin, String name, T defaultValue, boolean isPrivate) {
 		this.settingsPlugin = settingsPlugin;
 		this.plugin = plugin;
 		this.name = name;
 		this.defaultValue = defaultValue;
+		this.isPrivate = isPrivate;
 	}
 	
 	public final T get(Message message) {
