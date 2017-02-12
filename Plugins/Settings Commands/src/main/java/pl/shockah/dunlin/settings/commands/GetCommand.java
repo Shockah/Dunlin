@@ -2,6 +2,8 @@ package pl.shockah.dunlin.settings.commands;
 
 import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.Scope;
+import pl.shockah.dunlin.commands.ArgumentSet;
+import pl.shockah.dunlin.commands.ArgumentSetParser;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
@@ -15,16 +17,27 @@ public class GetCommand extends NamedCommand<GetCommand.Input, Object> {
 	
 	@Override
 	public CommandResult<Input> parseInput(Message message, String textInput) {
-		Scope scope = Scope.Server;
-		Setting<?> setting = null;
-		
-		//TODO: actual implementation
-		return new ParseCommandResultImpl<>(this, new Input(scope, setting));
+		return new ParseCommandResultImpl<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput());
 	}
 	
 	@Override
 	public CommandResult<Object> execute(Message message, Input input) {
 		return new ValueCommandResultImpl<>(this, input.setting.get(input.scope, message.getTextChannel()));
+	}
+	
+	public static final class Arguments extends ArgumentSet {
+		@Argument
+		public Scope scope = Scope.Server;
+		
+		@Argument("setting")
+		public String settingName;
+		
+		public Input toInput() {
+			//TODO: get actual Setting object
+			Setting<?> setting = null;
+			
+			return new Input(scope, setting);
+		}
 	}
 
 	public static final class Input {

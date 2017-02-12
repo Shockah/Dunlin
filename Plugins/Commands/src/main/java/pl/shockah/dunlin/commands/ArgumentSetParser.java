@@ -51,6 +51,7 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 				}
 			}
 			
+			argumentSet.finalValidation();
 			return argumentSet;
 		} catch (Exception e) {
 			throw new UnexpectedException(e);
@@ -82,78 +83,80 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 	}
 	
 	protected void putArgumentValue(ArgumentSetParseProcess.Argument argument, String rawValue) {
-		try {
-			Class<?> clazz = argument.field.getType();
-			switch (argument.type) {
-				case Bool: {
-					boolean value = Boolean.parseBoolean(rawValue);
-					if (clazz == boolean.class) {
-						argument.field.set(argument.argumentSet, value);
-						return;
-					} else if (clazz == Boolean.class) {
-						argument.field.set(argument.argumentSet, (Boolean)value);
+		Class<?> clazz = argument.field.getType();
+		switch (argument.type) {
+			case Bool: {
+				boolean value = Boolean.parseBoolean(rawValue);
+				if (clazz == boolean.class) {
+					putArgumentValueInternal(argument, value);
+					return;
+				} else if (clazz == Boolean.class) {
+					putArgumentValueInternal(argument, (Boolean)value);
+					return;
+				}
+			} break;
+			case Integer: {
+				BigInteger value = new BigInteger(rawValue);
+				if (clazz == BigInteger.class) {
+					putArgumentValueInternal(argument, value);
+					return;
+				} else if (clazz == int.class) {
+					putArgumentValueInternal(argument, value.intValueExact());
+					return;
+				} else if (clazz == long.class) {
+					putArgumentValueInternal(argument, value.longValueExact());
+					return;
+				}
+			} break;
+			case Decimal: {
+				BigDecimal value = new BigDecimal(rawValue);
+				if (clazz == BigDecimal.class) {
+					putArgumentValueInternal(argument, value);
+					return;
+				} else if (clazz == float.class) {
+					putArgumentValueInternal(argument, value.floatValue());
+					return;
+				} else if (clazz == long.class) {
+					putArgumentValueInternal(argument, value.doubleValue());
+					return;
+				}
+			} break;
+			case String: {
+				if (clazz == String.class) {
+					putArgumentValueInternal(argument, rawValue);
+					return;
+				}
+			} break;
+			case Enum: {
+				for (Object obj : clazz.getEnumConstants()) {
+					Enum<?> enumConst = (Enum<?>)obj;
+					if (enumConst.name().equalsIgnoreCase(rawValue)) {
+						putArgumentValueInternal(argument, enumConst);
 						return;
 					}
-				} break;
-				case Integer: {
-					BigInteger value = new BigInteger(rawValue);
-					if (clazz == BigInteger.class) {
-						argument.field.set(argument.argumentSet, value);
-						return;
-					} else if (clazz == int.class) {
-						argument.field.set(argument.argumentSet, value.intValueExact());
-						return;
-					} else if (clazz == long.class) {
-						argument.field.set(argument.argumentSet, value.longValueExact());
-						return;
-					}
-				} break;
-				case Decimal: {
-					BigDecimal value = new BigDecimal(rawValue);
-					if (clazz == BigDecimal.class) {
-						argument.field.set(argument.argumentSet, value);
-						return;
-					} else if (clazz == float.class) {
-						argument.field.set(argument.argumentSet, value.floatValue());
-						return;
-					} else if (clazz == long.class) {
-						argument.field.set(argument.argumentSet, value.doubleValue());
-						return;
-					}
-				} break;
-				case String: {
-					if (clazz == String.class) {
-						argument.field.set(argument.argumentSet, rawValue);
-						return;
-					}
-				} break;
-				case Enum: {
+				}
+				
+				try {
+					int ordinal = Integer.parseInt(rawValue);
 					for (Object obj : clazz.getEnumConstants()) {
 						Enum<?> enumConst = (Enum<?>)obj;
-						if (enumConst.name().equalsIgnoreCase(rawValue)) {
-							argument.field.set(argument.argumentSet, enumConst);
+						if (enumConst.ordinal() == ordinal) {
+							putArgumentValueInternal(argument, enumConst);
 							return;
 						}
 					}
-					
-					try {
-						int ordinal = Integer.parseInt(rawValue);
-						for (Object obj : clazz.getEnumConstants()) {
-							Enum<?> enumConst = (Enum<?>)obj;
-							if (enumConst.ordinal() == ordinal) {
-								argument.field.set(argument.argumentSet, enumConst);
-								return;
-							}
-						}
-					} catch (NumberFormatException e2) {
-					}
-				} break;
-				default:
-					break;
-			}
-			throw new IllegalArgumentException(String.format("Cannot handle argument %s of type %s.", argument.name, argument.type.name()));
-		} catch (IllegalAccessException e) {
-			throw new UnexpectedException(e);
+				} catch (NumberFormatException e2) {
+				}
+			} break;
+			default:
+				break;
 		}
+		throw new IllegalArgumentException(String.format("Cannot handle argument %s of type %s.", argument.name, argument.type.name()));
+	}
+	
+	private void putArgumentValueInternal(ArgumentSetParseProcess.Argument argument, Object value) {
+		if (!argument.argumentSet.isValueValid(argument.field, value))
+			throw new IllegalArgumentException(String.format("Invalid value for argument %s.", argument.name));
+		argument.put(value);
 	}
 }
