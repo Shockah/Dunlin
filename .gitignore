@@ -5,3 +5,7 @@
 /*/*/build/
 /*/.gradle/
 /*/*/.gradle/
+/*/.classpath
+/*/.settings/
+/*/*/.classpath
+/*/*/.settings/
