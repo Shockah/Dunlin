@@ -1,5 +1,7 @@
 package pl.shockah.dunlin.settings.commands;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.Scope;
 import pl.shockah.dunlin.commands.ArgumentSet;
@@ -8,16 +10,21 @@ import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
+import pl.shockah.dunlin.settings.EnumSetting;
 import pl.shockah.dunlin.settings.Setting;
+import pl.shockah.dunlin.settings.SettingsPlugin;
 
 public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
-	public SetCommand() {
+	private final SettingsPlugin settingsPlugin;
+	
+	public SetCommand(SettingsPlugin settingsPlugin) {
 		super("set");
+		this.settingsPlugin = settingsPlugin;
 	}
 	
 	@Override
 	public CommandResult<Input> parseInput(Message message, String textInput) {
-		return new ParseCommandResultImpl<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput());
+		return new ParseCommandResultImpl<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(this));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -37,12 +44,22 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 		@Argument("value")
 		public String rawValue;
 		
-		public Input toInput() {
-			//TODO: get actual Setting object
-			Setting<?> setting = null;
+		public Input toInput(SetCommand command) {
+			Setting<?> setting = command.settingsPlugin.getSettingByName(settingName);
+			Object value = null;
 			
-			//TODO: parse rawValue to the proper type - should somehow standardize setting types for that
-			Object value = rawValue;
+			switch (setting.type) {
+				case Bool:
+					value = ArgumentSetParser.parseBoolean(rawValue);
+				case Integer:
+					value = new BigInteger(rawValue);
+				case Decimal:
+					value = new BigDecimal(rawValue);
+				case String:
+					value = rawValue;
+				case Enum:
+					value = ArgumentSetParser.parseEnum(((EnumSetting<?>)setting).enumClass, rawValue);
+			}
 			
 			return new Input(scope, setting, value);
 		}

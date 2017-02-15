@@ -5,18 +5,19 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ErrorCommandResult;
+import pl.shockah.dunlin.commands.result.ErrorCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ParseCommandResult;
 import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
+import pl.shockah.dunlin.settings.Setting;
 import pl.shockah.dunlin.settings.SettingsPlugin;
-import pl.shockah.dunlin.settings.StringSetting;
 import pl.shockah.util.ReadWriteSet;
 
 public class CommandsPlugin extends ListenerPlugin {
 	@Dependency
 	private SettingsPlugin settingsPlugin;
 	
-	protected StringSetting prefixesSetting;
+	protected Setting<String> prefixesSetting;
 	
 	protected final ReadWriteSet<CommandPattern<? extends Command<Object, Object>>> patterns = new ReadWriteSet<>(new LinkedHashSet<>());
 	protected DefaultCommandPattern defaultCommandPattern;
@@ -29,7 +30,9 @@ public class CommandsPlugin extends ListenerPlugin {
 	
 	@Override
 	protected void onLoad() {
-		prefixesSetting = new StringSetting(settingsPlugin, this, "prefixes", ".");
+		settingsPlugin.register(
+			prefixesSetting = Setting.ofString(settingsPlugin, this, "prefixes", ".")
+		);
 		
 		defaultCommandPattern = new DefaultCommandPattern(this);
 		chainCommandPattern = new ChainCommandPattern(defaultCommandPattern);
@@ -38,6 +41,11 @@ public class CommandsPlugin extends ListenerPlugin {
 		
 		defaultNamedCommandProvider = new DefaultNamedCommandProvider();
 		registerNamedCommandProvider(defaultNamedCommandProvider);
+	}
+	
+	@Override
+	protected void onUnload() {
+		settingsPlugin.unregister(prefixesSetting);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -75,13 +83,18 @@ public class CommandsPlugin extends ListenerPlugin {
 			if (pattern.matches(message)) {
 				CommandPatternMatch<Command<Object, Object>> commandPatternMatch = (CommandPatternMatch<Command<Object, Object>>)pattern.getCommand(message);
 				if (commandPatternMatch != null) {
-					CommandResult<Object> input = commandPatternMatch.command.parseInput(message, commandPatternMatch.textInput);
-					if (input instanceof ErrorCommandResult<?>) {
-						respond(event, input.getMessage());
-					} else if (input instanceof ParseCommandResult<?>) {
-						CommandResult<Object> output = commandPatternMatch.command.execute(message, ((ParseCommandResult<?>)input).get());
-						respond(event, output.getMessage());
+					try {
+						CommandResult<Object> input = commandPatternMatch.command.parseInput(message, commandPatternMatch.textInput);
+						if (input instanceof ErrorCommandResult<?>) {
+							respond(event, input.getMessage());
+						} else if (input instanceof ParseCommandResult<?>) {
+							CommandResult<Object> output = commandPatternMatch.command.execute(message, ((ParseCommandResult<?>)input).get());
+							respond(event, output.getMessage());
+						}
+					} catch (Exception e) {
+						respond(event, ErrorCommandResultImpl.messageFromException(e));
 					}
+					iterator.stop();
 				}
 			}
 		});

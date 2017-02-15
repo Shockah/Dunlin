@@ -13,6 +13,7 @@ public class SettingsCommandsPlugin extends Plugin {
 	protected CommandsPlugin commandsPlugin;
 	
 	private SetCommand setCommand;
+	private GetCommand getCommand;
 	
 	public SettingsCommandsPlugin(PluginManager manager, Info info) {
 		super(manager, info);
@@ -20,11 +21,17 @@ public class SettingsCommandsPlugin extends Plugin {
 	
 	@Override
 	protected void onLoad() {
-		commandsPlugin.registerNamedCommand(setCommand = new SetCommand());
+		commandsPlugin.registerNamedCommand(
+			setCommand = new SetCommand(settingsPlugin)
+		);
+		commandsPlugin.registerNamedCommand(
+			getCommand = new GetCommand(settingsPlugin)
+		);
 	}
 	
 	@Override
 	protected void onUnload() {
 		commandsPlugin.unregisterNamedCommand(setCommand);
+		commandsPlugin.unregisterNamedCommand(getCommand);
 	}
 }

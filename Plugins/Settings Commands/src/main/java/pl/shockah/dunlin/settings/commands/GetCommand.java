@@ -9,15 +9,19 @@ import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
 import pl.shockah.dunlin.settings.Setting;
+import pl.shockah.dunlin.settings.SettingsPlugin;
 
 public class GetCommand extends NamedCommand<GetCommand.Input, Object> {
-	public GetCommand() {
+	private final SettingsPlugin settingsPlugin;
+	
+	public GetCommand(SettingsPlugin settingsPlugin) {
 		super("get");
+		this.settingsPlugin = settingsPlugin;
 	}
 	
 	@Override
 	public CommandResult<Input> parseInput(Message message, String textInput) {
-		return new ParseCommandResultImpl<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput());
+		return new ParseCommandResultImpl<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(this));
 	}
 	
 	@Override
@@ -32,10 +36,8 @@ public class GetCommand extends NamedCommand<GetCommand.Input, Object> {
 		@Argument("setting")
 		public String settingName;
 		
-		public Input toInput() {
-			//TODO: get actual Setting object
-			Setting<?> setting = null;
-			
+		public Input toInput(GetCommand command) {
+			Setting<?> setting = command.settingsPlugin.getSettingByName(settingName);
 			return new Input(scope, setting);
 		}
 	}

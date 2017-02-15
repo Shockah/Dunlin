@@ -82,17 +82,54 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 		return sb.toString();
 	}
 	
+	public static boolean parseBoolean(String rawValue) {
+		if (rawValue.equalsIgnoreCase("true") || rawValue.equalsIgnoreCase("t") || rawValue.equalsIgnoreCase("yes") || rawValue.equalsIgnoreCase("y"))
+			return true;
+		else if (rawValue.equalsIgnoreCase("false") || rawValue.equalsIgnoreCase("f") || rawValue.equalsIgnoreCase("no") || rawValue.equalsIgnoreCase("n"))
+			return false;
+		else
+			throw new IllegalArgumentException(String.format("Cannot parse '%s' as boolean.", rawValue));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T extends Enum<?>> T parseEnum(Class<T> clazz, String rawValue) {
+		for (Object obj : clazz.getEnumConstants()) {
+			Enum<?> enumConst = (Enum<?>)obj;
+			if (enumConst.name().equalsIgnoreCase(rawValue)) {
+				return (T)enumConst;
+			}
+		}
+		
+		try {
+			int ordinal = Integer.parseInt(rawValue);
+			for (Object obj : clazz.getEnumConstants()) {
+				Enum<?> enumConst = (Enum<?>)obj;
+				if (enumConst.ordinal() == ordinal) {
+					return (T)enumConst;
+				}
+			}
+		} catch (NumberFormatException e2) {
+		}
+		
+		throw new IllegalArgumentException(String.format("Cannot parse '%s' as enum %s.", rawValue, clazz.getSimpleName()));
+	}
+	
+	@SuppressWarnings("unchecked")
 	protected void putArgumentValue(ArgumentSetParseProcess.Argument argument, String rawValue) {
 		Class<?> clazz = argument.field.getType();
 		switch (argument.type) {
 			case Bool: {
-				boolean value = Boolean.parseBoolean(rawValue);
-				if (clazz == boolean.class) {
-					putArgumentValueInternal(argument, value);
-					return;
-				} else if (clazz == Boolean.class) {
-					putArgumentValueInternal(argument, (Boolean)value);
-					return;
+				try {
+					boolean value = parseBoolean(rawValue);
+					if (clazz == boolean.class) {
+						putArgumentValueInternal(argument, value);
+						return;
+					} else if (clazz == Boolean.class) {
+						putArgumentValueInternal(argument, (Boolean)value);
+						return;
+					}
+				} catch (Exception e) {
+					break;
 				}
 			} break;
 			case Integer: {
@@ -128,24 +165,10 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 				}
 			} break;
 			case Enum: {
-				for (Object obj : clazz.getEnumConstants()) {
-					Enum<?> enumConst = (Enum<?>)obj;
-					if (enumConst.name().equalsIgnoreCase(rawValue)) {
-						putArgumentValueInternal(argument, enumConst);
-						return;
-					}
-				}
-				
 				try {
-					int ordinal = Integer.parseInt(rawValue);
-					for (Object obj : clazz.getEnumConstants()) {
-						Enum<?> enumConst = (Enum<?>)obj;
-						if (enumConst.ordinal() == ordinal) {
-							putArgumentValueInternal(argument, enumConst);
-							return;
-						}
-					}
-				} catch (NumberFormatException e2) {
+					putArgumentValueInternal(argument, parseEnum((Class<? extends Enum<?>>)clazz, rawValue));
+				} catch (Exception e) {
+					break;
 				}
 			} break;
 			default:
