@@ -9,7 +9,7 @@ targetCompatibility = 1.8
 repositories {
 	jcenter()
 	maven {
-		url "https://plugins.gradle.org/m2/"
+		url 'https://plugins.gradle.org/m2/'
 	}
 	maven {
 		url 'https://jitpack.io'
@@ -17,9 +17,9 @@ repositories {
 }
 
 dependencies {
-	compile 'com.github.Shockah:pl.shockah.util:master-SNAPSHOT'
-	compile 'com.github.Shockah:pl.shockah.json:master-SNAPSHOT'
-	compile 'com.github.Shockah:pl.shockah.plugin:master-SNAPSHOT'
+	compile 'com.github.Shockah:pl.shockah.util:1.0'
+	compile 'com.github.Shockah:pl.shockah.json:1.0'
+	compile 'com.github.Shockah:pl.shockah.plugin:1.0'
 	
 	//Discord
 	compile 'net.dv8tion:JDA:3.0.BETA2_108'
@@ -32,4 +32,9 @@ dependencies {
 	//Utils
 	//compile 'com.github.kevinsawicki:http-request:6.0' //let's try Unirest instead, it's included with JDA
 	compile group: 'org.jsoup', name: 'jsoup', version: '1.10.2'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
 }
