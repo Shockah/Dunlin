@@ -3,6 +3,7 @@ package pl.shockah.dunlin;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
@@ -29,7 +30,11 @@ public class ShardManager {
 	}
 
 	private JDABuilder createBuilder() {
-		return new JDABuilder(AccountType.BOT).setToken(app.getConfig().getObject("api").getString("token")).addListener(eventListenerManager);
+		JDABuilder builder = new JDABuilder(AccountType.BOT);
+		builder.setToken(app.getConfig().getObject("api").getString("token"));
+		app.getConfig().getObject("api").onString("game", game -> builder.setGame(Game.of(game)));
+		builder.addListener(eventListenerManager);
+		return builder;
 	}
 
 	public Guild getGuildById(String guildId) {
