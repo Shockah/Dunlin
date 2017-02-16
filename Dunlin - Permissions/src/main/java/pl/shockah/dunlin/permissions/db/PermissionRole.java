@@ -5,7 +5,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Role;
-import pl.shockah.dunlin.InstanceManager;
+import pl.shockah.dunlin.ShardManager;
 import pl.shockah.dunlin.db.DbObject;
 import pl.shockah.dunlin.db.DbObject.TableVersion;
 
@@ -59,7 +59,7 @@ public class PermissionRole extends DbObject<PermissionRole> {
 		this.group = group;
 	}
 	
-	public Role getRole(InstanceManager manager) {
+	public Role getRole(ShardManager manager) {
 		return manager.getGuildById(guildId).getRoleById(roleId);
 	}
 	

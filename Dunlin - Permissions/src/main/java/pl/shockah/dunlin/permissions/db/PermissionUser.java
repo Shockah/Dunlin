@@ -5,7 +5,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.User;
-import pl.shockah.dunlin.InstanceManager;
+import pl.shockah.dunlin.ShardManager;
 import pl.shockah.dunlin.db.DbObject;
 import pl.shockah.dunlin.db.DbObject.TableVersion;
 
@@ -47,7 +47,7 @@ public class PermissionUser extends DbObject<PermissionUser> {
 		this.group = group;
 	}
 	
-	public User getUser(InstanceManager manager) {
+	public User getUser(ShardManager manager) {
 		return manager.getUserById(userId);
 	}
 	

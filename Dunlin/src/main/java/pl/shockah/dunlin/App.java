@@ -29,7 +29,7 @@ public class App {
 	
 	private JSONObject config;
 	private PluginManager pluginManager;
-	private InstanceManager instanceManager;
+	private ShardManager shardManager;
 	private DatabaseManager databaseManager;
 	
 	protected Path getConfigPath() {
@@ -49,14 +49,14 @@ public class App {
 	
 	private void initialize() throws IOException {
 		loadConfig(getConfigPath());
-		instanceManager = new InstanceManager(this);
+		shardManager = new ShardManager(this);
 		pluginManager = new PluginManager(this);
 		databaseManager = new DatabaseManager(this);
 	}
 	
 	private void main() throws LoginException, IllegalArgumentException, RateLimitedException {
 		pluginManager.reload();
-		instanceManager.connect(config.getObject("api").getInt("shards", 1));
+		shardManager.connect();
 	}
 	
 	private void deinitialize() {
@@ -74,8 +74,8 @@ public class App {
 		return pluginManager;
 	}
 	
-	public InstanceManager getInstanceManager() {
-		return instanceManager;
+	public ShardManager getShardManager() {
+		return shardManager;
 	}
 	
 	public DatabaseManager getDatabaseManager() {
