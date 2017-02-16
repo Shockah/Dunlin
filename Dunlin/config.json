@@ -1,0 +1,11 @@
+{
+	"api": {
+		"token": "Discord API bot token"
+	},
+	"database": {
+		"path": "h2:db"
+	},
+	"pl.shockah.dunlin.owner": {
+		"ownerUserId": "1234567890"
+	}
+}
