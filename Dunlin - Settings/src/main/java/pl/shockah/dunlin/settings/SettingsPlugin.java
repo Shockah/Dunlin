@@ -74,16 +74,19 @@ public class SettingsPlugin extends Plugin {
 	}
 	
 	protected JSONObject getSettingsObjectForReading(Scope scope, TextChannel channel, Plugin plugin) {
+		JSONObject settings = null;
 		for (int i = scope.ordinal(); i >= 0; i--) {
 			scope = Scope.values()[i];
-			JSONObject settings = getSettingsObjectForReadingInOneScopeOrNull(scope, channel, plugin);
+			settings = getSettingsObjectForReadingInOneScopeOrNull(scope, channel);
 			if (settings != null)
-				return settings;
+				break;
 		}
-		return null;
+		if (settings == null)
+			settings = new JSONObject();
+		return settings.getObjectOrEmpty(plugin.info.packageName());
 	}
 	
-	protected JSONObject getSettingsObjectForReadingInOneScopeOrNull(Scope scope, TextChannel channel, Plugin plugin) {
+	protected JSONObject getSettingsObjectForReadingInOneScopeOrNull(Scope scope, TextChannel channel) {
 		JSONObject settings = null;
 		if (scope == Scope.Global) {
 			settings = settingsJson.getObject("global", null);
@@ -95,9 +98,7 @@ public class SettingsPlugin extends Plugin {
 				settings = settings.getObjectOrEmpty("channel").getObject(channel.getId(), null);
 			}
 		}
-		if (settings == null)
-			return null;
-		return settings.getObjectOrEmpty(plugin.info.packageName());
+		return settings;
 	}
 	
 	protected JSONObject getSettingsObjectForReadingInOneScope(Scope scope, TextChannel channel, Plugin plugin) {

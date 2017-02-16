@@ -7,6 +7,6 @@ public abstract class NamedCommand<Input, Output> extends Command<Input, Output>
 		String[] joinedNames = new String[altNames.length + 1];
 		System.arraycopy(altNames, 0, joinedNames, 1, altNames.length);
 		joinedNames[0] = name;
-		names = altNames;
+		names = joinedNames;
 	}
 }

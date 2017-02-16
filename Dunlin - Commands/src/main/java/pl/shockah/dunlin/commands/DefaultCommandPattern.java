@@ -7,7 +7,7 @@ import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.util.ReadWriteSet;
 
 public class DefaultCommandPattern extends CommandPattern<NamedCommand<?, ?>> {
-	public static final String PARAMETERIZED_PATTERN = "^[%s](.*?)(?:\\s(.*))$";
+	public static final String PARAMETERIZED_PATTERN = "^[%s](.*?)(?:\\s(.*))?$";
 	
 	final CommandsPlugin plugin;
 	protected final ReadWriteSet<NamedCommandProvider<?, ?>> namedCommandProviders = new ReadWriteSet<>(new LinkedHashSet<>());
@@ -35,15 +35,16 @@ public class DefaultCommandPattern extends CommandPattern<NamedCommand<?, ?>> {
 			Matcher m = Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix)).matcher(content);
 			if (m.find()) {
 				commandName = m.group(1);
-				input = m.group(2);
+				input = m.groupCount() >= 2 ? m.group(2) : "";
 				break;
 			}
 		}
+
+		if (commandName == null)
+			return null;
 		
 		final String f_commandName = commandName;
-		NamedCommand<?, ?> command = namedCommandProviders.firstResult(provider -> {
-			return (NamedCommand<?, ?>)provider.provide(f_commandName);
-		});
+		NamedCommand<?, ?> command = namedCommandProviders.firstResult(provider -> (NamedCommand<?, ?>)provider.provide(f_commandName));
 		return command != null ? new CommandPatternMatch<>(command, input) : null;
 	}
 	

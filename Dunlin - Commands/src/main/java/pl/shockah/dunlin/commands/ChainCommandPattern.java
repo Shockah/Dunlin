@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 import net.dv8tion.jda.core.entities.Message;
 
 public class ChainCommandPattern extends CommandPattern<ChainCommand> {
-	public static final String PARAMETERIZED_PATTERN = "^[%s](.*?)(?:\\s(.*))$";
+	public static final String PARAMETERIZED_PATTERN = "^[%s](.*?)(?:\\s(.*))?$";
 	
 	protected final DefaultCommandPattern defaultCommandPattern;
 	
@@ -34,7 +34,7 @@ public class ChainCommandPattern extends CommandPattern<ChainCommand> {
 			Matcher m = Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix)).matcher(content);
 			if (m.find()) {
 				commandNamesString = m.group(1);
-				input = m.group(2);
+				input = m.groupCount() >= 2 ? m.group(2) : "";
 				break;
 			}
 		}

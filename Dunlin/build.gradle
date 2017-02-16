@@ -21,18 +21,11 @@ dependencies {
 mainClassName = 'pl.shockah.dunlin.App'
 
 task copyPluginsBeforeRun(type: Copy) {
-	def plugins = [
-			"Commands",
-			"Console Output",
-			"Owner",
-			"Permissions",
-			"Settings",
-			"Settings Commands"
-	]
+	delete fileTree(dir: "plugins/.")
 
-	for (def plugin : plugins) {
-		dependsOn project(":Dunlin - ${plugin}").tasks.build
-		from("../Dunlin - ${plugin}/build/libs")
+	for (def subproject : parent.subprojects.findAll{it.name.startsWith('Dunlin - ')}) {
+		dependsOn project(":${subproject.name}").tasks.build
+		from("../${subproject.name}/build/libs")
 	}
 
 	into 'plugins'

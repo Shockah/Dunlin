@@ -11,6 +11,8 @@ import pl.shockah.json.JSONList;
 public class OwnerPlugin extends Plugin {
 	@Dependency
 	private CommandsPlugin commandsPlugin;
+
+	private ReloadCommand reloadCommand;
 	
 	public OwnerPlugin(PluginManager manager, Info info) {
 		super(manager, info);
@@ -30,5 +32,14 @@ public class OwnerPlugin extends Plugin {
 				obj.setGroup(group);
 			});
 		}
+
+		commandsPlugin.registerNamedCommand(
+				reloadCommand = new ReloadCommand(manager)
+		);
+	}
+
+	@Override
+	protected void onUnload() {
+		commandsPlugin.unregisterNamedCommand(reloadCommand);
 	}
 }

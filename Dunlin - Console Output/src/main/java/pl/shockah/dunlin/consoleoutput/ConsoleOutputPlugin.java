@@ -19,13 +19,13 @@ public class ConsoleOutputPlugin extends ListenerPlugin {
 		String rawContent = message.getRawContent();
 		if (!rawContent.isEmpty()) {
 			for (String line : rawContent.split("\\n")) {
-				System.out.println(String.format("%s | %s | <%s#%s> %s",
+				System.out.println(String.format("%s->#%s | <%s#%s> %s",
 					event.getGuild().getName(), event.getChannel().getName(), event.getAuthor().getName(), event.getAuthor().getDiscriminator(), line));
 			}
 		}
 		
 		for (Attachment attachment : message.getAttachments()) {
-			System.out.println(String.format("%s | %s | <%s#%s> Attachment: ",
+			System.out.println(String.format("%s->#%s | <%s#%s> Attachment: ",
 				event.getGuild().getName(), event.getChannel().getName(), event.getAuthor().getName(), event.getAuthor().getDiscriminator(), attachment.getUrl()));
 		}
 	}
@@ -37,13 +37,13 @@ public class ConsoleOutputPlugin extends ListenerPlugin {
 		String rawContent = message.getRawContent();
 		if (!rawContent.isEmpty()) {
 			for (String line : rawContent.split("\\n")) {
-				System.out.println(String.format("%s | %s | * <%s#%s> %s",
+				System.out.println(String.format("%s->#%s | * <%s#%s> %s",
 					event.getGuild().getName(), event.getChannel().getName(), event.getAuthor().getName(), event.getAuthor().getDiscriminator(), line));
 			}
 		}
 		
 		for (Attachment attachment : message.getAttachments()) {
-			System.out.println(String.format("%s | %s | * <%s#%s> Attachment: ",
+			System.out.println(String.format("%s->#%s | * <%s#%s> Attachment: %s",
 				event.getGuild().getName(), event.getChannel().getName(), event.getAuthor().getName(), event.getAuthor().getDiscriminator(), attachment.getUrl()));
 		}
 	}
