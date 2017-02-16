@@ -1,20 +1,4 @@
-plugins {
-	id 'java'
-	id 'com.github.johnrengelman.shadow' version '1.2.4'
-}
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-repositories {
-	jcenter()
-	maven {
-		url 'https://plugins.gradle.org/m2/'
-	}
-	maven {
-		url 'https://jitpack.io'
-	}
-}
+apply plugin: 'application'
 
 dependencies {
 	compile 'com.github.Shockah:pl.shockah.util:1.0'
@@ -34,7 +18,4 @@ dependencies {
 	compile group: 'org.jsoup', name: 'jsoup', version: '1.10.2'
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier = 'sources'
-	from sourceSets.main.allSource
-}
+mainClassName = 'pl.shockah.dunlin.App'

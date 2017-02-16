@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="Dunlin-Dunlin_main" target="1.8" />
+      <module name="Dunlin-Dunlin_test" target="1.8" />
+      <module name="Dunlin_-_Commands_main" target="1.8" />
+      <module name="Dunlin_-_Commands_test" target="1.8" />
+      <module name="Dunlin_-_Console_Output_main" target="1.8" />
+      <module name="Dunlin_-_Console_Output_test" target="1.8" />
+      <module name="Dunlin_-_Owner_main" target="1.8" />
+      <module name="Dunlin_-_Owner_test" target="1.8" />
+      <module name="Dunlin_-_Permissions_main" target="1.8" />
+      <module name="Dunlin_-_Permissions_test" target="1.8" />
+      <module name="Dunlin_-_Settings_Commands_main" target="1.8" />
+      <module name="Dunlin_-_Settings_Commands_test" target="1.8" />
+      <module name="Dunlin_-_Settings_main" target="1.8" />
+      <module name="Dunlin_-_Settings_test" target="1.8" />
+      <module name="Dunlin_main" target="1.8" />
+      <module name="Dunlin_test" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
