@@ -2,6 +2,10 @@
 	"packageName": "pl.shockah.dunlin.settings.commands",
 	"baseClass": "pl.shockah.dunlin.settings.commands.SettingsCommandsPlugin",
 	"enabledByDefault": true,
+	"dependsOn": [
+		"pl.shockah.dunlin.settings",
+		"pl.shockah.dunlin.commands"
+	],
 
 	"name": "Settings Commands",
 	"author": "Shockah",

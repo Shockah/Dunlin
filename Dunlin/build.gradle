@@ -19,3 +19,25 @@ dependencies {
 }
 
 mainClassName = 'pl.shockah.dunlin.App'
+
+task copyPluginsBeforeRun(type: Copy) {
+	def plugins = [
+			"Commands",
+			"Console Output",
+			"Owner",
+			"Permissions",
+			"Settings",
+			"Settings Commands"
+	]
+
+	for (def plugin : plugins) {
+		dependsOn project(":Dunlin - ${plugin}").tasks.build
+		from("../Dunlin - ${plugin}/build/libs")
+	}
+
+	into 'plugins'
+}
+
+run {
+	dependsOn copyPluginsBeforeRun
+}
