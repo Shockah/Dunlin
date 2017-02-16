@@ -40,7 +40,7 @@ public class DatabaseManager implements Closeable {
 	public DatabaseManager(App app) {
 		this.app = app;
 		try {
-			connection = new JdbcConnectionSource("jdbc:" + app.getConfig().getObject("database").getString("databasePath"));
+			connection = new JdbcConnectionSource("jdbc:" + app.getConfig().getObject("database").getString("path"));
 			DataPersisterManager.registerDataPersisters(new PatternPersister());
 			DataPersisterManager.registerDataPersisters(new JSONObjectPersister());
 			DataPersisterManager.registerDataPersisters(new JSONListPersister());
