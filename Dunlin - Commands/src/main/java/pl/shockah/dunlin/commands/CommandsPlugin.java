@@ -1,6 +1,5 @@
 package pl.shockah.dunlin.commands;
 
-import java.util.LinkedHashSet;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import pl.shockah.dunlin.commands.result.CommandResult;
@@ -12,6 +11,7 @@ import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.dunlin.settings.Setting;
 import pl.shockah.dunlin.settings.SettingsPlugin;
 import pl.shockah.util.ReadWriteSet;
+import java.util.LinkedHashSet;
 
 public class CommandsPlugin extends ListenerPlugin {
 	@Dependency
@@ -99,7 +99,7 @@ public class CommandsPlugin extends ListenerPlugin {
 			}
 		});
 	}
-	
+
 	protected void respond(MessageReceivedEvent event, Message response) {
 		event.getChannel().sendMessage(response).queue();
 	}
