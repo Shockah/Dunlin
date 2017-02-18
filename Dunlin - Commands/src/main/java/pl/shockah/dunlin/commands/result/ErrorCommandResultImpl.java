@@ -21,10 +21,12 @@ public class ErrorCommandResultImpl<Output> extends CommandResultImpl<Output> im
 	
 	public static Message messageFromException(Exception e) {
 		//TODO: better implementation
+		String str = e.toString();
+		str = str.substring(0, Math.min(2000, str.length()));
 		return new MessageBuilder().setEmbed(
 			new EmbedBuilder()
 				.setColor(Color.RED)
-				.setDescription(e.toString().substring(0, 2000))
+				.setDescription(str)
 				.build()
 			).build();
 	}

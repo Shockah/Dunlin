@@ -13,6 +13,7 @@ public class OwnerPlugin extends Plugin {
 	private CommandsPlugin commandsPlugin;
 
 	private ReloadCommand reloadCommand;
+	private PingCommand pingCommand;
 	
 	public OwnerPlugin(PluginManager manager, Info info) {
 		super(manager, info);
@@ -36,10 +37,14 @@ public class OwnerPlugin extends Plugin {
 		commandsPlugin.registerNamedCommand(
 				reloadCommand = new ReloadCommand(manager)
 		);
+		commandsPlugin.registerNamedCommand(
+				pingCommand = new PingCommand()
+		);
 	}
 
 	@Override
 	protected void onUnload() {
 		commandsPlugin.unregisterNamedCommand(reloadCommand);
+		commandsPlugin.unregisterNamedCommand(pingCommand);
 	}
 }
