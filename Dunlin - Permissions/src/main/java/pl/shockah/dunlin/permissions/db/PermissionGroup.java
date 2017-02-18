@@ -5,9 +5,12 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.User;
 import pl.shockah.dunlin.db.DbObject;
 import pl.shockah.dunlin.db.DbObject.TableVersion;
 import pl.shockah.dunlin.db.ForeignCollectionWrapper;
+import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.json.JSONList;
 
 @DatabaseTable(tableName = "pl_shockah_dunlin_permissions_db_PermissionGroup")
@@ -58,5 +61,31 @@ public class PermissionGroup extends DbObject<PermissionGroup> {
 	
 	public ForeignCollectionWrapper<PermissionUser> getUsers() {
 		return new ForeignCollectionWrapper<>(users);
+	}
+
+	public boolean hasPermission(Plugin plugin, String permission) {
+		return hasPermission(String.format("%s.%s", plugin.info.packageName(), permission));
+	}
+
+	public boolean hasPermission(String permission) {
+		for (String myPermission : permissions) {
+			String[] spl = myPermission.split("\\.");
+			String[] splArg = permission.split("\\.");
+
+			if (spl.length > splArg.length)
+				return false;
+
+			for (int i = 0; i < spl.length; i++) {
+				String s = spl[i];
+				String arg = splArg[i];
+
+				if (s.equals("*"))
+					return true;
+				if (!s.equals(arg))
+					return false;
+			}
+			return true;
+		}
+		return false;
 	}
 }

@@ -2,6 +2,7 @@ package pl.shockah.dunlin.owner;
 
 import pl.shockah.dunlin.commands.CommandsPlugin;
 import pl.shockah.dunlin.db.DatabaseManager;
+import pl.shockah.dunlin.permissions.PermissionsPlugin;
 import pl.shockah.dunlin.permissions.db.PermissionGroup;
 import pl.shockah.dunlin.permissions.db.PermissionUser;
 import pl.shockah.dunlin.plugin.Plugin;
@@ -10,7 +11,10 @@ import pl.shockah.json.JSONList;
 
 public class OwnerPlugin extends Plugin {
 	@Dependency
-	private CommandsPlugin commandsPlugin;
+	public CommandsPlugin commandsPlugin;
+
+	@Dependency
+	public PermissionsPlugin permissionsPlugin;
 
 	private ReloadCommand reloadCommand;
 	private PingCommand pingCommand;
@@ -35,7 +39,7 @@ public class OwnerPlugin extends Plugin {
 		}
 
 		commandsPlugin.registerNamedCommand(
-				reloadCommand = new ReloadCommand(manager)
+				reloadCommand = new ReloadCommand(this)
 		);
 		commandsPlugin.registerNamedCommand(
 				pingCommand = new PingCommand()
