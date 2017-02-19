@@ -87,7 +87,7 @@ public class SettingsPlugin extends Plugin {
 	}
 	
 	protected JSONObject getSettingsObjectForReadingInOneScopeOrNull(Scope scope, TextChannel channel) {
-		JSONObject settings = null;
+		JSONObject settings;
 		if (scope == Scope.Global) {
 			settings = settingsJson.getObject("global", null);
 		} else {
@@ -102,7 +102,7 @@ public class SettingsPlugin extends Plugin {
 	}
 	
 	protected JSONObject getSettingsObjectForReadingInOneScope(Scope scope, TextChannel channel, Plugin plugin) {
-		JSONObject settings = null;
+		JSONObject settings;
 		if (scope == Scope.Global) {
 			settings = settingsJson.getObjectOrEmpty("global");
 		} else {
@@ -115,7 +115,7 @@ public class SettingsPlugin extends Plugin {
 	}
 	
 	protected JSONObject getSettingsObjectForWriting(Scope scope, TextChannel channel, Plugin plugin) {
-		JSONObject settings = null;
+		JSONObject settings;
 		if (scope == Scope.Global) {
 			settings = settingsJson.getObjectOrNew("global");
 		} else {

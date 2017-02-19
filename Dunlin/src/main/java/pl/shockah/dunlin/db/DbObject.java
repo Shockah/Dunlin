@@ -64,6 +64,6 @@ public class DbObject<T> extends BaseDaoEnabled<T, Integer> {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
 	public static @interface TableVersion {
-		public int value() default 1;
+		int value() default 1;
 	}
 }

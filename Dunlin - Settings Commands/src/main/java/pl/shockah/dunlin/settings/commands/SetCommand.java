@@ -51,14 +51,19 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 			switch (setting.type) {
 				case Bool:
 					value = ArgumentSetParser.parseBoolean(rawValue);
+					break;
 				case Integer:
 					value = new BigInteger(rawValue);
+					break;
 				case Decimal:
 					value = new BigDecimal(rawValue);
+					break;
 				case String:
 					value = rawValue;
+					break;
 				case Enum:
 					value = ArgumentSetParser.parseEnum(((EnumSetting<?>)setting).enumClass, rawValue);
+					break;
 			}
 			
 			return new Input(scope, setting, value);

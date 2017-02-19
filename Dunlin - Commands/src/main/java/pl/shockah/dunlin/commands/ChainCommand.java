@@ -15,7 +15,7 @@ public class ChainCommand extends Command<Object, Object> {
 	
 	@Override
 	public CommandResult<Object> parseInput(Message message, String textInput) {
-		return (CommandResult<Object>)commands[0].parseInput(message, textInput);
+		return commands[0].parseInput(message, textInput);
 	}
 
 	@Override

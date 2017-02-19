@@ -7,7 +7,7 @@ import pl.shockah.util.func.Func0;
 
 public class Lazy<T> extends LazyInitializer<T> {
 	public static <R> Lazy<R> of(Func0<R> func) {
-		return new Lazy<R>(func);
+		return new Lazy<>(func);
 	}
 	
 	protected final Func0<T> func;
@@ -21,12 +21,10 @@ public class Lazy<T> extends LazyInitializer<T> {
 	}
 	
 	public synchronized T get() {
-		T obj = null;
 		try {
-			obj = super.get();
+			return super.get();
 		} catch (Exception e) {
 			throw new UnexpectedException(e);
 		}
-		return obj;
 	}
 }

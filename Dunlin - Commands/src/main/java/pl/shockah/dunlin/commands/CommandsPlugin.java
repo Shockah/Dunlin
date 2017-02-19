@@ -11,6 +11,7 @@ import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.dunlin.settings.Setting;
 import pl.shockah.dunlin.settings.SettingsPlugin;
 import pl.shockah.util.ReadWriteSet;
+
 import java.util.LinkedHashSet;
 
 public class CommandsPlugin extends ListenerPlugin {
