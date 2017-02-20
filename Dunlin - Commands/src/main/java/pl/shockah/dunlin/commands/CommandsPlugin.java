@@ -80,6 +80,9 @@ public class CommandsPlugin extends ListenerPlugin {
 	@Override
 	protected void onMessageReceived(MessageReceivedEvent event) {
 		Message message = event.getMessage();
+		if (message.getAuthor().isBot() || message.getAuthor().isFake())
+			return;
+
 		patterns.iterate((pattern, iterator) -> {
 			if (pattern.matches(message)) {
 				CommandPatternMatch<Command<Object, Object>> commandPatternMatch = (CommandPatternMatch<Command<Object, Object>>)pattern.getCommand(message);
