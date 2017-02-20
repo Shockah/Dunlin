@@ -1,6 +1,7 @@
 package pl.shockah.dunlin.settings.commands;
 
 import pl.shockah.dunlin.commands.CommandsPlugin;
+import pl.shockah.dunlin.permissions.PermissionsPlugin;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.dunlin.settings.SettingsPlugin;
@@ -11,6 +12,9 @@ public class SettingsCommandsPlugin extends Plugin {
 	
 	@Dependency
 	protected CommandsPlugin commandsPlugin;
+
+	@Dependency
+	protected PermissionsPlugin permissionsPlugin;
 	
 	private SetCommand setCommand;
 	private GetCommand getCommand;
@@ -22,7 +26,7 @@ public class SettingsCommandsPlugin extends Plugin {
 	@Override
 	protected void onLoad() {
 		commandsPlugin.registerNamedCommand(
-			setCommand = new SetCommand(settingsPlugin)
+			setCommand = new SetCommand(this)
 		);
 		commandsPlugin.registerNamedCommand(
 			getCommand = new GetCommand(settingsPlugin)

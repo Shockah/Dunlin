@@ -2,12 +2,15 @@ package pl.shockah.dunlin.settings.commands;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.Scope;
 import pl.shockah.dunlin.commands.ArgumentSet;
 import pl.shockah.dunlin.commands.ArgumentSetParser;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.CommandResult;
+import pl.shockah.dunlin.commands.result.ErrorCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
 import pl.shockah.dunlin.settings.EnumSetting;
@@ -15,11 +18,11 @@ import pl.shockah.dunlin.settings.Setting;
 import pl.shockah.dunlin.settings.SettingsPlugin;
 
 public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
-	private final SettingsPlugin settingsPlugin;
+	private final SettingsCommandsPlugin settingsCommandsPlugin;
 	
-	public SetCommand(SettingsPlugin settingsPlugin) {
+	public SetCommand(SettingsCommandsPlugin settingsCommandsPlugin) {
 		super("set");
-		this.settingsPlugin = settingsPlugin;
+		this.settingsCommandsPlugin = settingsCommandsPlugin;
 	}
 	
 	@Override
@@ -30,6 +33,21 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public CommandResult<Setting<?>> execute(Message message, Input input) {
+		if (input.scope == Scope.Global) {
+			if (!settingsCommandsPlugin.permissionsPlugin.hasPermission(message, settingsCommandsPlugin, names[0]))
+				return new ErrorCommandResultImpl<>(this, settingsCommandsPlugin.permissionsPlugin.buildMissingPermissionMessage(settingsCommandsPlugin, names[0]));
+		} else if (input.scope == Scope.Server) {
+			if (!message.getGuild().getMember(message.getAuthor()).hasPermission(Permission.MANAGE_SERVER)) {
+				if (!settingsCommandsPlugin.permissionsPlugin.hasPermission(message, settingsCommandsPlugin, names[0]))
+					return new ErrorCommandResultImpl<>(this, settingsCommandsPlugin.permissionsPlugin.buildMissingPermissionMessage(settingsCommandsPlugin, names[0]));
+			}
+		} else if (input.scope == Scope.Channel) {
+			if (!message.getGuild().getMember(message.getAuthor()).hasPermission(message.getTextChannel(), Permission.MANAGE_CHANNEL)) {
+				if (!settingsCommandsPlugin.permissionsPlugin.hasPermission(message, settingsCommandsPlugin, names[0]))
+					return new ErrorCommandResultImpl<>(this, settingsCommandsPlugin.permissionsPlugin.buildMissingPermissionMessage(settingsCommandsPlugin, names[0]));
+			}
+		}
+
 		((Setting<Object>)input.setting).set(input.value, input.scope, message.getTextChannel());
 		message.addReaction("\uD83D\uDC4C").queue();
 		return new ValueCommandResultImpl<>(this, input.setting);
@@ -58,7 +76,7 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 		}
 
 		public Input toInput(SetCommand command) {
-			Setting<?> setting = command.settingsPlugin.getSettingByName(settingName);
+			Setting<?> setting = command.settingsCommandsPlugin.settingsPlugin.getSettingByName(settingName);
 			Object value = null;
 			
 			switch (setting.type) {
