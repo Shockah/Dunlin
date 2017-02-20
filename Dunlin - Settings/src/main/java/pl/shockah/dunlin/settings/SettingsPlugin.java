@@ -72,59 +72,82 @@ public class SettingsPlugin extends Plugin {
 	public Setting<?> getSettingByName(String name) {
 		return settings.get(name.toLowerCase());
 	}
-	
-	protected JSONObject getSettingsObjectForReading(Scope scope, TextChannel channel, Plugin plugin) {
-		JSONObject settings = null;
+
+	public Object getSettingValue(Scope scope, TextChannel channel, Plugin plugin, String setting) {
+		return getSettingValue(scope, channel, String.format("%s.%s", plugin.info.packageName(), setting));
+	}
+
+	public Object getSettingValue(Scope scope, TextChannel channel, String fullSettingName) {
 		for (int i = scope.ordinal(); i >= 0; i--) {
-			scope = Scope.values()[i];
-			settings = getSettingsObjectForReadingInOneScopeOrNull(scope, channel);
-			if (settings != null)
-				break;
+			Object value = getSettingValueForScope(Scope.values()[i], channel, fullSettingName);
+			if (value != null)
+				return value;
 		}
-		if (settings == null)
-			settings = new JSONObject();
-		return settings.getObjectOrEmpty(plugin.info.packageName());
+		return null;
 	}
-	
-	protected JSONObject getSettingsObjectForReadingInOneScopeOrNull(Scope scope, TextChannel channel) {
-		JSONObject settings;
-		if (scope == Scope.Global) {
-			settings = settingsJson.getObject("global", null);
-		} else {
-			settings = settingsJson.getObjectOrEmpty("server").getObject(channel.getGuild().getId(), null);
-			if (settings == null)
-				return null;
-			if (scope == Scope.Channel) {
-				settings = settings.getObjectOrEmpty("channel").getObject(channel.getId(), null);
-			}
-		}
-		return settings;
+
+	public Object getSettingValueForScope(Scope scope, TextChannel channel, Plugin plugin, String setting) {
+		return getSettingValueForScope(scope, channel, String.format("%s.%s", plugin.info.packageName(), setting));
 	}
-	
-	protected JSONObject getSettingsObjectForReadingInOneScope(Scope scope, TextChannel channel, Plugin plugin) {
-		JSONObject settings;
-		if (scope == Scope.Global) {
-			settings = settingsJson.getObjectOrEmpty("global");
-		} else {
-			settings = settingsJson.getObjectOrEmpty("server").getObjectOrEmpty(channel.getGuild().getId());
-			if (scope == Scope.Channel) {
-				settings = settings.getObjectOrEmpty("channel").getObjectOrEmpty(channel.getId());
-			}
+
+	public Object getSettingValueForScope(Scope scope, TextChannel channel, String fullSettingName) {
+		if (!settingsJson.containsKey(fullSettingName))
+			return null;
+
+		JSONObject settingJson = settingsJson.getObject(fullSettingName);
+
+		switch (scope) {
+			case Channel: {
+				if (channel == null)
+					return null;
+
+				String key = String.format("%s.%s", channel.getGuild().getId(), channel.getId());
+				if (settingJson.containsKey(key))
+					return settingJson.get(key);
+			} break;
+			case Server: {
+				if (channel == null)
+					return null;
+
+				String key = channel.getGuild().getId();
+				if (settingJson.containsKey(key))
+					return settingJson.get(key);
+			} break;
+			case Global: {
+				if (settingJson.containsKey("global"))
+					return settingJson.get("global");
+			} break;
 		}
-		return settings.getObjectOrEmpty(plugin.info.packageName());
+
+		return null;
 	}
-	
-	protected JSONObject getSettingsObjectForWriting(Scope scope, TextChannel channel, Plugin plugin) {
-		JSONObject settings;
-		if (scope == Scope.Global) {
-			settings = settingsJson.getObjectOrNew("global");
-		} else {
-			settings = settingsJson.getObjectOrNew("server").getObjectOrNew(channel.getGuild().getId());
-			if (scope == Scope.Channel) {
-				settings = settings.getObjectOrNew("channel").getObjectOrNew(channel.getId());
-			}
+
+	public void setSettingValueForScope(Scope scope, TextChannel channel, Plugin plugin, String setting, Object value) {
+		setSettingValueForScope(scope, channel, String.format("%s.%s", plugin.info.packageName(), setting), value);
+	}
+
+	public void setSettingValueForScope(Scope scope, TextChannel channel, String fullSettingName, Object value) {
+		JSONObject settingJson = settingsJson.getObjectOrNew(fullSettingName);
+
+		switch (scope) {
+			case Channel: {
+				if (channel == null)
+					throw new IllegalArgumentException("Missing `channel` argument.");
+
+				String key = String.format("%s.%s", channel.getGuild().getId(), channel.getId());
+				settingJson.put(key, value);
+			} break;
+			case Server: {
+				if (channel == null)
+					throw new IllegalArgumentException("Missing `channel` argument.");
+
+				String key = channel.getGuild().getId();
+				settingJson.put(key, value);
+			} break;
+			case Global: {
+				settingJson.put("global", value);
+			} break;
 		}
-		return settings.getObjectOrNew(plugin.info.packageName());
 	}
 	
 	protected synchronized void onSettingChange(Setting<?> setting) {

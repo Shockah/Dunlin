@@ -7,7 +7,7 @@ import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.util.ReadWriteSet;
 
 public class DefaultCommandPattern extends CommandPattern<NamedCommand<?, ?>> {
-	public static final String PARAMETERIZED_PATTERN = "^[%s](.*?)(?:\\s(.*))?$";
+	public static final String PARAMETERIZED_PATTERN = "^[%s]([^\\s]*?)(?:\\s(.*))?$";
 	
 	final CommandsPlugin plugin;
 	protected final ReadWriteSet<NamedCommandProvider<?, ?>> namedCommandProviders = new ReadWriteSet<>(new LinkedHashSet<>());
@@ -20,7 +20,7 @@ public class DefaultCommandPattern extends CommandPattern<NamedCommand<?, ?>> {
 	public boolean matches(Message message) {
 		String content = message.getRawContent();
 		for (String prefix : plugin.prefixesSetting.get(message).split("\\s")) {
-			if (content.matches(String.format(PARAMETERIZED_PATTERN, prefix)))
+			if (Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix), Pattern.DOTALL | Pattern.MULTILINE).matcher(content).find())
 				return true;
 		}
 		return false;
@@ -32,7 +32,7 @@ public class DefaultCommandPattern extends CommandPattern<NamedCommand<?, ?>> {
 		String input = null;
 		String content = message.getRawContent();
 		for (String prefix : plugin.prefixesSetting.get(message).split("\\s")) {
-			Matcher m = Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix)).matcher(content);
+			Matcher m = Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix), Pattern.DOTALL | Pattern.MULTILINE).matcher(content);
 			if (m.find()) {
 				commandName = m.group(1);
 				input = m.groupCount() >= 2 ? m.group(2) : "";

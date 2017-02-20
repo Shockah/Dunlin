@@ -31,19 +31,20 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 					if (m.find()) {
 						String argumentName = m.group(1);
 						
-						Box<Integer> index = new Box<>(i + 1);
+						Box<Integer> index = new Box<>(i + 2);
 						String rawValue = parseRawValue(split, index);
 						i = index.value - 1;
 						
 						ArgumentSetParseProcess.Argument argument = process.nameToArgument.get(argumentName);
-						if (argument == null) {
+						if (argument == null)
 							argumentSet.onUnknownArgument(argumentName, rawValue);
-							continue;
-						}
+						else
+							putArgumentValue(argument, rawValue);
+						continue;
 					}
 					
 					if (process.defaultArgument != null) {
-						Box<Integer> index = new Box<>(i + 1);
+						Box<Integer> index = new Box<>(i + 2);
 						String rawValue = parseRawValue(split, index);
 						putArgumentValue(process.defaultArgument, rawValue);
 						break;
@@ -59,10 +60,9 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 	}
 	
 	protected String parseRawValue(String[] split, Box<Integer> index) {
-		StringBuilder sb = new StringBuilder();
-		String[] copy = Arrays.copyOf(split, split.length);
-		
-		if (copy[index.value].charAt(0) == '"') {
+		if (split[index.value].charAt(0) == '"') {
+			StringBuilder sb = new StringBuilder();
+			String[] copy = Arrays.copyOf(split, split.length);
 			copy[index.value] = copy[index.value].substring(1);
 			
 			while (index.value < copy.length) {
@@ -77,9 +77,11 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 					sb.append(s);
 				}
 			}
+
+			return sb.toString();
+		} else {
+			return split[index.value++];
 		}
-		
-		return sb.toString();
 	}
 	
 	public static boolean parseBoolean(String rawValue) {
@@ -88,7 +90,7 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 		else if (rawValue.equalsIgnoreCase("false") || rawValue.equalsIgnoreCase("f") || rawValue.equalsIgnoreCase("no") || rawValue.equalsIgnoreCase("n"))
 			return false;
 		else
-			throw new IllegalArgumentException(String.format("Cannot parse '%s' as boolean.", rawValue));
+			throw new IllegalArgumentException(String.format("Cannot parse `%s` as boolean.", rawValue));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -111,7 +113,7 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 		} catch (NumberFormatException e2) {
 		}
 		
-		throw new IllegalArgumentException(String.format("Cannot parse '%s' as enum %s.", rawValue, clazz.getSimpleName()));
+		throw new IllegalArgumentException(String.format("Cannot parse `%s` as enum `%s`.", rawValue, clazz.getSimpleName()));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -167,19 +169,20 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 			case Enum: {
 				try {
 					putArgumentValueInternal(argument, parseEnum((Class<? extends Enum<?>>)clazz, rawValue));
+					return;
 				} catch (Exception e) {
 					break;
 				}
-			} break;
+			}
 			default:
 				break;
 		}
-		throw new IllegalArgumentException(String.format("Cannot handle argument %s of type %s.", argument.name, argument.type.name()));
+		throw new IllegalArgumentException(String.format("Cannot handle argument `%s` of type `%s`.", argument.name, argument.type.name()));
 	}
 	
 	private void putArgumentValueInternal(ArgumentSetParseProcess.Argument argument, Object value) {
 		if (!argument.argumentSet.isValueValid(argument.field, value))
-			throw new IllegalArgumentException(String.format("Invalid value for argument %s.", argument.name));
+			throw new IllegalArgumentException(String.format("Invalid value for argument `%s`.", argument.name));
 		argument.put(value);
 	}
 }

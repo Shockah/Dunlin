@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 import net.dv8tion.jda.core.entities.Message;
 
 public class ChainCommandPattern extends CommandPattern<ChainCommand> {
-	public static final String PARAMETERIZED_PATTERN = "^[%s](.*?)(?:\\s(.*))?$";
+	public static final String PARAMETERIZED_PATTERN = "^[%s]([^\\s]*?)(?:\\s(.*))?$";
 	
 	protected final DefaultCommandPattern defaultCommandPattern;
 	
@@ -18,7 +18,7 @@ public class ChainCommandPattern extends CommandPattern<ChainCommand> {
 	public boolean matches(Message message) {
 		String content = message.getRawContent();
 		for (String prefix : defaultCommandPattern.plugin.prefixesSetting.get(message).split("\\s")) {
-			Matcher m = Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix)).matcher(content);
+			Matcher m = Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix), Pattern.DOTALL | Pattern.MULTILINE).matcher(content);
 			if (m.find() && m.group(1).split("\\>").length >= 2)
 				return true;
 		}
@@ -31,7 +31,7 @@ public class ChainCommandPattern extends CommandPattern<ChainCommand> {
 		String input = null;
 		String content = message.getRawContent();
 		for (String prefix : defaultCommandPattern.plugin.prefixesSetting.get(message).split("\\s")) {
-			Matcher m = Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix)).matcher(content);
+			Matcher m = Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix), Pattern.DOTALL | Pattern.MULTILINE).matcher(content);
 			if (m.find()) {
 				commandNamesString = m.group(1);
 				input = m.groupCount() >= 2 ? m.group(2) : "";

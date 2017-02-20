@@ -2,4 +2,5 @@ dependencies {
 	compile project(':Dunlin')
 	compile project(':Dunlin - Commands')
 	compile project(':Dunlin - Permissions')
+	compile project(':Dunlin - Settings')
 }

@@ -4,6 +4,8 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import pl.shockah.dunlin.Scope;
 import pl.shockah.dunlin.plugin.Plugin;
 
+import java.math.BigInteger;
+
 public class EnumSetting<T extends Enum<T>> extends Setting<T> {
 	public final Class<T> enumClass;
 	
@@ -14,12 +16,13 @@ public class EnumSetting<T extends Enum<T>> extends Setting<T> {
 	
 	@Override
 	public T get(Scope scope, TextChannel channel) {
-		return Enum.valueOf(enumClass, getSettingsObjectForReading(scope, channel).getString(getFullName()));
+		Object raw = getRaw(scope, channel);
+		return raw != null ? Enum.valueOf(enumClass, (String)raw) : defaultValue;
 	}
 	
 	@Override
 	public void set(T value, Scope scope, TextChannel channel) {
-		settingsPlugin.getSettingsObjectForWriting(scope, channel, plugin).put(name, value.name());
+		settingsPlugin.setSettingValueForScope(scope, channel, plugin, name, value.name());
 		settingsPlugin.onSettingChange(this);
 	}
 }

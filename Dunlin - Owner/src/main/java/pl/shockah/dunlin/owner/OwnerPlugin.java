@@ -7,6 +7,8 @@ import pl.shockah.dunlin.permissions.db.PermissionGroup;
 import pl.shockah.dunlin.permissions.db.PermissionUser;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
+import pl.shockah.dunlin.settings.Setting;
+import pl.shockah.dunlin.settings.SettingsPlugin;
 import pl.shockah.json.JSONList;
 
 public class OwnerPlugin extends Plugin {
@@ -16,8 +18,14 @@ public class OwnerPlugin extends Plugin {
 	@Dependency
 	public PermissionsPlugin permissionsPlugin;
 
+	@Dependency
+	public SettingsPlugin settingsPlugin;
+
 	private ReloadCommand reloadCommand;
 	private PingCommand pingCommand;
+	private AnnounceCommand announceCommand;
+
+	protected Setting<String> announceChannelSetting;
 	
 	public OwnerPlugin(PluginManager manager, Info info) {
 		super(manager, info);
@@ -44,11 +52,21 @@ public class OwnerPlugin extends Plugin {
 		commandsPlugin.registerNamedCommand(
 				pingCommand = new PingCommand()
 		);
+		commandsPlugin.registerNamedCommand(
+				announceCommand = new AnnounceCommand(this)
+		);
+
+		settingsPlugin.register(
+				announceChannelSetting = Setting.ofString(settingsPlugin, this, "announceChannel", ".")
+		);
 	}
 
 	@Override
 	protected void onUnload() {
 		commandsPlugin.unregisterNamedCommand(reloadCommand);
 		commandsPlugin.unregisterNamedCommand(pingCommand);
+		commandsPlugin.unregisterNamedCommand(announceCommand);
+
+		settingsPlugin.unregister(announceChannelSetting);
 	}
 }

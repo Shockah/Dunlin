@@ -23,37 +23,23 @@ public class Setting<T> {
 	}
 	
 	public static Setting<Boolean> ofBool(SettingsPlugin settingsPlugin, Plugin plugin, String name, boolean defaultValue) {
-		return new Setting<Boolean>(settingsPlugin, Type.Bool, plugin, name, defaultValue){
-			@Override
-			public Boolean get(Scope scope, TextChannel channel) {
-				return getSettingsObjectForReading(scope, channel).getBool(getFullName(), defaultValue);
-			}
-		};
+		return new Setting<>(settingsPlugin, Type.Bool, plugin, name, defaultValue);
 	}
 	
 	public static Setting<String> ofString(SettingsPlugin settingsPlugin, Plugin plugin, String name, String defaultValue) {
-		return new Setting<String>(settingsPlugin, Type.String, plugin, name, defaultValue){
-			@Override
-			public String get(Scope scope, TextChannel channel) {
-				return getSettingsObjectForReading(scope, channel).getString(getFullName(), defaultValue);
-			}
-		};
+		return new Setting<>(settingsPlugin, Type.String, plugin, name, defaultValue);
 	}
 	
 	public static Setting<BigInteger> ofBigInt(SettingsPlugin settingsPlugin, Plugin plugin, String name, BigInteger defaultValue) {
-		return new Setting<BigInteger>(settingsPlugin, Type.Integer, plugin, name, defaultValue){
-			@Override
-			public BigInteger get(Scope scope, TextChannel channel) {
-				return getSettingsObjectForReading(scope, channel).getBigInt(getFullName(), defaultValue);
-			}
-		};
+		return new Setting<>(settingsPlugin, Type.Integer, plugin, name, defaultValue);
 	}
 	
 	public static Setting<Integer> ofInt(SettingsPlugin settingsPlugin, Plugin plugin, String name, int defaultValue) {
 		return new Setting<Integer>(settingsPlugin, Type.Integer, plugin, name, defaultValue){
 			@Override
 			public Integer get(Scope scope, TextChannel channel) {
-				return getSettingsObjectForReading(scope, channel).getInt(getFullName(), defaultValue);
+				Object raw = getRaw(scope, channel);
+				return raw != null ? ((BigInteger)raw).intValueExact() : defaultValue;
 			}
 		};
 	}
@@ -62,7 +48,8 @@ public class Setting<T> {
 		return new Setting<Long>(settingsPlugin, Type.Integer, plugin, name, defaultValue){
 			@Override
 			public Long get(Scope scope, TextChannel channel) {
-				return getSettingsObjectForReading(scope, channel).getLong(getFullName(), defaultValue);
+				Object raw = getRaw(scope, channel);
+				return raw != null ? ((BigInteger)raw).longValueExact() : defaultValue;
 			}
 		};
 	}
@@ -93,15 +80,17 @@ public class Setting<T> {
 	
 	@SuppressWarnings("unchecked")
 	public T get(Scope scope, TextChannel channel) {
-		return (T)getSettingsObjectForReading(scope, channel).get(getFullName());
+		Object raw = getRaw(scope, channel);
+		return raw != null ? (T)raw : defaultValue;
 	}
-	
-	protected JSONObject getSettingsObjectForReading(Scope scope, TextChannel channel) {
-		return settingsPlugin.getSettingsObjectForReading(scope, channel, plugin);
+
+	@SuppressWarnings("unchecked")
+	protected Object getRaw(Scope scope, TextChannel channel) {
+		return settingsPlugin.getSettingValue(scope, channel, plugin, name);
 	}
 	
 	public void set(T value, Scope scope, TextChannel channel) {
-		settingsPlugin.getSettingsObjectForWriting(scope, channel, plugin).put(name, (Boolean)value);
+		settingsPlugin.setSettingValueForScope(scope, channel, plugin, name, value);
 		settingsPlugin.onSettingChange(this);
 	}
 	

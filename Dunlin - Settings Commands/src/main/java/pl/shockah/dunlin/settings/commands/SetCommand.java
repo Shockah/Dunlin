@@ -31,9 +31,15 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 	@Override
 	public CommandResult<Setting<?>> execute(Message message, Input input) {
 		((Setting<Object>)input.setting).set(input.value, input.scope, message.getTextChannel());
+		message.addReaction("\uD83D\uDC4C").queue();
 		return new ValueCommandResultImpl<>(this, input.setting);
 	}
-	
+
+	@Override
+	public Message formatOutput(Setting<?> setting) {
+		return null;
+	}
+
 	public static final class Arguments extends ArgumentSet {
 		@Argument
 		public Scope scope = Scope.Server;
@@ -43,7 +49,14 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 		
 		@Argument("value")
 		public String rawValue;
-		
+
+		@Override
+		public void finalValidation() {
+			//TODO: reset setting for null values instead
+			if (rawValue == null)
+				throw new IllegalArgumentException("Missing `value` argument.");
+		}
+
 		public Input toInput(SetCommand command) {
 			Setting<?> setting = command.settingsPlugin.getSettingByName(settingName);
 			Object value = null;

@@ -1,5 +1,9 @@
 package pl.shockah.dunlin.commands;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 
 public abstract class ArgumentSet {
@@ -16,7 +20,9 @@ public abstract class ArgumentSet {
 	
 	public void finalValidation() {
 	}
-	
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
 	public static @interface Argument {
 		String value() default "";
 		boolean isDefault() default false;
