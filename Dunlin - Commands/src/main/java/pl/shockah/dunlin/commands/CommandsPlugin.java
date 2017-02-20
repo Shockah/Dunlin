@@ -102,6 +102,7 @@ public class CommandsPlugin extends ListenerPlugin {
 	}
 
 	protected void respond(MessageReceivedEvent event, Message response) {
-		event.getChannel().sendMessage(response).queue();
+		if (response != null)
+			event.getChannel().sendMessage(response).queue();
 	}
 }

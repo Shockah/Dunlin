@@ -20,7 +20,7 @@ dependencies {
 
 mainClassName = 'pl.shockah.dunlin.App'
 
-task copyPluginsBeforeRun(type: Copy) {
+task copyPlugins(type: Copy) {
 	delete fileTree(dir: "run/plugins/.")
 
 	for (def subproject : parent.subprojects.findAll{it.name.startsWith('Dunlin - ')}) {
@@ -32,6 +32,6 @@ task copyPluginsBeforeRun(type: Copy) {
 }
 
 run {
-	dependsOn copyPluginsBeforeRun
+	dependsOn copyPlugins
 	workingDir 'run'
 }

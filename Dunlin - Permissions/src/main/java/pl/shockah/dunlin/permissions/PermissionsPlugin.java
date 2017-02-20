@@ -1,6 +1,8 @@
 package pl.shockah.dunlin.permissions;
 
 import com.j256.ormlite.stmt.QueryBuilder;
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
@@ -12,10 +14,13 @@ import pl.shockah.dunlin.permissions.db.PermissionUser;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PermissionsPlugin extends Plugin {
+	public static final Color MISSING_PERMISSION_EMBED_COLOR = new Color(1.0f, 0.35f, 0.35f);
+
 	public PermissionsPlugin(PluginManager manager, Info info) {
 		super(manager, info);
 	}
@@ -89,6 +94,18 @@ public class PermissionsPlugin extends Plugin {
 
 	public String getMissingPermissionMessage(String permission) {
 		return String.format("Missing permission: `%s`.", permission);
+	}
+
+	public Message buildMissingPermissionMessage(Plugin plugin, String permission) {
+		return buildMissingPermissionMessage(String.format("%s.%s", plugin.info.packageName(), permission));
+	}
+
+	public Message buildMissingPermissionMessage(String permission) {
+		return new MessageBuilder().setEmbed(new EmbedBuilder()
+				.setColor(MISSING_PERMISSION_EMBED_COLOR)
+				.setDescription(getMissingPermissionMessage(permission))
+				.build())
+		.build();
 	}
 
 	public boolean hasPermission(User user, Plugin plugin, String permission) {
