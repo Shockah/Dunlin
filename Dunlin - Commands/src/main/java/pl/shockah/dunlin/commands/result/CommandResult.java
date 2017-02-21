@@ -6,5 +6,5 @@ import pl.shockah.dunlin.commands.Command;
 public interface CommandResult<Output> {
 	Command<?, Output> getCommand();
 	
-	Message getMessage();
+	Message getMessage(Message message, Object input);
 }

@@ -9,6 +9,10 @@ public abstract class Command<Input, Output> {
 	
 	public abstract CommandResult<Output> execute(Message message, Input input);
 	
+	public Message formatOutput(Message message, Input input, Output output) {
+		return formatOutput(output);
+	}
+
 	public Message formatOutput(Output output) {
 		return new MessageBuilder().append(output.toString()).build();
 	}

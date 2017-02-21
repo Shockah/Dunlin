@@ -13,7 +13,7 @@ public class ParseCommandResultImpl<Output> extends CommandResultImpl<Output> im
 	}
 
 	@Override
-	public Message getMessage() {
+	public Message getMessage(Message message, Object input) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -16,8 +16,9 @@ public class ValueCommandResultImpl<Output> extends CommandResultImpl<Output> im
 	}
 
 	@Override
-	public Message getMessage() {
-		return command.formatOutput(value);
+	@SuppressWarnings("unchecked")
+	public Message getMessage(Message message, Object input) {
+		return ((Command<Object, Output>)command).formatOutput(message, input, value);
 	}
 
 	@Override

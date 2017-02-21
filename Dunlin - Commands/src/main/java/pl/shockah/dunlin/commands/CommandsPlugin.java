@@ -90,10 +90,11 @@ public class CommandsPlugin extends ListenerPlugin {
 					try {
 						CommandResult<Object> input = commandPatternMatch.command.parseInput(message, commandPatternMatch.textInput);
 						if (input instanceof ErrorCommandResult<?>) {
-							respond(event, input.getMessage());
+							respond(event, input.getMessage(message, null));
 						} else if (input instanceof ParseCommandResult<?>) {
-							CommandResult<Object> output = commandPatternMatch.command.execute(message, ((ParseCommandResult<?>)input).get());
-							respond(event, output.getMessage());
+							ParseCommandResult<?> parseCommandResult = (ParseCommandResult<?>)input;
+							CommandResult<Object> output = commandPatternMatch.command.execute(message, parseCommandResult.get());
+							respond(event, output.getMessage(message, parseCommandResult.get()));
 						}
 					} catch (Exception e) {
 						respond(event, ErrorCommandResultImpl.messageFromException(e));

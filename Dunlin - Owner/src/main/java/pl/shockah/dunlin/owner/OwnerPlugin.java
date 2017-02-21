@@ -24,6 +24,7 @@ public class OwnerPlugin extends Plugin {
 	private ReloadCommand reloadCommand;
 	private PingCommand pingCommand;
 	private AnnounceCommand announceCommand;
+	private StatusCommand statusCommand;
 
 	protected Setting<String> announceChannelSetting;
 	
@@ -55,6 +56,9 @@ public class OwnerPlugin extends Plugin {
 		commandsPlugin.registerNamedCommand(
 				announceCommand = new AnnounceCommand(this)
 		);
+		commandsPlugin.registerNamedCommand(
+				statusCommand = new StatusCommand(this)
+		);
 
 		settingsPlugin.register(
 				announceChannelSetting = Setting.ofString(settingsPlugin, this, "announceChannel", ".")
@@ -66,6 +70,7 @@ public class OwnerPlugin extends Plugin {
 		commandsPlugin.unregisterNamedCommand(reloadCommand);
 		commandsPlugin.unregisterNamedCommand(pingCommand);
 		commandsPlugin.unregisterNamedCommand(announceCommand);
+		commandsPlugin.unregisterNamedCommand(statusCommand);
 
 		settingsPlugin.unregister(announceChannelSetting);
 	}
