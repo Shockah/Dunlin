@@ -4,16 +4,14 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.SelfUser;
+import net.dv8tion.jda.core.entities.*;
 import pl.shockah.dunlin.ShardManager;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
 
+import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,71 +42,51 @@ public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
 
         output.textChannels = (int)Arrays.stream(shardManager.shards)
                 .map(JDA::getTextChannels)
-                .flatMap(List::stream)
-                .count();
+                .mapToLong(List::size)
+                .sum();
 
         output.voiceChannels = (int)Arrays.stream(shardManager.shards)
                 .map(JDA::getVoiceChannels)
-                .flatMap(List::stream)
-                .count();
+                .mapToLong(List::size)
+                .sum();
 
-        output.users = (int)Arrays.stream(shardManager.shards)
+        List<User> allUsersAndBots = Arrays.stream(shardManager.shards)
                 .map(JDA::getUsers)
                 .flatMap(List::stream)
+                .collect(Collectors.toList());
+        List<User> allUsers = allUsersAndBots.stream()
                 .filter(user -> !user.isBot())
-                .count();
-
-        output.uniqueUsers = (int)Arrays.stream(shardManager.shards)
-                .map(JDA::getUsers)
-                .flatMap(List::stream)
-                .filter(user -> !user.isBot())
-                .distinct()
-                .count();
-
-        output.bots = (int)Arrays.stream(shardManager.shards)
-                .map(JDA::getUsers)
-                .flatMap(List::stream)
+                .collect(Collectors.toList());
+        List<User> allBots = allUsersAndBots.stream()
                 .filter(user -> user.isBot())
-                .count();
+                .collect(Collectors.toList());
 
-        output.uniqueBots = (int)Arrays.stream(shardManager.shards)
-                .map(JDA::getUsers)
-                .flatMap(List::stream)
-                .filter(user -> user.isBot())
-                .distinct()
-                .count();
+        output.users = allUsers.size();
+        output.bots = allBots.size();
+        output.uniqueUsers = (int)allUsers.stream().distinct().count();
+        output.uniqueBots = (int)allBots.stream().distinct().count();
 
-        output.onlineUsers = (int)allGuilds.stream()
+        List<Member> allOnlineMembers = allGuilds.stream()
                 .map(Guild::getMembers)
                 .flatMap(List::stream)
+                .filter(member -> member.getOnlineStatus() != OnlineStatus.OFFLINE)
+                .collect(Collectors.toList());
+        List<Member> allOnlineUserMembers = allOnlineMembers.stream()
                 .filter(member -> !member.getUser().isBot())
-                .filter(member -> member.getOnlineStatus() != OnlineStatus.OFFLINE)
-                .count();
-
-        output.onlineBots = (int)allGuilds.stream()
-                .map(Guild::getMembers)
-                .flatMap(List::stream)
+                .collect(Collectors.toList());
+        List<Member> allOnlineBotMembers = allOnlineMembers.stream()
                 .filter(member -> member.getUser().isBot())
-                .filter(member -> member.getOnlineStatus() != OnlineStatus.OFFLINE)
-                .count();
+                .collect(Collectors.toList());
 
-        output.uniqueOnlineUsers = (int)allGuilds.stream()
-                .map(Guild::getMembers)
-                .flatMap(List::stream)
-                .filter(member -> !member.getUser().isBot())
-                .filter(member -> member.getOnlineStatus() != OnlineStatus.OFFLINE)
-                .map(Member::getUser)
-                .distinct()
-                .count();
+        output.onlineUsers = allOnlineUserMembers.size();
+        output.onlineBots = allOnlineBotMembers.size();
+        output.uniqueOnlineUsers = (int)allOnlineUserMembers.stream().distinct().count();
+        output.uniqueOnlineBots = (int)allOnlineBotMembers.stream().distinct().count();
 
-        output.uniqueOnlineBots = (int)allGuilds.stream()
-                .map(Guild::getMembers)
-                .flatMap(List::stream)
-                .filter(member -> member.getUser().isBot())
-                .filter(member -> member.getOnlineStatus() != OnlineStatus.OFFLINE)
-                .map(Member::getUser)
-                .distinct()
-                .count();
+        output.totalMemory = Runtime.getRuntime().totalMemory();
+        output.usedMemory = output.totalMemory - Runtime.getRuntime().freeMemory();
+
+        output.cpuLoad = ((com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean()).getProcessCpuLoad();
 
         return new ValueCommandResultImpl<>(this, output);
     }
@@ -127,6 +105,8 @@ public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
                                 output.onlineUsers, output.onlineBots,
                                 output.uniqueOnlineUsers, output.uniqueOnlineBots),
                         true)
+                .addField("Memory", String.format("%.1f/%.1f MB", output.usedMemory / 1024.0 / 1024.0, output.totalMemory / 1024.0 / 1024.0), true)
+                .addField("CPU", String.format("%.1f%%", output.cpuLoad * 100.0), true)
                 .build()).build();
     }
 
@@ -145,5 +125,10 @@ public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
         public int uniqueBots;
         public int onlineBots;
         public int uniqueOnlineBots;
+
+        public long usedMemory;
+        public long totalMemory;
+
+        public double cpuLoad;
     }
 }
