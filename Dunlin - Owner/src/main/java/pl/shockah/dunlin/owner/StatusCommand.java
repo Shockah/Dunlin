@@ -34,11 +34,14 @@ public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
         Output output = new Output();
         ShardManager shardManager = ownerPlugin.manager.app.getShardManager();
 
+        output.totalShards = shardManager.shards.length;
+        output.connectedShards = (int)Arrays.stream(shardManager.shards).filter(jda -> jda.getStatus() == JDA.Status.CONNECTED).count();
+
         List<Guild> allGuilds = Arrays.stream(shardManager.shards)
                 .map(JDA::getGuilds)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
-        output.servers = allGuilds.size();
+        output.guilds = allGuilds.size();
 
         output.textChannels = (int)Arrays.stream(shardManager.shards)
                 .map(JDA::getTextChannels)
@@ -96,10 +99,10 @@ public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
         SelfUser selfUser = message.getJDA().getSelfUser();
         return new MessageBuilder().setEmbed(new EmbedBuilder()
                 .setAuthor(selfUser.getName(), null, selfUser.getEffectiveAvatarUrl())
-                .addField("Servers", String.valueOf(output.servers), true)
-                .addField("Channels", String.format("Text: %d\nVoice: %d", output.textChannels, output.voiceChannels), true)
+                .addField("Servers", String.format("**Shards:** %d/%d\n**Guilds:** %d", output.connectedShards, output.totalShards, output.guilds), true)
+                .addField("Channels", String.format("**Text:** %d\n**Voice:** %d", output.textChannels, output.voiceChannels), true)
                 .addField("Users (+ bots)",
-                        String.format("All: %d + %d\nUnique: %d + %d\nOnline: %d + %d\nUnique online: %d + %d",
+                        String.format("**All:** %d + %d\n**Unique:** %d + %d\n**Online:** %d + %d\n**Unique online:** %d + %d",
                                 output.users, output.bots,
                                 output.uniqueUsers, output.uniqueBots,
                                 output.onlineUsers, output.onlineBots,
@@ -111,7 +114,9 @@ public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
     }
 
     public static final class Output {
-        public int servers;
+    	public int connectedShards;
+    	public int totalShards;
+        public int guilds;
 
         public int textChannels;
         public int voiceChannels;
