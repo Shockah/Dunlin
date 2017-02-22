@@ -105,10 +105,10 @@ public class UserCommand extends NamedCommand<User, User> {
 			embedBuilder.addField("Nickname", member.getNickname(), true);
 		embedBuilder.addField("ID", output.getId(), true);
 		if (member != null)
-			embedBuilder.addField("Joined", TimeDuration.format(Date.from(member.getJoinDate().toInstant())), true);
+			embedBuilder.addField("Joined", String.format("%s ago", TimeDuration.format(Date.from(member.getJoinDate().toInstant()))), true);
 
 		if (member != null && !member.getRoles().isEmpty())
-			embedBuilder.addField("Roles", member.getRoles().stream().map(Role::getName).collect(Collectors.joining(", ")), false);
+			embedBuilder.addField("Roles", member.getRoles().stream().map(Role::getAsMention).collect(Collectors.joining(", ")), false);
 
 		return new MessageBuilder().setEmbed(embedBuilder.build()).build();
 	}
