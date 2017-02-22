@@ -18,7 +18,7 @@ public class ErrorCommandResultImpl<Output> extends CommandResultImpl<Output> im
 
 	@Override
 	public Message getMessage(Message message, Object input) {
-		return message;
+		return this.message;
 	}
 	
 	public static Message messageFromException(Exception e) {
