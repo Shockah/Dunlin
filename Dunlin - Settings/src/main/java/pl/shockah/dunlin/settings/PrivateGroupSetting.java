@@ -3,10 +3,10 @@ package pl.shockah.dunlin.settings;
 import net.dv8tion.jda.core.entities.TextChannel;
 import pl.shockah.dunlin.Scope;
 
-public class PrivateSetting<T> extends Setting<T> {
-	protected final Setting<T> baseSetting;
+public class PrivateGroupSetting<T> extends GroupSetting<T> {
+	protected final GroupSetting<T> baseSetting;
 	
-	public PrivateSetting(Setting<T> setting) {
+	public PrivateGroupSetting(GroupSetting<T> setting) {
 		super(setting.settingsPlugin, setting.type, setting.plugin, setting.name, setting.defaultValue);
 		baseSetting = setting;
 	}

@@ -4,12 +4,10 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import pl.shockah.dunlin.Scope;
 import pl.shockah.dunlin.plugin.Plugin;
 
-import java.math.BigInteger;
-
-public class EnumSetting<T extends Enum<T>> extends Setting<T> {
+public class EnumGroupSetting<T extends Enum<T>> extends GroupSetting<T> {
 	public final Class<T> enumClass;
 	
-	public EnumSetting(SettingsPlugin settingsPlugin, Class<T> enumClass, Plugin plugin, String name, T defaultValue) {
+	public EnumGroupSetting(SettingsPlugin settingsPlugin, Class<T> enumClass, Plugin plugin, String name, T defaultValue) {
 		super(settingsPlugin, Type.Enum, plugin, name, defaultValue);
 		this.enumClass = enumClass;
 	}

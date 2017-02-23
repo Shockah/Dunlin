@@ -10,8 +10,10 @@ import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
+import pl.shockah.dunlin.settings.GroupSetting;
 import pl.shockah.dunlin.settings.Setting;
 import pl.shockah.dunlin.settings.SettingsPlugin;
+import pl.shockah.dunlin.settings.UserSetting;
 
 public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output> {
 	private final SettingsPlugin settingsPlugin;
@@ -32,11 +34,19 @@ public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output
 	}
 
 	@Override
-	public Message formatOutput(Output output) {
-		return new MessageBuilder().setEmbed(new EmbedBuilder()
-				.setTitle(String.format("%s in scope %s", output.setting.getFullName(), output.scope.name()), null)
-				.setDescription(String.valueOf(output.value))
-		.build()).build();
+	public Message formatOutput(Message message, Input input, Output output) {
+		EmbedBuilder embedBuilder = new EmbedBuilder();
+
+		if (output.setting instanceof GroupSetting<?>)
+			embedBuilder.setTitle(String.format("%s in scope %s", output.setting.getFullName(), output.scope.name()), null);
+		else if (output.setting instanceof UserSetting<?>)
+			embedBuilder.setTitle(String.format("%s for user %s#%s", output.setting.getFullName(), message.getAuthor().getName(), message.getAuthor().getDiscriminator()), null);
+		else
+			throw new IllegalArgumentException(String.format("Cannot handle setting type %s.", output.setting.getClass().getName()));
+
+		embedBuilder.setDescription(String.valueOf(output.value));
+
+		return new MessageBuilder().setEmbed(embedBuilder.build()).build();
 	}
 
 	public static final class Arguments extends ArgumentSet {
@@ -62,7 +72,14 @@ public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output
 		}
 
 		public Output getOutput(Message message) {
-			return new Output(scope, setting, setting.get(scope, message.getTextChannel()));
+			Object value = null;
+			if (setting instanceof GroupSetting<?>)
+				value = ((GroupSetting<?>)setting).get(scope, message.getTextChannel());
+			else if (setting instanceof UserSetting<?>)
+				value = ((UserSetting<?>)setting).get(message.getAuthor());
+			else
+				throw new IllegalArgumentException(String.format("Cannot handle setting type %s.", setting.getClass().getName()));
+			return new Output(scope, setting, value);
 		}
 	}
 
