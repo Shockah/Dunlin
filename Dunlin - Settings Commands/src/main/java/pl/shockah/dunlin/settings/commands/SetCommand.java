@@ -13,9 +13,10 @@ import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ErrorCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
-import pl.shockah.dunlin.settings.EnumSetting;
+import pl.shockah.dunlin.settings.EnumGroupSetting;
+import pl.shockah.dunlin.settings.GroupSetting;
 import pl.shockah.dunlin.settings.Setting;
-import pl.shockah.dunlin.settings.SettingsPlugin;
+import pl.shockah.dunlin.settings.UserSetting;
 
 public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 	private final SettingsCommandsPlugin settingsCommandsPlugin;
@@ -48,7 +49,13 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 			}
 		}
 
-		((Setting<Object>)input.setting).set(input.value, input.scope, message.getTextChannel());
+		if (input.setting instanceof GroupSetting<?>)
+			((GroupSetting<Object>)input.setting).set(input.value, input.scope, message.getTextChannel());
+		else if (input.setting instanceof UserSetting<?>)
+			((UserSetting<Object>)input.setting).set(input.value, message.getAuthor());
+		else
+			throw new IllegalArgumentException(String.format("Cannot handle setting type %s.", input.setting.getClass().getName()));
+
 		message.addReaction("\uD83D\uDC4C").queue();
 		return new ValueCommandResultImpl<>(this, input.setting);
 	}
@@ -93,7 +100,7 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 					value = rawValue;
 					break;
 				case Enum:
-					value = ArgumentSetParser.parseEnum(((EnumSetting<?>)setting).enumClass, rawValue);
+					value = ArgumentSetParser.parseEnum(((EnumGroupSetting<?>)setting).enumClass, rawValue);
 					break;
 			}
 			

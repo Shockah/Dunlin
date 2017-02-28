@@ -10,6 +10,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 import pl.shockah.dunlin.Scope;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
@@ -58,15 +59,15 @@ public class SettingsPlugin extends Plugin {
 	}
 	
 	public void register(Setting<?> setting) {
-		settings.put(String.format("%s.%s", setting.plugin.info.packageName(), setting.name).toLowerCase(), setting);
+		settings.put(setting.getFullName().toLowerCase(), setting);
 	}
 	
 	public void unregister(Setting<?> setting) {
-		settings.remove(String.format("%s.%s", setting.plugin.info.packageName(), setting.name).toLowerCase());
+		settings.remove(setting.getFullName().toLowerCase());
 	}
 	
 	public Setting<?> getSetting(Plugin plugin, String name) {
-		return settings.get(String.format("%s.%s", plugin.info.packageName(), name).toLowerCase());
+		return getSettingByName(String.format("%s.%s", plugin.info.packageName(), name));
 	}
 	
 	public Setting<?> getSettingByName(String name) {
@@ -148,6 +149,22 @@ public class SettingsPlugin extends Plugin {
 				settingJson.put("global", value);
 			} break;
 		}
+	}
+
+	public Object getUserSettingValue(User user, Plugin plugin, String setting) {
+		return getUserSettingValue(user, String.format("%s.%s", plugin.info.packageName(), setting));
+	}
+
+	public Object getUserSettingValue(User user, String fullSettingName) {
+		return settingsJson.getObjectOrEmpty(fullSettingName).getOrDefault(user.getId(), null);
+	}
+
+	public void setUserSettingValue(User user, Plugin plugin, String setting, Object value) {
+		setUserSettingValue(user, String.format("%s.%s", plugin.info.packageName(), setting), value);
+	}
+
+	public void setUserSettingValue(User user, String fullSettingName, Object value) {
+		settingsJson.getObjectOrNew(fullSettingName).put(user.getId(), value);
 	}
 	
 	protected synchronized void onSettingChange(Setting<?> setting) {
