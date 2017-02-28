@@ -41,12 +41,12 @@ public abstract class MessageMedium {
 		
 		@Override
 		public void sendMessage(String message) {
-			user.getPrivateChannel().sendMessage(message).queue();
+			user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue());
 		}
 		
 		@Override
 		public void sendMessage(Message message) {
-			user.getPrivateChannel().sendMessage(message).queue();
+			user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue());
 		}
 
 		@Override

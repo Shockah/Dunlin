@@ -47,10 +47,10 @@ public class ConsoleOutputPlugin extends ListenerPlugin {
 			System.out.println(String.format("%s->#%s |%s<%s#%s> Embed:",
 					guild.getName(), channel.getName(), edit ? " * " : " ", message.getAuthor().getName(), message.getAuthor().getDiscriminator()));
 
-			if (!StringUtils.isEmpty(embed.getTitle()))
-				System.out.println(String.format("\tTitle: %s", embed.getTitle()));
 			if (embed.getAuthor() != null)
 				System.out.println(String.format("\tAuthor: %s", embed.getAuthor().getName()));
+			if (!StringUtils.isEmpty(embed.getTitle()))
+				System.out.println(String.format("\tTitle: %s", embed.getTitle()));
 
 			for (MessageEmbed.Field field : embed.getFields()) {
 				System.out.println(String.format("\t%s: %s", field.getName(), field.getValue()));
