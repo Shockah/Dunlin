@@ -14,6 +14,7 @@ import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
 import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
@@ -53,9 +54,10 @@ public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
                 .mapToLong(List::size)
                 .sum();
 
-        List<User> allUsersAndBots = Arrays.stream(shardManager.shards)
-                .map(JDA::getUsers)
+        List<User> allUsersAndBots = allGuilds.stream()
+                .map(Guild::getMembers)
                 .flatMap(List::stream)
+                .map(Member::getUser)
                 .collect(Collectors.toList());
         List<User> allUsers = allUsersAndBots.stream()
                 .filter(user -> !user.isBot())
@@ -83,8 +85,8 @@ public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
 
         output.onlineUsers = allOnlineUserMembers.size();
         output.onlineBots = allOnlineBotMembers.size();
-        output.uniqueOnlineUsers = (int)allOnlineUserMembers.stream().distinct().count();
-        output.uniqueOnlineBots = (int)allOnlineBotMembers.stream().distinct().count();
+        output.uniqueOnlineUsers = (int)allOnlineUserMembers.stream().map(Member::getUser).distinct().count();
+        output.uniqueOnlineBots = (int)allOnlineBotMembers.stream().map(Member::getUser).distinct().count();
 
         output.totalMemory = Runtime.getRuntime().totalMemory();
         output.usedMemory = output.totalMemory - Runtime.getRuntime().freeMemory();
