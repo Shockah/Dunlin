@@ -1,6 +1,6 @@
 dependencies {
-	compile project(':Dunlin')
-	compile project(':Dunlin - Settings')
-	compile project(':Dunlin - Commands')
-	compile project(':Dunlin - Permissions')
+	compileOnly project(':Dunlin')
+	compileOnly project(':Dunlin - Settings')
+	compileOnly project(':Dunlin - Commands')
+	compileOnly project(':Dunlin - Permissions')
 }

@@ -24,7 +24,7 @@ task copyPlugins(type: Copy) {
 	delete fileTree(dir: "run/plugins/.")
 
 	for (def subproject : parent.subprojects.findAll{it.name.startsWith('Dunlin - ')}) {
-		dependsOn project(":${subproject.name}").tasks.build
+		dependsOn subproject.tasks.shadowJar
 		from("../${subproject.name}/build/libs")
 	}
 
