@@ -1,0 +1,14 @@
+{
+	"packageName": "pl.shockah.dunlin.music",
+	"baseClass": "pl.shockah.dunlin.music.MusicPlugin",
+	"enabledByDefault": true,
+	"dependsOn": [
+		"pl.shockah.dunlin.commands",
+		"pl.shockah.dunlin.permissions",
+	  	"pl.shockah.dunlin.settings"
+	],
+
+	"name": "Music",
+	"author": "Shockah",
+	"description": ""
+}
