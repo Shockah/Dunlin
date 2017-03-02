@@ -4,7 +4,6 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.message.react.GenericMessageReactionEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import pl.shockah.dunlin.commands.CommandsPlugin;
@@ -19,7 +18,6 @@ import pl.shockah.dunlin.settings.SettingsPlugin;
 import pl.shockah.util.ReadWriteMap;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class MusicPlugin extends ListenerPlugin {

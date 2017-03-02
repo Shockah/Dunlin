@@ -7,7 +7,6 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import pl.shockah.dunlin.music.GuildAudioManager;
-import pl.shockah.dunlin.music.MusicPlugin;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
