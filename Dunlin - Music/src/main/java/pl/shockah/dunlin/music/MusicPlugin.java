@@ -3,25 +3,26 @@ package pl.shockah.dunlin.music;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.events.message.react.GenericMessageReactionEvent;
+import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import pl.shockah.dunlin.commands.CommandsPlugin;
-import pl.shockah.dunlin.music.playlist.DedicatedChannelPlaylist;
-import pl.shockah.dunlin.music.playlist.PinnedMessagePlaylist;
+import pl.shockah.dunlin.music.playlist.MessagePlaylist;
 import pl.shockah.dunlin.music.playlist.Playlist;
 import pl.shockah.dunlin.permissions.PermissionsPlugin;
-import pl.shockah.dunlin.plugin.Plugin;
+import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.dunlin.settings.EnumGroupSetting;
 import pl.shockah.dunlin.settings.GroupSetting;
 import pl.shockah.dunlin.settings.SettingsPlugin;
 import pl.shockah.util.ReadWriteMap;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 
-public class MusicPlugin extends Plugin {
+public class MusicPlugin extends ListenerPlugin {
 	@Dependency
 	public CommandsPlugin commandsPlugin;
 
@@ -37,7 +38,7 @@ public class MusicPlugin extends Plugin {
 	public GroupSetting<Integer> entriesPerPageSetting;
 
 	public AudioPlayerManager audioPlayerManager;
-	protected final ReadWriteMap<Guild, Playlist> playlists = new ReadWriteMap<>(new HashMap<>());
+	protected final ReadWriteMap<Guild, GuildAudioManager> guildAudioManagers = new ReadWriteMap<>(new HashMap<>());
 	
 	public MusicPlugin(PluginManager manager, Info info) {
 		super(manager, info);
@@ -69,40 +70,57 @@ public class MusicPlugin extends Plugin {
 
 		settingsPlugin.unregister(playlistDisplayModeSetting);
 		settingsPlugin.unregister(dedicatedChannelSetting);
-	}
 
-	public Playlist getPlaylist(Message message) {
-		return playlists.writeOperation(playlists -> {
-			return playlists.computeIfAbsent(message.getGuild(), k -> createPlaylistImplementation(message));
+		guildAudioManagers.iterateValues(guildAudioManager -> {
+			try {
+				guildAudioManager.close();
+			} catch (IOException e) {
+			}
 		});
 	}
 
-	private Playlist createPlaylistImplementation(Message message) {
-		switch (playlistDisplayModeSetting.get(message)) {
-			case DedicatedChannel:
-				return new DedicatedChannelPlaylist(this, createPlaylistMessage(getDedicatedChannel(message)));
-			case PinnedMessage: {
-				Message playlistMessage = createPlaylistMessage(getDedicatedChannel(message));
-				playlistMessage.pin().queue();
-				return new PinnedMessagePlaylist(this, playlistMessage);
-			}
-		}
-		throw new UnsupportedOperationException();
+	public GuildAudioManager getGuildAudioManager(Guild guild) {
+		return guildAudioManagers.writeOperation(guildAudioManagers -> {
+			return guildAudioManagers.computeIfAbsent(guild, k -> new GuildAudioManager(this, k));
+		});
 	}
 
-	private Message createPlaylistMessage(TextChannel channel) {
-		Message message = channel.sendMessage(new EmbedBuilder().setDescription("Preparing playlist...").build()).complete();
-		message.addReaction("\u23EF").queue();
-		message.addReaction("\u23ED").queue();
-		message.addReaction("\u2B05").queue();
-		message.addReaction("\u27A1").queue();
-		return message;
+	@Override
+	protected void onMessageReactionAdd(MessageReactionAddEvent event) {
+		handleReactionChange(event.getUser(), event.getReaction(), event.getChannel());
 	}
 
-	private TextChannel getDedicatedChannel(Message message) {
-		String channelName = dedicatedChannelSetting.get(message);
-		if (channelName == null)
-			return message.getTextChannel();
-		return message.getGuild().getTextChannelsByName(channelName, true).get(0);
+	@Override
+	protected void onMessageReactionRemove(MessageReactionRemoveEvent event) {
+		handleReactionChange(event.getUser(), event.getReaction(), event.getChannel());
+	}
+
+	private void handleReactionChange(User user, MessageReaction reaction, MessageChannel channel) {
+		if (user.isBot() || user.isFake())
+			return;
+		if (reaction.getEmote().isEmote())
+			return;
+		if (channel.getType() != ChannelType.TEXT)
+			return;
+
+		String emoji = reaction.getEmote().getName();
+		if (!GuildAudioManager.EMOJIS.contains(emoji))
+			return;
+
+		TextChannel textChannel = (TextChannel)channel;
+		guildAudioManagers.writeOperation(guildAudioManagers -> {
+			if (!guildAudioManagers.containsKey(textChannel.getGuild()))
+				return;
+
+			GuildAudioManager guildAudioManager = getGuildAudioManager(textChannel.getGuild());
+			Playlist playlist = guildAudioManager.getPlaylist(null);
+			if (playlist == null)
+				return;
+
+			if (!(playlist instanceof MessagePlaylist))
+				return;
+			MessagePlaylist messagePlaylist = (MessagePlaylist)playlist;
+			messagePlaylist.onReaction(textChannel.getGuild().getMember(user), emoji);
+		});
 	}
 }
