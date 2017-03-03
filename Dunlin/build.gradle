@@ -26,6 +26,7 @@ task copyPlugins(type: Copy) {
 	for (def subproject : parent.subprojects.findAll{it.name.startsWith('Dunlin - ')}) {
 		dependsOn subproject.tasks.shadowJar
 		from("../${subproject.name}/build/libs")
+		exclude "${subproject.name}.jar"
 	}
 
 	into 'run/plugins'
