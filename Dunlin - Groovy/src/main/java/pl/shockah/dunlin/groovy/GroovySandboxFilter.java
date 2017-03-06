@@ -9,77 +9,38 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 	protected final List<Package> whitelistedPackages = new ArrayList<>();
 	protected final List<Class<?>> whitelistedClasses = new ArrayList<>();
 	protected final List<Method> whitelistedMethods = new ArrayList<>();
-	protected final List<Field> whitelistedFields = new ArrayList<>();
 
-	protected final List<Package> blacklistedPackages = new ArrayList<>();
-	protected final List<Class<?>> blacklistedClasses = new ArrayList<>();
-	protected final List<Method> blacklistedMethods = new ArrayList<>();
 	protected final List<Field> blacklistedFields = new ArrayList<>();
 
-	private boolean isPackageWhitelisted(Package pkg) {
+	protected boolean isPackageAllowed(Package pkg) {
 		return whitelistedPackages.contains(pkg);
 	}
 
-	private boolean isClassWhitelisted(Class<?> clazz) {
+	protected boolean isClassAllowed(Class<?> clazz) {
 		if (whitelistedClasses.contains(clazz))
 			return true;
-		if (isPackageWhitelisted(clazz.getPackage()))
+		if (isPackageAllowed(clazz.getPackage()))
 			return true;
 
 		clazz = clazz.getSuperclass();
 		if (clazz != null)
-			return isClassWhitelisted(clazz);
+			return isClassAllowed(clazz);
 
 		return false;
 	}
 
-	private boolean isMethodWhitelisted(Method method) {
+	protected boolean isMethodAllowed(Method method) {
 		if (whitelistedMethods.contains(method))
 			return true;
-		if (isClassWhitelisted(method.getDeclaringClass()))
+		if (isClassAllowed(method.getDeclaringClass()))
 			return true;
 		return false;
 	}
 
-	private boolean isFieldWhitelisted(Field field) {
-		if (whitelistedFields.contains(field))
-			return true;
-		if (isClassWhitelisted(field.getDeclaringClass()))
-			return true;
-		return false;
-	}
-
-	private boolean isPackageBlacklisted(Package pkg) {
-		return blacklistedPackages.contains(pkg);
-	}
-
-	private boolean isClassBlacklisted(Class<?> clazz) {
-		if (blacklistedClasses.contains(clazz))
-			return true;
-		if (isPackageBlacklisted(clazz.getPackage()))
-			return true;
-
-		clazz = clazz.getSuperclass();
-		if (clazz != null)
-			return isClassBlacklisted(clazz);
-
-		return false;
-	}
-
-	private boolean isMethodBlacklisted(Method method) {
-		if (blacklistedMethods.contains(method))
-			return true;
-		if (isClassBlacklisted(method.getDeclaringClass()))
-			return true;
-		return false;
-	}
-
-	private boolean isFieldBlacklisted(Field field) {
+	protected boolean isFieldAllowed(Field field) {
 		if (blacklistedFields.contains(field))
-			return true;
-		if (isClassBlacklisted(field.getDeclaringClass()))
-			return true;
-		return false;
+			return false;
+		return true;
 	}
 
 	private Method getMethod(Class<?> clazz, String methodName, Object... args) throws NoSuchMethodException {
@@ -102,17 +63,13 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 
 	@Override
 	public boolean isConstructorAllowed(Class<?> clazz, Object... args) {
-		if (isClassBlacklisted(clazz) && !isClassWhitelisted(clazz))
-			return false;
-		return super.isConstructorAllowed(clazz, args);
+		return isClassAllowed(clazz);
 	}
 
 	@Override
 	public boolean isClassMethodAllowed(Class<?> clazz, String method, Object... args) {
 		try {
-			Method actualMethod = getMethod(clazz, method, args);
-			if (isMethodBlacklisted(actualMethod) && !isMethodWhitelisted(actualMethod))
-				return false;
+			return isMethodAllowed(getMethod(clazz, method, args));
 		} catch (Exception e) {
 		}
 		return super.isClassMethodAllowed(clazz, method, args);
@@ -121,18 +78,10 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 	@Override
 	public boolean isInstanceMethodAllowed(Object obj, String method, Object... args) {
 		try {
-			Method actualMethod = getMethod(obj.getClass(), method, args);
-			if (isMethodBlacklisted(actualMethod) && !isMethodWhitelisted(actualMethod))
-				return false;
+			return isMethodAllowed(getMethod(obj.getClass(), method, args));
 		} catch (Exception e) {
 		}
 		return super.isInstanceMethodAllowed(obj, method, args);
-	}
-
-	public boolean isFieldAllowed(Field field) {
-		if (isFieldBlacklisted(field) && !isFieldWhitelisted(field))
-			return false;
-		return true;
 	}
 
 	@Override
