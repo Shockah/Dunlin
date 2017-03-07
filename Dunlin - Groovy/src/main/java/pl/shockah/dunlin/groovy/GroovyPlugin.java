@@ -10,6 +10,7 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.kohsuke.groovy.sandbox.GroovyInterceptor;
+import org.kohsuke.groovy.sandbox.SandboxTransformer;
 import pl.shockah.dunlin.commands.CommandsPlugin;
 import pl.shockah.dunlin.permissions.PermissionsPlugin;
 import pl.shockah.dunlin.plugin.Plugin;
@@ -51,9 +52,10 @@ public class GroovyPlugin extends Plugin {
 	}
 
 	public GroovyInterceptor getSandbox(User user) {
-		if (permissionsPlugin.hasPermission(user, this, "unrestricted"))
-			return null;
-		throw new UnsupportedOperationException();
+		//if (permissionsPlugin.hasPermission(user, this, "unrestricted"))
+		//	return null;
+		return new BasicGroovySandboxFilter();
+		//throw new UnsupportedOperationException();
 	}
 
 	public void injectVariables(Binding binding, Message message) {
@@ -153,6 +155,12 @@ public class GroovyPlugin extends Plugin {
 						.addStaticStars(Math.class.getName())
 		);
 
-		return new GroovyShell(manager.pluginClassLoader, binding, cc);
+		if (sandbox != null)
+			cc.addCompilationCustomizers(new SandboxTransformer());
+
+		GroovyShell shell = new GroovyShell(manager.pluginClassLoader, binding, cc);
+		if (sandbox != null)
+			sandbox.register();
+		return shell;
 	}
 }

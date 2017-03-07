@@ -22,9 +22,10 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 		if (isPackageAllowed(clazz.getPackage()))
 			return true;
 
-		clazz = clazz.getSuperclass();
-		if (clazz != null)
-			return isClassAllowed(clazz);
+		if (clazz.getSuperclass() != null && isClassAllowed(clazz.getSuperclass()))
+			return true;
+		if (clazz.getDeclaringClass() != null && isClassAllowed(clazz.getDeclaringClass()))
+			return true;
 
 		return false;
 	}
@@ -43,7 +44,9 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 		return true;
 	}
 
-	private Method getMethod(Class<?> clazz, String methodName, Object... args) throws NoSuchMethodException {
+	private List<Method> getMethods(Class<?> clazz, String methodName, Object... args) {
+		List<Method> methods = new ArrayList<>();
+
 		L: for (Method method : clazz.getMethods()) {
 			if (!method.getName().equals(methodName))
 				continue;
@@ -52,13 +55,34 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 				continue;
 
 			for (int i = 0; i < parameters.length; i++) {
-				if (!parameters[i].isInstance(args[i]))
-					continue L;
+				if (parameters[i].isInstance(args[i]))
+					continue;
+				if (parameters[i] == boolean.class && args[i] instanceof Boolean)
+					continue;
+				if (parameters[i] == byte.class && args[i] instanceof Byte)
+					continue;
+				if (parameters[i] == short.class && args[i] instanceof Short)
+					continue;
+				if (parameters[i] == int.class && args[i] instanceof Integer)
+					continue;
+				if (parameters[i] == char.class && args[i] instanceof Character)
+					continue;
+				if (parameters[i] == float.class && args[i] instanceof Float)
+					continue;
+				if (parameters[i] == double.class && args[i] instanceof Double)
+					continue;
+				if (parameters[i] == long.class && args[i] instanceof Long)
+					continue;
+				continue L;
 			}
-			return method;
+			methods.add(method);
+
+			for (Class<?> interfaceClass : clazz.getInterfaces()) {
+				methods.addAll(getMethods(interfaceClass, methodName, args));
+			}
 		}
 
-		throw new NoSuchMethodException();
+		return methods;
 	}
 
 	@Override
@@ -69,7 +93,7 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 	@Override
 	public boolean isClassMethodAllowed(Class<?> clazz, String method, Object... args) {
 		try {
-			return isMethodAllowed(getMethod(clazz, method, args));
+			return getMethods(clazz, method, args).stream().anyMatch(this::isMethodAllowed);
 		} catch (Exception e) {
 		}
 		return super.isClassMethodAllowed(clazz, method, args);
@@ -78,7 +102,7 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 	@Override
 	public boolean isInstanceMethodAllowed(Object obj, String method, Object... args) {
 		try {
-			return isMethodAllowed(getMethod(obj.getClass(), method, args));
+			return getMethods(obj.getClass(), method, args).stream().anyMatch(this::isMethodAllowed);
 		} catch (Exception e) {
 		}
 		return super.isInstanceMethodAllowed(obj, method, args);

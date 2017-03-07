@@ -4,6 +4,8 @@ import java.awt.Color;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import pl.shockah.dunlin.commands.Command;
 
 public class ErrorCommandResultImpl<Output> extends CommandResultImpl<Output> implements ErrorCommandResult<Output> {
@@ -21,15 +23,22 @@ public class ErrorCommandResultImpl<Output> extends CommandResultImpl<Output> im
 		return this.message;
 	}
 	
-	public static Message messageFromException(Exception e) {
-		//TODO: better implementation
-		String str = e.toString();
-		str = str.substring(0, Math.min(2000, str.length()));
-		return new MessageBuilder().setEmbed(
-			new EmbedBuilder()
+	public static Message messageFromThrowable(Throwable throwable) {
+		String message = ExceptionUtils.getMessage(throwable);
+		String[] stackFrames = ExceptionUtils.getStackFrames(throwable);
+		for (int i = 0; i < stackFrames.length; i++) {
+			if (stackFrames[i].charAt(0) == '\t')
+				stackFrames[i] = stackFrames[i].substring(1);
+			if (stackFrames[i].startsWith("at "))
+				stackFrames[i] = stackFrames[i].substring(3);
+		}
+		String stackTrace = StringUtils.join(stackFrames, "\n", 1, stackFrames.length);
+		stackTrace = stackTrace.substring(0, Math.min(1992, stackTrace.length()));
+
+		return new MessageBuilder().setEmbed(new EmbedBuilder()
 				.setColor(EMBED_COLOR)
-				.setDescription(str)
-				.build()
-			).build();
+				.setTitle(message, null)
+				.setDescription(String.format("```\n%s\n```", stackTrace))
+				.build()).build();
 	}
 }

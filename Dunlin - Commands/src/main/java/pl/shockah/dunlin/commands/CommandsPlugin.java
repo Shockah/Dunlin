@@ -97,7 +97,7 @@ public class CommandsPlugin extends ListenerPlugin {
 							respond(event, output.getMessage(message, parseCommandResult.get()));
 						}
 					} catch (Exception e) {
-						respond(event, ErrorCommandResultImpl.messageFromException(e));
+						respond(event, ErrorCommandResultImpl.messageFromThrowable(e));
 					}
 					iterator.stop();
 				}
