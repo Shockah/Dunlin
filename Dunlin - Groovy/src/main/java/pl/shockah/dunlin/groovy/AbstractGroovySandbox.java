@@ -70,11 +70,11 @@ public abstract class AbstractGroovySandbox extends GroovyInterceptor {
 					Method method = clazz.getMethod(methodName);
 					if (Modifier.isStatic(method.getModifiers())) {
 						if (!isClassMethodAllowed(clazz, methodName))
-							throw new SecurityException(String.format("%s.%s class method call not allowed.", clazz.getName(), method));
+							throw new SecurityException(String.format("%s class method call not allowed.", method));
 					} else {
 						clazz = clazz.getClass();
-						if (isInstanceMethodAllowed(clazz, methodName))
-							throw new SecurityException(String.format("%s.%s instance method call not allowed.", clazz.getName(), method));
+						if (!isInstanceMethodAllowed(clazz, methodName))
+							throw new SecurityException(String.format("%s instance method call not allowed.", method));
 					}
 				} catch (NoSuchMethodException e2) {
 				}
@@ -91,10 +91,10 @@ public abstract class AbstractGroovySandbox extends GroovyInterceptor {
 					Method method = clazz.getMethod(methodName);
 					if (Modifier.isStatic(method.getModifiers())) {
 						if (!isClassMethodAllowed(clazz, methodName))
-							throw new SecurityException(String.format("%s.%s class method call not allowed.", clazz.getName(), method));
+							throw new SecurityException(String.format("%s class method call not allowed.", method));
 					} else {
-						if (isInstanceMethodAllowed(receiver, methodName))
-							throw new SecurityException(String.format("%s.%s instance method call not allowed.", clazz.getName(), method));
+						if (!isInstanceMethodAllowed(receiver, methodName))
+							throw new SecurityException(String.format("%s instance method call not allowed.", method));
 					}
 				} catch (NoSuchMethodException e2) {
 				}
@@ -117,11 +117,11 @@ public abstract class AbstractGroovySandbox extends GroovyInterceptor {
 					Method method = clazz.getMethod(methodName);
 					if (Modifier.isStatic(method.getModifiers())) {
 						if (!isClassMethodAllowed(clazz, methodName, value))
-							throw new SecurityException(String.format("%s.%s class method call not allowed.", clazz.getName(), method));
+							throw new SecurityException(String.format("%s class method call not allowed.", method));
 					} else {
 						clazz = clazz.getClass();
-						if (isInstanceMethodAllowed(clazz, methodName, value))
-							throw new SecurityException(String.format("%s.%s instance method call not allowed.", clazz.getName(), method));
+						if (!isInstanceMethodAllowed(clazz, methodName, value))
+							throw new SecurityException(String.format("%s instance method call not allowed.", method));
 					}
 				} catch (NoSuchMethodException e2) {
 				}
@@ -138,10 +138,10 @@ public abstract class AbstractGroovySandbox extends GroovyInterceptor {
 					Method method = clazz.getMethod(methodName);
 					if (Modifier.isStatic(method.getModifiers())) {
 						if (!isClassMethodAllowed(clazz, methodName, value))
-							throw new SecurityException(String.format("%s.%s class method call not allowed.", clazz.getName(), method));
+							throw new SecurityException(String.format("%s class method call not allowed.", method));
 					} else {
-						if (isInstanceMethodAllowed(receiver, methodName, value))
-							throw new SecurityException(String.format("%s.%s instance method call not allowed.", clazz.getName(), method));
+						if (!isInstanceMethodAllowed(receiver, methodName, value))
+							throw new SecurityException(String.format("%s instance method call not allowed.", method));
 					}
 				} catch (NoSuchMethodException e2) {
 				}

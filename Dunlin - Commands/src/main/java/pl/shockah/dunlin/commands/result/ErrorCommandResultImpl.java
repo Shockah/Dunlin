@@ -35,10 +35,12 @@ public class ErrorCommandResultImpl<Output> extends CommandResultImpl<Output> im
 		String stackTrace = StringUtils.join(stackFrames, "\n", 1, stackFrames.length);
 		stackTrace = stackTrace.substring(0, Math.min(1992, stackTrace.length()));
 
-		return new MessageBuilder().setEmbed(new EmbedBuilder()
+		EmbedBuilder embedBuilder = new EmbedBuilder()
 				.setColor(EMBED_COLOR)
-				.setTitle(message, null)
-				.setDescription(String.format("```\n%s\n```", stackTrace))
-				.build()).build();
+				.setDescription(String.format("```\n%s\n```", stackTrace));
+		if (!StringUtils.isBlank(message))
+			embedBuilder.setTitle(message, null);
+
+		return new MessageBuilder().setEmbed(embedBuilder.build()).build();
 	}
 }

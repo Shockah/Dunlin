@@ -76,10 +76,10 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 				continue L;
 			}
 			methods.add(method);
+		}
 
-			for (Class<?> interfaceClass : clazz.getInterfaces()) {
-				methods.addAll(getMethods(interfaceClass, methodName, args));
-			}
+		for (Class<?> interfaceClass : clazz.getInterfaces()) {
+			methods.addAll(getMethods(interfaceClass, methodName, args));
 		}
 
 		return methods;
