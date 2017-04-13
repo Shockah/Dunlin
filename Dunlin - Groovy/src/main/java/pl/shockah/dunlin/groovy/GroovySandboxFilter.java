@@ -3,6 +3,7 @@ package pl.shockah.dunlin.groovy;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GroovySandboxFilter extends AbstractGroovySandbox {
@@ -35,6 +36,16 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 			return true;
 		if (isClassAllowed(method.getDeclaringClass()))
 			return true;
+		if (method.getDeclaringClass().getInterfaces().length != 0) {
+			for (Method whitelistedMethod : whitelistedMethods) {
+				if (!whitelistedMethod.getDeclaringClass().isInterface())
+					continue;
+				if (!Arrays.asList(method.getDeclaringClass().getInterfaces()).contains(whitelistedMethod.getDeclaringClass()))
+					continue;
+				if (methodMatchesWithTypes(whitelistedMethod, method.getName(), method.getParameterTypes()))
+					return true;
+			}
+		}
 		return false;
 	}
 
@@ -44,38 +55,76 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 		return true;
 	}
 
+	private boolean methodMatches(Method method, String methodName, Object... args) {
+		if (!method.getName().equals(methodName))
+			return false;
+		Class<?>[] parameters = method.getParameterTypes();
+		if (parameters.length != args.length)
+			return false;
+
+		for (int i = 0; i < parameters.length; i++) {
+			if (parameters[i].isInstance(args[i]))
+				continue;
+			if (parameters[i] == boolean.class && args[i] instanceof Boolean)
+				continue;
+			if (parameters[i] == byte.class && args[i] instanceof Byte)
+				continue;
+			if (parameters[i] == short.class && args[i] instanceof Short)
+				continue;
+			if (parameters[i] == int.class && args[i] instanceof Integer)
+				continue;
+			if (parameters[i] == char.class && args[i] instanceof Character)
+				continue;
+			if (parameters[i] == float.class && args[i] instanceof Float)
+				continue;
+			if (parameters[i] == double.class && args[i] instanceof Double)
+				continue;
+			if (parameters[i] == long.class && args[i] instanceof Long)
+				continue;
+			return false;
+		}
+
+		return true;
+	}
+
+	private boolean methodMatchesWithTypes(Method method, String methodName, Class<?>... args) {
+		if (!method.getName().equals(methodName))
+			return false;
+		Class<?>[] parameters = method.getParameterTypes();
+		if (parameters.length != args.length)
+			return false;
+
+		for (int i = 0; i < parameters.length; i++) {
+			if (parameters[i].isInstance(args[i]))
+				continue;
+			if (parameters[i] == boolean.class && args[i] == Boolean.class)
+				continue;
+			if (parameters[i] == byte.class && args[i] == Byte.class)
+				continue;
+			if (parameters[i] == short.class && args[i] == Short.class)
+				continue;
+			if (parameters[i] == int.class && args[i] == Integer.class)
+				continue;
+			if (parameters[i] == char.class && args[i] == Character.class)
+				continue;
+			if (parameters[i] == float.class && args[i] == Float.class)
+				continue;
+			if (parameters[i] == double.class && args[i] == Double.class)
+				continue;
+			if (parameters[i] == long.class && args[i] == Long.class)
+				continue;
+			return false;
+		}
+
+		return true;
+	}
+
 	private List<Method> getMethods(Class<?> clazz, String methodName, Object... args) {
 		List<Method> methods = new ArrayList<>();
 
-		L: for (Method method : clazz.getMethods()) {
-			if (!method.getName().equals(methodName))
-				continue;
-			Class<?>[] parameters = method.getParameterTypes();
-			if (parameters.length != args.length)
-				continue;
-
-			for (int i = 0; i < parameters.length; i++) {
-				if (parameters[i].isInstance(args[i]))
-					continue;
-				if (parameters[i] == boolean.class && args[i] instanceof Boolean)
-					continue;
-				if (parameters[i] == byte.class && args[i] instanceof Byte)
-					continue;
-				if (parameters[i] == short.class && args[i] instanceof Short)
-					continue;
-				if (parameters[i] == int.class && args[i] instanceof Integer)
-					continue;
-				if (parameters[i] == char.class && args[i] instanceof Character)
-					continue;
-				if (parameters[i] == float.class && args[i] instanceof Float)
-					continue;
-				if (parameters[i] == double.class && args[i] instanceof Double)
-					continue;
-				if (parameters[i] == long.class && args[i] instanceof Long)
-					continue;
-				continue L;
-			}
-			methods.add(method);
+		for (Method method : clazz.getMethods()) {
+			if (methodMatches(method, methodName, args))
+				methods.add(method);
 		}
 
 		for (Class<?> interfaceClass : clazz.getInterfaces()) {
