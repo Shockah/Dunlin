@@ -1,7 +1,8 @@
 package pl.shockah.dunlin.groovy;
 
-import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.*;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.managers.Presence;
 import net.dv8tion.jda.core.requests.RestAction;
 import pl.shockah.util.UnexpectedException;
 
@@ -16,6 +17,18 @@ public class DunlinGroovySandboxFilter extends BasicGroovySandboxFilter {
 
     private void addJDAWhitelist() {
         try {
+            whitelistedClasses.addAll(Arrays.asList(
+                    AccountType.class,
+                    OnlineStatus.class,
+                    Game.class,
+                    Permission.class,
+                    Guild.MFALevel.class,
+                    Region.class,
+                    Guild.Timeout.class,
+                    Guild.VerificationLevel.class,
+                    Guild.NotificationLevel.class
+            ));
+
             whitelistedMethods.addAll(Arrays.asList(
                     RestAction.class.getMethod("complete"),
                     RestAction.class.getMethod("complete", boolean.class),
@@ -24,6 +37,9 @@ public class DunlinGroovySandboxFilter extends BasicGroovySandboxFilter {
                     ISnowflake.class.getMethod("getCreationTime"),
 
                     IMentionable.class.getMethod("getAsMention"),
+
+                    IFakeable.class.getMethod("isFake"),
+
                     IPermissionHolder.class.getMethod("getGuild"),
                     IPermissionHolder.class.getMethod("getPermissions"),
                     IPermissionHolder.class.getMethod("hasPermission", Channel.class, Collection.class),
@@ -153,7 +169,62 @@ public class DunlinGroovySandboxFilter extends BasicGroovySandboxFilter {
                     Emote.class.getMethod("getName"),
                     Emote.class.getMethod("getAsMention"),
                     Emote.class.getMethod("getImageUrl"),
-                    Emote.class.getMethod("getRoles")
+                    Emote.class.getMethod("getRoles"),
+
+                    JDA.class.getMethod("getSelfUser"),
+                    JDA.class.getMethod("getAccountType"),
+                    JDA.class.getMethod("getPresence"),
+                    JDA.class.getMethod("getShardInfo"),
+                    JDA.class.getMethod("getStatus"),
+                    JDA.class.getMethod("isAudioEnabled"),
+                    JDA.class.getMethod("isAutoReconnect"),
+                    JDA.class.getMethod("isBulkDeleteSplittingEnabled"),
+
+                    JDA.ShardInfo.class.getMethod("getShardId"),
+                    JDA.ShardInfo.class.getMethod("getShardString"),
+                    JDA.ShardInfo.class.getMethod("getShardTotal"),
+
+                    Webhook.class.getMethod("getName"),
+                    Webhook.class.getMethod("getChannel"),
+                    Webhook.class.getMethod("getDefaultUser"),
+                    Webhook.class.getMethod("getGuild"),
+                    Webhook.class.getMethod("getJDA"),
+                    Webhook.class.getMethod("getOwner"),
+
+                    Invite.class.getMethod("getJDA"),
+                    Invite.class.getMethod("getGuild"),
+                    Invite.class.getMethod("getChannel"),
+                    Invite.class.getMethod("getCode"),
+                    Invite.class.getMethod("getCreationTime"),
+                    Invite.class.getMethod("getInviter"),
+                    Invite.class.getMethod("getMaxAge"),
+                    Invite.class.getMethod("getMaxUses"),
+                    Invite.class.getMethod("getUses"),
+                    Invite.class.getMethod("isExpanded"),
+                    Invite.class.getMethod("isTemporary"),
+                    Invite.class.getMethod("resolve", JDA.class, String.class),
+
+                    PermissionOverride.class.getMethod("getAllowedRaw"),
+                    PermissionOverride.class.getMethod("getInheritRaw"),
+                    PermissionOverride.class.getMethod("getDeniedRaw"),
+                    PermissionOverride.class.getMethod("getAllowed"),
+                    PermissionOverride.class.getMethod("getInherit"),
+                    PermissionOverride.class.getMethod("getDenied"),
+                    PermissionOverride.class.getMethod("getJDA"),
+                    PermissionOverride.class.getMethod("getMember"),
+                    PermissionOverride.class.getMethod("getRole"),
+                    PermissionOverride.class.getMethod("getChannel"),
+                    PermissionOverride.class.getMethod("getGuild"),
+                    PermissionOverride.class.getMethod("isMemberOverride"),
+                    PermissionOverride.class.getMethod("isRoleOverride"),
+
+                    SelfUser.class.getMethod("isVerified"),
+                    SelfUser.class.getMethod("isMfaEnabled"),
+
+                    Presence.class.getMethod("getJDA"),
+                    Presence.class.getMethod("getStatus"),
+                    Presence.class.getMethod("getGame"),
+                    Presence.class.getMethod("isIdle")
             ));
         } catch (NoSuchMethodException e) {
             throw new UnexpectedException(e);

@@ -52,10 +52,9 @@ public class GroovyPlugin extends Plugin {
 	}
 
 	public GroovyInterceptor getSandbox(User user) {
-		//if (permissionsPlugin.hasPermission(user, this, "unrestricted"))
-		//	return null;
+		if (permissionsPlugin.hasPermission(user, this, "unrestricted"))
+			return null;
 		return new DunlinGroovySandboxFilter();
-		//throw new UnsupportedOperationException();
 	}
 
 	public void injectVariables(Binding binding, Message message) {
