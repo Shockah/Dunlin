@@ -93,6 +93,8 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 	@Override
 	public boolean isClassMethodAllowed(Class<?> clazz, String method, Object... args) {
 		try {
+			if (isClassAllowed(clazz))
+				return true;
 			return getMethods(clazz, method, args).stream().anyMatch(this::isMethodAllowed);
 		} catch (Exception e) {
 		}
@@ -102,6 +104,8 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 	@Override
 	public boolean isInstanceMethodAllowed(Object obj, String method, Object... args) {
 		try {
+			if (isClassAllowed(obj.getClass()))
+				return true;
 			return getMethods(obj.getClass(), method, args).stream().anyMatch(this::isMethodAllowed);
 		} catch (Exception e) {
 		}

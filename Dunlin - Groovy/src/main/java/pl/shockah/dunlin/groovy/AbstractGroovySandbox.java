@@ -45,7 +45,7 @@ public abstract class AbstractGroovySandbox extends GroovyInterceptor {
 	@Override
 	public Object onStaticCall(Invoker invoker, Class receiver, String method, Object... args) throws Throwable {
 		if (!isClassMethodAllowed(receiver, method, args))
-			throw new SecurityException(String.format("%s.%s class method call not allowed.", receiver.getClass().getName(), method));
+			throw new SecurityException(String.format("%s.%s class method call not allowed.", receiver.getName(), method));
 		return super.onStaticCall(invoker, receiver, method, args);
 	}
 

@@ -32,8 +32,18 @@ public class BasicGroovySandboxFilter extends GroovySandboxFilter {
             ));
 
 	        whitelistedClasses.addAll(Arrays.asList(
+	        		Byte.class,
+					Short.class,
+					Integer.class,
+					Long.class,
+					Character.class,
+					Float.class,
+					Double.class,
+					CharSequence.class,
+					String.class,
 	        		Comparable.class,
-					TimeUnit.class
+					TimeUnit.class,
+					Math.class
 			));
 
 		    whitelistedMethods.addAll(Arrays.asList(
@@ -44,43 +54,7 @@ public class BasicGroovySandboxFilter extends GroovySandboxFilter {
 
 				    Object.class.getMethod("toString"),
 				    Object.class.getMethod("hashCode"),
-				    Object.class.getMethod("equals", Object.class),
-
-					Long.class.getMethod("compareTo", Long.class),
-					Long.class.getMethod("bitCount", long.class),
-					Long.class.getMethod("compare", long.class, long.class),
-					Long.class.getMethod("compareUnsigned", long.class, long.class),
-					Long.class.getMethod("divideUnsigned", long.class, long.class),
-					Long.class.getMethod("getLong", String.class),
-					Long.class.getMethod("getLong", String.class, long.class),
-					Long.class.getMethod("getLong", String.class, Long.class),
-					Long.class.getMethod("highestOneBit", long.class),
-					Long.class.getMethod("lowestOneBit", long.class),
-					Long.class.getMethod("max", long.class, long.class),
-					Long.class.getMethod("min", long.class, long.class),
-					Long.class.getMethod("numberOfLeadingZeros", long.class),
-					Long.class.getMethod("numberOfTrailingZeros", long.class),
-					Long.class.getMethod("parseLong", String.class),
-					Long.class.getMethod("parseLong", String.class, int.class),
-					Long.class.getMethod("parseUnsignedLong", String.class),
-					Long.class.getMethod("parseUnsignedLong", String.class, int.class),
-					Long.class.getMethod("remainderUnsigned", long.class, long.class),
-					Long.class.getMethod("reverse", long.class),
-					Long.class.getMethod("reverseBytes", long.class),
-					Long.class.getMethod("rotateLeft", long.class, int.class),
-					Long.class.getMethod("rotateRight", long.class, int.class),
-					Long.class.getMethod("signum", long.class),
-					Long.class.getMethod("sum", long.class, long.class),
-					Long.class.getMethod("toBinaryString", long.class),
-					Long.class.getMethod("toHexString", long.class),
-					Long.class.getMethod("toOctalString", long.class),
-					Long.class.getMethod("toString", long.class),
-					Long.class.getMethod("toString", long.class, int.class),
-					Long.class.getMethod("toUnsignedString", long.class),
-					Long.class.getMethod("toUnsignedString", long.class, int.class),
-					Long.class.getMethod("valueOf", long.class),
-					Long.class.getMethod("valueOf", String.class),
-					Long.class.getMethod("valueOf", String.class, int.class)
+				    Object.class.getMethod("equals", Object.class)
 		    ));
 	    } catch (NoSuchMethodException e) {
 		    throw new UnexpectedException(e);
