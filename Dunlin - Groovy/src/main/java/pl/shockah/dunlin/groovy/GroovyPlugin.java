@@ -3,6 +3,7 @@ package pl.shockah.dunlin.groovy;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.transform.TimedInterrupt;
+import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
@@ -52,6 +53,8 @@ public class GroovyPlugin extends Plugin {
 	}
 
 	public GroovyInterceptor getSandbox(User user) {
+		if (user.getJDA().getAccountType() == AccountType.CLIENT && user.equals(user.getJDA().getSelfUser()))
+			return null;
 		if (permissionsPlugin.hasPermission(user, this, "unrestricted"))
 			return null;
 		return new DunlinGroovySandboxFilter();
