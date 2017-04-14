@@ -4,5 +4,5 @@ dependencies {
 	compileOnly project(':Dunlin - Permissions')
 	compileOnly project(':Dunlin - Settings')
 
-	compile 'com.sedmelluq:lavaplayer:1.2.22'
+	compile 'com.sedmelluq:lavaplayer:1.2.36'
 }
