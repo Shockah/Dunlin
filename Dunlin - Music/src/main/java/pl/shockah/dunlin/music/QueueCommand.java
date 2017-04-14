@@ -1,9 +1,12 @@
 package pl.shockah.dunlin.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
+import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
@@ -15,6 +18,8 @@ import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
 import pl.shockah.util.Box;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 
 public class QueueCommand extends NamedCommand<AudioItem, AudioItem> {
@@ -45,7 +50,24 @@ public class QueueCommand extends NamedCommand<AudioItem, AudioItem> {
 
 		    @Override
 		    public void noMatches() {
-			    latch.countDown();
+				try {
+					new URL(textInput);
+					latch.countDown();
+				} catch (MalformedURLException e1) {
+					//TODO: add search with user choice
+					try {
+						String youtubeSearchQuery = String.format("ytsearch:%s", textInput);
+						AudioItem audio = new YoutubeAudioSourceManager(true).loadItem((DefaultAudioPlayerManager) plugin.audioPlayerManager, new AudioReference(youtubeSearchQuery, null));
+						if (audio != null) {
+							if (audio instanceof AudioPlaylist)
+								item.value = ((AudioPlaylist) audio).getTracks().get(0);
+							else
+								item.value = audio;
+						}
+					} catch (Exception e2) {
+					}
+					latch.countDown();
+				}
 		    }
 
 		    @Override

@@ -2,7 +2,13 @@ package pl.shockah.dunlin.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
@@ -59,7 +65,14 @@ public class MusicPlugin extends ListenerPlugin {
 		);
 
 		audioPlayerManager = new DefaultAudioPlayerManager();
-		AudioSourceManagers.registerRemoteSources(audioPlayerManager);
+		audioPlayerManager.registerSourceManager(new YoutubeAudioSourceManager(false));
+		audioPlayerManager.registerSourceManager(new SoundCloudAudioSourceManager());
+		audioPlayerManager.registerSourceManager(new BandcampAudioSourceManager());
+		audioPlayerManager.registerSourceManager(new VimeoAudioSourceManager());
+		audioPlayerManager.registerSourceManager(new BeamAudioSourceManager());
+		audioPlayerManager.registerSourceManager(new HttpAudioSourceManager());
+		audioPlayerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
+		//AudioSourceManagers.registerRemoteSources(audioPlayerManager);
 	}
 
 	@Override
