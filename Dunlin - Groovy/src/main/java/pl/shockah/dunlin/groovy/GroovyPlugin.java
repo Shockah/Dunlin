@@ -3,14 +3,15 @@ package pl.shockah.dunlin.groovy;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.transform.TimedInterrupt;
+import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.GenericMessageEvent;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.kohsuke.groovy.sandbox.GroovyInterceptor;
+import org.kohsuke.groovy.sandbox.SandboxTransformer;
 import pl.shockah.dunlin.commands.CommandsPlugin;
 import pl.shockah.dunlin.permissions.PermissionsPlugin;
 import pl.shockah.dunlin.plugin.Plugin;
@@ -52,9 +53,11 @@ public class GroovyPlugin extends Plugin {
 	}
 
 	public GroovyInterceptor getSandbox(User user) {
+		if (user.getJDA().getAccountType() == AccountType.CLIENT && user.equals(user.getJDA().getSelfUser()))
+			return null;
 		if (permissionsPlugin.hasPermission(user, this, "unrestricted"))
 			return null;
-		throw new UnsupportedOperationException();
+		return new DunlinGroovySandboxFilter();
 	}
 
 	public void injectVariables(Binding binding, Message message) {
@@ -95,12 +98,71 @@ public class GroovyPlugin extends Plugin {
 				new ASTTransformationCustomizer(JSONObject.of("value", getConfig().getInt("timeout", DEFAULT_TIMEOUT)), TimedInterrupt.class),
 				new ImportCustomizer()
 						.addStarImports("java.lang.reflect")
-						.addStarImports("net.dv8tion.jda")
-						.addStarImports("net.dv8tion.jda.entities")
-						.addStarImports("net.dv8tion.jda.managers")
+						.addStarImports(
+								"net.dv8tion.jda.core",
+								"net.dv8tion.jda.core.audio",
+								"net.dv8tion.jda.core.audio.factory",
+								"net.dv8tion.jda.core.audio.hooks",
+								"net.dv8tion.jda.core.entities",
+								"net.dv8tion.jda.core.entities.impl",
+								"net.dv8tion.jda.core.events",
+								"net.dv8tion.jda.core.events.channel.priv",
+								"net.dv8tion.jda.core.events.channel.text",
+								"net.dv8tion.jda.core.events.channel.text.update",
+								"net.dv8tion.jda.core.events.channel.voice",
+								"net.dv8tion.jda.core.events.channel.voice.update",
+								"net.dv8tion.jda.core.events.guild",
+								"net.dv8tion.jda.core.events.guild.member",
+								"net.dv8tion.jda.core.events.guild.update",
+								"net.dv8tion.jda.core.events.guild.voice",
+								"net.dv8tion.jda.core.events.message",
+								"net.dv8tion.jda.core.events.message.guild",
+								"net.dv8tion.jda.core.events.message.priv",
+								"net.dv8tion.jda.core.events.message.react",
+								"net.dv8tion.jda.core.events.role",
+								"net.dv8tion.jda.core.events.role.update",
+								"net.dv8tion.jda.core.events.self",
+								"net.dv8tion.jda.core.events.user",
+								"net.dv8tion.jda.core.exceptions",
+								"net.dv8tion.jda.core.handle",
+								"net.dv8tion.jda.core.hooks",
+								"net.dv8tion.jda.core.managers",
+								"net.dv8tion.jda.core.managers.fields",
+								"net.dv8tion.jda.core.managers.impl",
+								"net.dv8tion.jda.core.requests",
+								"net.dv8tion.jda.core.requests.ratelimit",
+								"net.dv8tion.jda.core.requests.restaction",
+								"net.dv8tion.jda.core.utils"
+						)
+						.addStarImports(
+								"net.dv8tion.jda.bot",
+								"net.dv8tion.jda.bot.entities.impl"
+						)
+						.addStarImports(
+								"net.dv8tion.jda.client",
+								"net.dv8tion.jda.client.entities",
+								"net.dv8tion.jda.client.entities.impl",
+								"net.dv8tion.jda.client.events.call",
+								"net.dv8tion.jda.client.events.call.update",
+								"net.dv8tion.jda.client.events.call.voice",
+								"net.dv8tion.jda.client.events.group",
+								"net.dv8tion.jda.client.events.group.update",
+								"net.dv8tion.jda.client.events.message.group",
+								"net.dv8tion.jda.client.events.relationship",
+								"net.dv8tion.jda.client.exceptions",
+								"net.dv8tion.jda.client.handle",
+								"net.dv8tion.jda.client.managers",
+								"net.dv8tion.jda.client.managers.fields"
+						)
 						.addStaticStars(Math.class.getName())
 		);
 
-		return new GroovyShell(manager.pluginClassLoader, binding, cc);
+		if (sandbox != null)
+			cc.addCompilationCustomizers(new SandboxTransformer());
+
+		GroovyShell shell = new GroovyShell(manager.pluginClassLoader, binding, cc);
+		if (sandbox != null)
+			sandbox.register();
+		return shell;
 	}
 }

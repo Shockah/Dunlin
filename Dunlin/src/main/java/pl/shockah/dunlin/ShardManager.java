@@ -7,6 +7,7 @@ import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
+import pl.shockah.json.JSONObject;
 
 import javax.security.auth.login.LoginException;
 
@@ -30,9 +31,22 @@ public class ShardManager {
 	}
 
 	private JDABuilder createBuilder() {
-		JDABuilder builder = new JDABuilder(AccountType.BOT);
-		builder.setToken(app.getConfig().getObject("api").getString("token"));
-		app.getConfig().getObject("api").onString("game", game -> builder.setGame(Game.of(game)));
+		JSONObject apiConfig = app.getConfig().getObject("api");
+
+		String accountTypeStr = apiConfig.getString("accountType", "BOT");
+		AccountType accountType = null;
+		for (AccountType o : AccountType.values()) {
+			if (o.name().equalsIgnoreCase(accountTypeStr)) {
+				accountType = o;
+				break;
+			}
+		}
+		if (accountType == null)
+			throw new IllegalArgumentException(String.format("Unknown account type `%s`.", accountTypeStr));
+
+		JDABuilder builder = new JDABuilder(accountType);
+		builder.setToken(apiConfig.getString("token"));
+		apiConfig.onString("game", game -> builder.setGame(Game.of(game)));
 		builder.addListener(eventListenerManager);
 		return builder;
 	}

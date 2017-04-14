@@ -1,5 +1,6 @@
 package pl.shockah.dunlin.commands;
 
+import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import pl.shockah.dunlin.commands.result.CommandResult;
@@ -82,6 +83,8 @@ public class CommandsPlugin extends ListenerPlugin {
 		Message message = event.getMessage();
 		if (message.getAuthor().isBot() || message.getAuthor().isFake())
 			return;
+		if (message.getJDA().getAccountType() == AccountType.CLIENT && !message.getAuthor().equals(message.getJDA().getSelfUser()))
+			return;
 
 		patterns.iterate((pattern, iterator) -> {
 			if (pattern.matches(message)) {
@@ -97,7 +100,7 @@ public class CommandsPlugin extends ListenerPlugin {
 							respond(event, output.getMessage(message, parseCommandResult.get()));
 						}
 					} catch (Exception e) {
-						respond(event, ErrorCommandResultImpl.messageFromException(e));
+						respond(event, ErrorCommandResultImpl.messageFromThrowable(e));
 					}
 					iterator.stop();
 				}
