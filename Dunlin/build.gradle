@@ -6,7 +6,7 @@ dependencies {
 	compile 'com.github.Shockah:pl.shockah.plugin:1.0'
 	
 	//Discord
-	compile 'net.dv8tion:JDA:3.0.BETA2_140'
+	compile 'net.dv8tion:JDA:3.0.0_175'
 	
 	//Database / ORM
 	compile group: 'com.h2database', name: 'h2', version: '1.4.193'
