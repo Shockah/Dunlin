@@ -10,9 +10,11 @@ import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceMan
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import pl.shockah.dunlin.commands.CommandsPlugin;
+import pl.shockah.dunlin.music.playlist.DedicatedChannelPlaylist;
 import pl.shockah.dunlin.music.playlist.MessagePlaylist;
 import pl.shockah.dunlin.music.playlist.Playlist;
 import pl.shockah.dunlin.permissions.PermissionsPlugin;
@@ -132,6 +134,29 @@ public class MusicPlugin extends ListenerPlugin {
 				return;
 			MessagePlaylist messagePlaylist = (MessagePlaylist)playlist;
 			messagePlaylist.onReaction(textChannel.getGuild().getMember(user), emoji);
+		});
+	}
+
+	@Override
+	protected void onMessageReceived(MessageReceivedEvent event) {
+		if (event.getAuthor().isBot() || event.getAuthor().isFake())
+			return;
+		if (event.getChannel().getType() != ChannelType.TEXT)
+			return;
+
+		TextChannel textChannel = (TextChannel)event.getChannel();
+		guildAudioManagers.writeOperation(guildAudioManagers -> {
+			if (!guildAudioManagers.containsKey(textChannel.getGuild()))
+				return;
+
+			GuildAudioManager guildAudioManager = getGuildAudioManager(textChannel.getGuild());
+			Playlist playlist = guildAudioManager.getPlaylist(null);
+			if (playlist == null)
+				return;
+
+			if (!(playlist instanceof DedicatedChannelPlaylist))
+				return;
+			commandsPlugin.callCommand(queueCommand, event.getMessage().getRawContent(), event);
 		});
 	}
 }

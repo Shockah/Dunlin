@@ -90,22 +90,29 @@ public class CommandsPlugin extends ListenerPlugin {
 			if (pattern.matches(message)) {
 				CommandPatternMatch<Command<Object, Object>> commandPatternMatch = (CommandPatternMatch<Command<Object, Object>>)pattern.getCommand(message);
 				if (commandPatternMatch != null) {
-					try {
-						CommandResult<Object> input = commandPatternMatch.command.parseInput(message, commandPatternMatch.textInput);
-						if (input instanceof ErrorCommandResult<?>) {
-							respond(event, input.getMessage(message, null));
-						} else if (input instanceof ParseCommandResult<?>) {
-							ParseCommandResult<?> parseCommandResult = (ParseCommandResult<?>)input;
-							CommandResult<Object> output = commandPatternMatch.command.execute(message, parseCommandResult.get());
-							respond(event, output.getMessage(message, parseCommandResult.get()));
-						}
-					} catch (Exception e) {
-						respond(event, ErrorCommandResultImpl.messageFromThrowable(e));
-					}
+					callCommand(commandPatternMatch.command, commandPatternMatch.textInput, event);
 					iterator.stop();
 				}
 			}
 		});
+	}
+
+	@SuppressWarnings("unchecked")
+	public void callCommand(Command<?, ?> command, String textInput, MessageReceivedEvent event) {
+		Message message = event.getMessage();
+		Command<Object, Object> plainCommand = (Command<Object, Object>)command;
+		try {
+			CommandResult<Object> input = plainCommand.parseInput(message, textInput);
+			if (input instanceof ErrorCommandResult<?>) {
+				respond(event, input.getMessage(message, null));
+			} else if (input instanceof ParseCommandResult<?>) {
+				ParseCommandResult<?> parseCommandResult = (ParseCommandResult<?>)input;
+				CommandResult<Object> output = plainCommand.execute(message, parseCommandResult.get());
+				respond(event, output.getMessage(message, parseCommandResult.get()));
+			}
+		} catch (Exception e) {
+			respond(event, ErrorCommandResultImpl.messageFromThrowable(e));
+		}
 	}
 
 	protected void respond(MessageReceivedEvent event, Message response) {
