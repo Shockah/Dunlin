@@ -156,6 +156,8 @@ public class MusicPlugin extends ListenerPlugin {
 
 			if (!(playlist instanceof DedicatedChannelPlaylist))
 				return;
+			if (((DedicatedChannelPlaylist)playlist).channel != textChannel)
+				return;
 			commandsPlugin.callCommand(queueCommand, event.getMessage().getRawContent(), event);
 		});
 	}
