@@ -11,6 +11,7 @@ import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.dunlin.settings.GroupSetting;
 import pl.shockah.dunlin.settings.SettingsPlugin;
+import pl.shockah.util.Box;
 import pl.shockah.util.ReadWriteSet;
 
 import java.util.LinkedHashSet;
@@ -20,7 +21,8 @@ public class CommandsPlugin extends ListenerPlugin {
 	private SettingsPlugin settingsPlugin;
 	
 	protected GroupSetting<String> prefixesSetting;
-	
+
+	protected final ReadWriteSet<CommandListener> listeners = new ReadWriteSet<>(new LinkedHashSet<>());
 	protected final ReadWriteSet<CommandPattern<? extends Command<Object, Object>>> patterns = new ReadWriteSet<>(new LinkedHashSet<>());
 	protected DefaultCommandPattern defaultCommandPattern;
 	protected ChainCommandPattern chainCommandPattern;
@@ -48,6 +50,14 @@ public class CommandsPlugin extends ListenerPlugin {
 	@Override
 	protected void onUnload() {
 		settingsPlugin.unregister(prefixesSetting);
+	}
+
+	public void registerListener(CommandListener listener) {
+		listeners.add(listener);
+	}
+
+	public void unregisterListener(CommandListener listener) {
+		listeners.remove(listener);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -86,10 +96,15 @@ public class CommandsPlugin extends ListenerPlugin {
 		if (message.getJDA().getAccountType() == AccountType.CLIENT && !message.getAuthor().equals(message.getJDA().getSelfUser()))
 			return;
 
+		Box<Boolean> matchedCommand = new Box<>(false);
 		patterns.iterate((pattern, iterator) -> {
 			if (pattern.matches(message)) {
 				CommandPatternMatch<Command<Object, Object>> commandPatternMatch = (CommandPatternMatch<Command<Object, Object>>)pattern.getCommand(message);
 				if (commandPatternMatch != null) {
+					matchedCommand.value = true;
+					listeners.iterate(listener -> {
+						listener.onCommandReceived(event, pattern, commandPatternMatch.command, commandPatternMatch.textInput);
+					});
 					try {
 						CommandResult<Object> input = commandPatternMatch.command.parseInput(message, commandPatternMatch.textInput);
 						if (input instanceof ErrorCommandResult<?>) {
@@ -97,6 +112,9 @@ public class CommandsPlugin extends ListenerPlugin {
 						} else if (input instanceof ParseCommandResult<?>) {
 							ParseCommandResult<?> parseCommandResult = (ParseCommandResult<?>)input;
 							CommandResult<Object> output = commandPatternMatch.command.execute(message, parseCommandResult.get());
+							listeners.iterate(listener -> {
+								listener.onCommandExecuted(event, pattern, commandPatternMatch.command, commandPatternMatch.textInput, output);
+							});
 							respond(event, output.getMessage(message, parseCommandResult.get()));
 						}
 					} catch (Exception e) {
@@ -106,6 +124,12 @@ public class CommandsPlugin extends ListenerPlugin {
 				}
 			}
 		});
+
+		if (!matchedCommand.value) {
+			listeners.iterate(listener -> {
+				listener.onNonCommandMessageReceived(event);
+			});
+		}
 	}
 
 	protected void respond(MessageReceivedEvent event, Message response) {
