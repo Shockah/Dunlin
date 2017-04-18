@@ -1,14 +1,5 @@
 package pl.shockah.dunlin.settings;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import pl.shockah.dunlin.Scope;
@@ -18,6 +9,18 @@ import pl.shockah.json.JSONObject;
 import pl.shockah.json.JSONParser;
 import pl.shockah.json.JSONPrettyPrinter;
 import pl.shockah.util.ReadWriteMap;
+import pl.shockah.util.ReadWriteSet;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class SettingsPlugin extends Plugin {
 	public static final Path SETTINGS_PATH = Paths.get("pluginSettings.json");
@@ -31,6 +34,7 @@ public class SettingsPlugin extends Plugin {
 	protected boolean dirty = false;
 	
 	protected final ReadWriteMap<String, Setting<?>> settings = new ReadWriteMap<>(new HashMap<>());
+	protected final ReadWriteSet<SettingListener> listeners = new ReadWriteSet<>(new LinkedHashSet<>());
 	
 	public SettingsPlugin(PluginManager manager, Info info) {
 		super(manager, info);
@@ -64,6 +68,14 @@ public class SettingsPlugin extends Plugin {
 	
 	public void unregister(Setting<?> setting) {
 		settings.remove(setting.getFullName().toLowerCase());
+	}
+
+	public void registerListener(SettingListener listener) {
+		listeners.add(listener);
+	}
+
+	public void unregisterListener(SettingListener listener) {
+		listeners.remove(listener);
 	}
 	
 	public Setting<?> getSetting(Plugin plugin, String name) {
@@ -137,6 +149,9 @@ public class SettingsPlugin extends Plugin {
 
 				String key = String.format("%s.%s", channel.getGuild().getId(), channel.getId());
 				settingJson.put(key, value);
+				listeners.iterate(listener -> {
+					listener.onSettingSet(fullSettingName, value, Scope.Channel, channel);
+				});
 			} break;
 			case Server: {
 				if (channel == null)
@@ -144,9 +159,15 @@ public class SettingsPlugin extends Plugin {
 
 				String key = channel.getGuild().getId();
 				settingJson.put(key, value);
+				listeners.iterate(listener -> {
+					listener.onSettingSet(fullSettingName, value, Scope.Server, channel);
+				});
 			} break;
 			case Global: {
 				settingJson.put("global", value);
+				listeners.iterate(listener -> {
+					listener.onSettingSet(fullSettingName, value, Scope.Global, null);
+				});
 			} break;
 		}
 	}
