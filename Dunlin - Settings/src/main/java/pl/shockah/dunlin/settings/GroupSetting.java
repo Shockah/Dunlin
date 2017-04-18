@@ -1,12 +1,17 @@
 package pl.shockah.dunlin.settings;
 
-import java.math.BigInteger;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import pl.shockah.dunlin.Scope;
 import pl.shockah.dunlin.plugin.Plugin;
+import pl.shockah.util.ReadWriteSet;
+
+import java.math.BigInteger;
+import java.util.LinkedHashSet;
 
 public class GroupSetting<T> extends Setting<T> {
+	protected final ReadWriteSet<GroupSettingListener<T>> listeners = new ReadWriteSet<>(new LinkedHashSet<>());
+
 	protected GroupSetting(SettingsPlugin settingsPlugin, Type type, Plugin plugin, String name, T defaultValue) {
 		super(settingsPlugin, type, plugin, name, defaultValue);
 	}
@@ -41,6 +46,14 @@ public class GroupSetting<T> extends Setting<T> {
 				return raw != null ? ((BigInteger)raw).longValueExact() : defaultValue;
 			}
 		};
+	}
+
+	public void registerListener(GroupSettingListener<T> listener) {
+		listeners.add(listener);
+	}
+
+	public void unregisterListener(GroupSettingListener<T> listener) {
+		listeners.remove(listener);
 	}
 
 	@Override
