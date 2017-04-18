@@ -34,7 +34,8 @@ public class SettingsPlugin extends Plugin {
 	protected boolean dirty = false;
 	
 	protected final ReadWriteMap<String, Setting<?>> settings = new ReadWriteMap<>(new HashMap<>());
-	protected final ReadWriteSet<SettingListener> listeners = new ReadWriteSet<>(new LinkedHashSet<>());
+	protected final ReadWriteSet<GroupSettingsListener> groupListeners = new ReadWriteSet<>(new LinkedHashSet<>());
+	protected final ReadWriteSet<UserSettingsListener> userListeners = new ReadWriteSet<>(new LinkedHashSet<>());
 	
 	public SettingsPlugin(PluginManager manager, Info info) {
 		super(manager, info);
@@ -70,12 +71,20 @@ public class SettingsPlugin extends Plugin {
 		settings.remove(setting.getFullName().toLowerCase());
 	}
 
-	public void registerListener(SettingListener listener) {
-		listeners.add(listener);
+	public void registerListener(GroupSettingsListener listener) {
+		groupListeners.add(listener);
 	}
 
-	public void unregisterListener(SettingListener listener) {
-		listeners.remove(listener);
+	public void unregisterListener(GroupSettingsListener listener) {
+		groupListeners.remove(listener);
+	}
+
+	public void registerListener(UserSettingsListener listener) {
+		userListeners.add(listener);
+	}
+
+	public void unregisterListener(UserSettingsListener listener) {
+		userListeners.remove(listener);
 	}
 	
 	public Setting<?> getSetting(Plugin plugin, String name) {
@@ -139,6 +148,7 @@ public class SettingsPlugin extends Plugin {
 		setSettingValueForScope(scope, channel, String.format("%s.%s", plugin.info.packageName(), setting), value);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setSettingValueForScope(Scope scope, TextChannel channel, String fullSettingName, Object value) {
 		JSONObject settingJson = settingsJson.getObjectOrNew(fullSettingName);
 
@@ -149,9 +159,18 @@ public class SettingsPlugin extends Plugin {
 
 				String key = String.format("%s.%s", channel.getGuild().getId(), channel.getId());
 				settingJson.put(key, value);
-				listeners.iterate(listener -> {
+
+				groupListeners.iterate(listener -> {
 					listener.onSettingSet(fullSettingName, value, Scope.Channel, channel);
 				});
+
+				Setting<?> setting = getSettingByName(fullSettingName);
+				if (setting != null && setting instanceof GroupSetting<?>) {
+					GroupSetting<Object> groupSetting = (GroupSetting<Object>)setting;
+					groupSetting.listeners.iterate(listener -> {
+						listener.onSettingSet(groupSetting, value, Scope.Channel, channel);
+					});
+				}
 			} break;
 			case Server: {
 				if (channel == null)
@@ -159,15 +178,33 @@ public class SettingsPlugin extends Plugin {
 
 				String key = channel.getGuild().getId();
 				settingJson.put(key, value);
-				listeners.iterate(listener -> {
+
+				groupListeners.iterate(listener -> {
 					listener.onSettingSet(fullSettingName, value, Scope.Server, channel);
 				});
+
+				Setting<?> setting = getSettingByName(fullSettingName);
+				if (setting != null && setting instanceof GroupSetting<?>) {
+					GroupSetting<Object> groupSetting = (GroupSetting<Object>)setting;
+					groupSetting.listeners.iterate(listener -> {
+						listener.onSettingSet(groupSetting, value, Scope.Server, channel);
+					});
+				}
 			} break;
 			case Global: {
 				settingJson.put("global", value);
-				listeners.iterate(listener -> {
+
+				groupListeners.iterate(listener -> {
 					listener.onSettingSet(fullSettingName, value, Scope.Global, null);
 				});
+
+				Setting<?> setting = getSettingByName(fullSettingName);
+				if (setting != null && setting instanceof GroupSetting<?>) {
+					GroupSetting<Object> groupSetting = (GroupSetting<Object>)setting;
+					groupSetting.listeners.iterate(listener -> {
+						listener.onSettingSet(groupSetting, value, Scope.Global, null);
+					});
+				}
 			} break;
 		}
 	}
@@ -186,6 +223,18 @@ public class SettingsPlugin extends Plugin {
 
 	public void setUserSettingValue(User user, String fullSettingName, Object value) {
 		settingsJson.getObjectOrNew(fullSettingName).put(user.getId(), value);
+
+		userListeners.iterate(listener -> {
+			listener.onSettingSet(fullSettingName, value, user);
+		});
+
+		Setting<?> setting = getSettingByName(fullSettingName);
+		if (setting != null && setting instanceof UserSetting<?>) {
+			UserSetting<Object> userSetting = (UserSetting<Object>)setting;
+			userSetting.listeners.iterate(listener -> {
+				listener.onSettingSet(userSetting, value, user);
+			});
+		}
 	}
 	
 	protected synchronized void onSettingChange(Setting<?> setting) {

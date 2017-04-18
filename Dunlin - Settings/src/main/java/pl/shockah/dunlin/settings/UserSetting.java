@@ -1,14 +1,16 @@
 package pl.shockah.dunlin.settings;
 
 import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
-import pl.shockah.dunlin.Scope;
 import pl.shockah.dunlin.plugin.Plugin;
+import pl.shockah.util.ReadWriteSet;
 
 import java.math.BigInteger;
+import java.util.LinkedHashSet;
 
 public class UserSetting<T> extends Setting<T> {
+    protected final ReadWriteSet<UserSettingListener<T>> listeners = new ReadWriteSet<>(new LinkedHashSet<>());
+
     protected UserSetting(SettingsPlugin settingsPlugin, Type type, Plugin plugin, String name, T defaultValue) {
         super(settingsPlugin, type, plugin, name, defaultValue);
     }
@@ -43,6 +45,14 @@ public class UserSetting<T> extends Setting<T> {
                 return raw != null ? ((BigInteger)raw).longValueExact() : defaultValue;
             }
         };
+    }
+
+    public void registerListener(UserSettingListener<T> listener) {
+        listeners.add(listener);
+    }
+
+    public void unregisterListener(UserSettingListener<T> listener) {
+        listeners.remove(listener);
     }
 
     @Override
