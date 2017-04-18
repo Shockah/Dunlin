@@ -3,17 +3,13 @@ package pl.shockah.dunlin.settings.commands;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
-import pl.shockah.dunlin.Scope;
 import pl.shockah.dunlin.commands.ArgumentSet;
 import pl.shockah.dunlin.commands.ArgumentSetParser;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
-import pl.shockah.dunlin.settings.old.GroupSetting;
-import pl.shockah.dunlin.settings.old.Setting;
-import pl.shockah.dunlin.settings.SettingsPlugin;
-import pl.shockah.dunlin.settings.old.UserSetting;
+import pl.shockah.dunlin.settings.*;
 
 public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output> {
 	private final SettingsPlugin settingsPlugin;
@@ -25,7 +21,7 @@ public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output
 	
 	@Override
 	public CommandResult<Input> parseInput(Message message, String textInput) {
-		return new ParseCommandResultImpl<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(this));
+		return new ParseCommandResultImpl<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(this, message));
 	}
 	
 	@Override
@@ -35,18 +31,10 @@ public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output
 
 	@Override
 	public Message formatOutput(Message message, Input input, Output output) {
-		EmbedBuilder embedBuilder = new EmbedBuilder();
-
-		if (output.setting instanceof GroupSetting<?>)
-			embedBuilder.setTitle(String.format("%s in scope %s", output.setting.getFullName(), output.scope.name()), null);
-		else if (output.setting instanceof UserSetting<?>)
-			embedBuilder.setTitle(String.format("%s for user %s#%s", output.setting.getFullName(), message.getAuthor().getName(), message.getAuthor().getDiscriminator()), null);
-		else
-			throw new IllegalArgumentException(String.format("Cannot handle setting type %s.", output.setting.getClass().getName()));
-
-		embedBuilder.setDescription(String.valueOf(output.value));
-
-		return new MessageBuilder().setEmbed(embedBuilder.build()).build();
+		return new MessageBuilder().setEmbed(new EmbedBuilder()
+				.setTitle(String.format("%s in scope %s", output.setting.getFullName(), output.scope.toString()), null)
+				.setDescription(String.valueOf(output.value))
+		.build()).build();
 	}
 
 	public static final class Arguments extends ArgumentSet {
@@ -56,39 +44,49 @@ public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output
 		@Argument("setting")
 		public String settingName;
 		
-		public Input toInput(GetCommand command) {
+		public Input toInput(GetCommand command, Message message) {
 			Setting<?> setting = command.settingsPlugin.getSettingByName(settingName);
-			return new Input(scope, setting);
+			SettingScope settingScope = null;
+			switch (scope) {
+				case Global:
+					settingScope = new GlobalSettingScope();
+					break;
+				case Guild:
+					settingScope = new GuildSettingScope(message.getGuild());
+					break;
+				case Channel:
+					settingScope = new TextChannelSettingScope(message.getTextChannel());
+					break;
+				case User:
+					settingScope = new UserSettingScope(message.getAuthor());
+					break;
+				default:
+					throw new IllegalArgumentException();
+			}
+			return new Input(settingScope, setting);
 		}
 	}
 
 	public static final class Input {
-		public final Scope scope;
+		public final SettingScope scope;
 		public final Setting<?> setting;
 		
-		public Input(Scope scope, Setting<?> setting) {
+		public Input(SettingScope scope, Setting<?> setting) {
 			this.scope = scope;
 			this.setting = setting;
 		}
 
 		public Output getOutput(Message message) {
-			Object value = null;
-			if (setting instanceof GroupSetting<?>)
-				value = ((GroupSetting<?>)setting).get(scope, message.getTextChannel());
-			else if (setting instanceof UserSetting<?>)
-				value = ((UserSetting<?>)setting).get(message.getAuthor());
-			else
-				throw new IllegalArgumentException(String.format("Cannot handle setting type %s.", setting.getClass().getName()));
-			return new Output(scope, setting, value);
+			return new Output(scope, setting, setting.get(scope));
 		}
 	}
 
 	public static final class Output {
-		public final Scope scope;
+		public final SettingScope scope;
 		public final Setting<?> setting;
 		public final Object value;
 
-		public Output(Scope scope, Setting<?> setting, Object value) {
+		public Output(SettingScope scope, Setting<?> setting, Object value) {
 			this.scope = scope;
 			this.setting = setting;
 			this.value = value;

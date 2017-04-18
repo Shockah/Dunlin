@@ -8,4 +8,6 @@ public abstract class SettingScope {
     protected abstract Object getRaw(Setting<?> setting);
 
     protected abstract void setRaw(Setting<?> setting, Object raw);
+
+    public abstract String name();
 }

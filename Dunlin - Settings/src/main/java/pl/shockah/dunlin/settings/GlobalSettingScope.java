@@ -10,4 +10,9 @@ public class GlobalSettingScope extends SettingScope {
     protected void setRaw(Setting<?> setting, Object raw) {
         setting.settingsPlugin.settingsJson.getObjectOrNew("global").put(setting.getFullName(), raw);
     }
+
+    @Override
+    public String name() {
+        return "Global";
+    }
 }

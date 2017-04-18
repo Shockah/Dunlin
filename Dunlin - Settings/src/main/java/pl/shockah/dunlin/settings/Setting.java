@@ -58,6 +58,8 @@ public abstract class Setting<T> {
 
     public abstract void setForScope(SettingScope scope, T value);
 
+    public abstract T parseValue(String textInput);
+
     public final PrivateSetting<T> asPrivate() {
         return PrivateSetting.of(this);
     }
@@ -73,6 +75,16 @@ public abstract class Setting<T> {
             public void setForScope(SettingScope scope, Boolean value) {
                 scope.setRaw(this, value);
             }
+
+            @Override
+            public Boolean parseValue(String textInput) {
+                if (textInput.equalsIgnoreCase("true") || textInput.equalsIgnoreCase("t") || textInput.equalsIgnoreCase("yes") || textInput.equalsIgnoreCase("y"))
+                    return true;
+                else if (textInput.equalsIgnoreCase("false") || textInput.equalsIgnoreCase("f") || textInput.equalsIgnoreCase("no") || textInput.equalsIgnoreCase("n"))
+                    return false;
+                else
+                    throw new IllegalArgumentException(String.format("Cannot parse `%s` as boolean.", textInput));
+            }
         };
     }
 
@@ -86,6 +98,11 @@ public abstract class Setting<T> {
             @Override
             public void setForScope(SettingScope scope, Integer value) {
                 scope.setRaw(this, value);
+            }
+
+            @Override
+            public Integer parseValue(String textInput) {
+                return new BigInteger(textInput).intValue();
             }
         };
     }
@@ -101,6 +118,11 @@ public abstract class Setting<T> {
             public void setForScope(SettingScope scope, BigInteger value) {
                 scope.setRaw(this, value);
             }
+
+            @Override
+            public BigInteger parseValue(String textInput) {
+                return new BigInteger(textInput);
+            }
         };
     }
 
@@ -114,6 +136,11 @@ public abstract class Setting<T> {
             @Override
             public void setForScope(SettingScope scope, String value) {
                 scope.setRaw(this, value);
+            }
+
+            @Override
+            public String parseValue(String textInput) {
+                return textInput;
             }
         };
     }

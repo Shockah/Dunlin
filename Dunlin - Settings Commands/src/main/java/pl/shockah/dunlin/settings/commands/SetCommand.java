@@ -1,11 +1,7 @@
 package pl.shockah.dunlin.settings.commands;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
-import pl.shockah.dunlin.Scope;
 import pl.shockah.dunlin.commands.ArgumentSet;
 import pl.shockah.dunlin.commands.ArgumentSetParser;
 import pl.shockah.dunlin.commands.NamedCommand;
@@ -13,10 +9,7 @@ import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ErrorCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
-import pl.shockah.dunlin.settings.old.EnumGroupSetting;
-import pl.shockah.dunlin.settings.old.GroupSetting;
-import pl.shockah.dunlin.settings.old.Setting;
-import pl.shockah.dunlin.settings.old.UserSetting;
+import pl.shockah.dunlin.settings.*;
 
 public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 	private final SettingsCommandsPlugin settingsCommandsPlugin;
@@ -28,33 +21,29 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 	
 	@Override
 	public CommandResult<Input> parseInput(Message message, String textInput) {
-		return new ParseCommandResultImpl<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(this));
+		return new ParseCommandResultImpl<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(this, message));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public CommandResult<Setting<?>> execute(Message message, Input input) {
-		if (input.scope == Scope.Global) {
+		if (input.scope instanceof GlobalSettingScope) {
 			if (!settingsCommandsPlugin.permissionsPlugin.hasPermission(message, settingsCommandsPlugin, names[0]))
 				return new ErrorCommandResultImpl<>(this, settingsCommandsPlugin.permissionsPlugin.buildMissingPermissionMessage(settingsCommandsPlugin, names[0]));
-		} else if (input.scope == Scope.Server) {
+		} else if (input.scope instanceof GuildSettingScope) {
 			if (!message.getGuild().getMember(message.getAuthor()).hasPermission(Permission.MANAGE_SERVER)) {
 				if (!settingsCommandsPlugin.permissionsPlugin.hasPermission(message, settingsCommandsPlugin, names[0]))
 					return new ErrorCommandResultImpl<>(this, settingsCommandsPlugin.permissionsPlugin.buildMissingPermissionMessage(settingsCommandsPlugin, names[0]));
 			}
-		} else if (input.scope == Scope.Channel) {
+		} else if (input.scope instanceof TextChannelSettingScope) {
 			if (!message.getGuild().getMember(message.getAuthor()).hasPermission(message.getTextChannel(), Permission.MANAGE_CHANNEL)) {
 				if (!settingsCommandsPlugin.permissionsPlugin.hasPermission(message, settingsCommandsPlugin, names[0]))
 					return new ErrorCommandResultImpl<>(this, settingsCommandsPlugin.permissionsPlugin.buildMissingPermissionMessage(settingsCommandsPlugin, names[0]));
 			}
 		}
 
-		if (input.setting instanceof GroupSetting<?>)
-			((GroupSetting<Object>)input.setting).set(input.value, input.scope, message.getTextChannel());
-		else if (input.setting instanceof UserSetting<?>)
-			((UserSetting<Object>)input.setting).set(input.value, message.getAuthor());
-		else
-			throw new IllegalArgumentException(String.format("Cannot handle setting type %s.", input.setting.getClass().getName()));
+		Setting<Object> genericSetting = (Setting<Object>)input.setting;
+		genericSetting.set(input.scope, input.value);
 
 		message.addReaction("\uD83D\uDC4C").queue();
 		return new ValueCommandResultImpl<>(this, input.setting);
@@ -67,7 +56,7 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 
 	public static final class Arguments extends ArgumentSet {
 		@Argument
-		public Scope scope = Scope.Server;
+		public Scope scope = Scope.Guild;
 		
 		@Argument("setting")
 		public String settingName;
@@ -82,38 +71,35 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 				throw new IllegalArgumentException("Missing `value` argument.");
 		}
 
-		public Input toInput(SetCommand command) {
+		public Input toInput(SetCommand command, Message message) {
 			Setting<?> setting = command.settingsCommandsPlugin.settingsPlugin.getSettingByName(settingName);
-			Object value = null;
-			
-			switch (setting.type) {
-				case Bool:
-					value = ArgumentSetParser.parseBoolean(rawValue);
+			SettingScope settingScope = null;
+			switch (scope) {
+				case Global:
+					settingScope = new GlobalSettingScope();
 					break;
-				case Integer:
-					value = new BigInteger(rawValue);
+				case Guild:
+					settingScope = new GuildSettingScope(message.getGuild());
 					break;
-				case Decimal:
-					value = new BigDecimal(rawValue);
+				case Channel:
+					settingScope = new TextChannelSettingScope(message.getTextChannel());
 					break;
-				case String:
-					value = rawValue;
+				case User:
+					settingScope = new UserSettingScope(message.getAuthor());
 					break;
-				case Enum:
-					value = ArgumentSetParser.parseEnum(((EnumGroupSetting<?>)setting).enumClass, rawValue);
-					break;
+				default:
+					throw new IllegalArgumentException();
 			}
-			
-			return new Input(scope, setting, value);
+			return new Input(settingScope, setting, setting.parseValue(rawValue));
 		}
 	}
 
 	public static final class Input {
-		public final Scope scope;
+		public final SettingScope scope;
 		public final Setting<?> setting;
 		public final Object value;
 		
-		public Input(Scope scope, Setting<?> setting, Object value) {
+		public Input(SettingScope scope, Setting<?> setting, Object value) {
 			this.scope = scope;
 			this.setting = setting;
 			this.value = value;

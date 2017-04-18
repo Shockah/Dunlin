@@ -23,4 +23,9 @@ public class GuildSettingScope extends SettingScope {
     public SettingScope downscope() {
         return new GlobalSettingScope();
     }
+
+    @Override
+    public String name() {
+        return String.format("Guild: %s", guild.getName());
+    }
 }

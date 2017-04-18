@@ -22,4 +22,28 @@ public class EnumSetting<T extends Enum<T>> extends Setting<T> {
 	public void setForScope(SettingScope scope, T value) {
 		scope.setRaw(this, value.name());
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public T parseValue(String textInput) {
+		for (Object obj : clazz.getEnumConstants()) {
+			Enum<?> enumConst = (Enum<?>)obj;
+			if (enumConst.name().equalsIgnoreCase(textInput)) {
+				return (T)enumConst;
+			}
+		}
+
+		try {
+			int ordinal = Integer.parseInt(textInput);
+			for (Object obj : clazz.getEnumConstants()) {
+				Enum<?> enumConst = (Enum<?>)obj;
+				if (enumConst.ordinal() == ordinal) {
+					return (T)enumConst;
+				}
+			}
+		} catch (NumberFormatException e2) {
+		}
+
+		throw new IllegalArgumentException(String.format("Cannot parse `%s` as enum `%s`.", textInput, clazz.getSimpleName()));
+	}
 }

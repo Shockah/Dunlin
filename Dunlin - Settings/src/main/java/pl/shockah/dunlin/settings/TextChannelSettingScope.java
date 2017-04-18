@@ -23,4 +23,9 @@ public class TextChannelSettingScope extends SettingScope {
     public SettingScope downscope() {
         return new GuildSettingScope(textChannel.getGuild());
     }
+
+    @Override
+    public String name() {
+        return String.format("Channel: #%s", textChannel.getName());
+    }
 }

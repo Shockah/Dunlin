@@ -23,4 +23,9 @@ public class UserSettingScope extends SettingScope {
     public SettingScope downscope() {
         return new GlobalSettingScope();
     }
+
+    @Override
+    public String name() {
+        return String.format("User: %s#%s", user.getName(), user.getDiscriminator());
+    }
 }
