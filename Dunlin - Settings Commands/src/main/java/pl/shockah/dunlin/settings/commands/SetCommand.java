@@ -13,10 +13,10 @@ import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ErrorCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
-import pl.shockah.dunlin.settings.EnumGroupSetting;
-import pl.shockah.dunlin.settings.GroupSetting;
-import pl.shockah.dunlin.settings.Setting;
-import pl.shockah.dunlin.settings.UserSetting;
+import pl.shockah.dunlin.settings.old.EnumGroupSetting;
+import pl.shockah.dunlin.settings.old.GroupSetting;
+import pl.shockah.dunlin.settings.old.Setting;
+import pl.shockah.dunlin.settings.old.UserSetting;
 
 public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 	private final SettingsCommandsPlugin settingsCommandsPlugin;

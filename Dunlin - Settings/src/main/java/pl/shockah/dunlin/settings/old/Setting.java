@@ -1,15 +1,19 @@
-package pl.shockah.dunlin.settings;
+package pl.shockah.dunlin.settings.old;
 
+import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.plugin.Plugin;
+import pl.shockah.dunlin.settings.SettingsPlugin;
 
 public abstract class Setting<T> {
     public final SettingsPlugin settingsPlugin;
+    public final GroupSetting.Type type;
     public final Plugin plugin;
     public final String name;
     public final T defaultValue;
 
-    protected Setting(SettingsPlugin settingsPlugin, Plugin plugin, String name, T defaultValue) {
+    protected Setting(SettingsPlugin settingsPlugin, GroupSetting.Type type, Plugin plugin, String name, T defaultValue) {
         this.settingsPlugin = settingsPlugin;
+        this.type = type;
         this.plugin = plugin;
         this.name = name;
         this.defaultValue = defaultValue;
@@ -19,9 +23,5 @@ public abstract class Setting<T> {
         return String.format("%s.%s", plugin.info.packageName(), name);
     }
 
-    public abstract T get(SettingScope scope);
-
-    public abstract void set(SettingScope scope, T value);
-
-    protected abstract Object getRaw(SettingScope scope);
+    public abstract T get(Message message);
 }

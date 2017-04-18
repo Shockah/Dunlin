@@ -10,10 +10,10 @@ import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
-import pl.shockah.dunlin.settings.GroupSetting;
-import pl.shockah.dunlin.settings.Setting;
+import pl.shockah.dunlin.settings.old.GroupSetting;
+import pl.shockah.dunlin.settings.old.Setting;
 import pl.shockah.dunlin.settings.SettingsPlugin;
-import pl.shockah.dunlin.settings.UserSetting;
+import pl.shockah.dunlin.settings.old.UserSetting;
 
 public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output> {
 	private final SettingsPlugin settingsPlugin;

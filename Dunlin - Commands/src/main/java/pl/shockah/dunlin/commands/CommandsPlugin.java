@@ -9,7 +9,7 @@ import pl.shockah.dunlin.commands.result.ErrorCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ParseCommandResult;
 import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
-import pl.shockah.dunlin.settings.GroupSetting;
+import pl.shockah.dunlin.settings.old.GroupSetting;
 import pl.shockah.dunlin.settings.SettingsPlugin;
 import pl.shockah.util.Box;
 import pl.shockah.util.ReadWriteSet;

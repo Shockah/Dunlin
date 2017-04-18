@@ -7,7 +7,7 @@ import pl.shockah.dunlin.permissions.db.PermissionGroup;
 import pl.shockah.dunlin.permissions.db.PermissionUser;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
-import pl.shockah.dunlin.settings.GroupSetting;
+import pl.shockah.dunlin.settings.old.GroupSetting;
 import pl.shockah.dunlin.settings.SettingsPlugin;
 import pl.shockah.json.JSONList;
 

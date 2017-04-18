@@ -1,4 +1,4 @@
-package pl.shockah.dunlin.settings;
+package pl.shockah.dunlin.settings.old;
 
 import net.dv8tion.jda.core.entities.User;
 

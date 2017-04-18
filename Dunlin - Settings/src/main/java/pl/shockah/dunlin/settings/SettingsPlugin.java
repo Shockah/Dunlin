@@ -5,6 +5,7 @@ import net.dv8tion.jda.core.entities.User;
 import pl.shockah.dunlin.Scope;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
+import pl.shockah.dunlin.settings.old.*;
 import pl.shockah.json.JSONObject;
 import pl.shockah.json.JSONParser;
 import pl.shockah.json.JSONPrettyPrinter;

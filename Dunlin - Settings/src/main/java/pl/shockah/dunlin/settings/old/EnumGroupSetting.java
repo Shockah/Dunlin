@@ -1,8 +1,9 @@
-package pl.shockah.dunlin.settings;
+package pl.shockah.dunlin.settings.old;
 
 import net.dv8tion.jda.core.entities.TextChannel;
 import pl.shockah.dunlin.Scope;
 import pl.shockah.dunlin.plugin.Plugin;
+import pl.shockah.dunlin.settings.SettingsPlugin;
 
 public class EnumGroupSetting<T extends Enum<T>> extends GroupSetting<T> {
 	public final Class<T> enumClass;

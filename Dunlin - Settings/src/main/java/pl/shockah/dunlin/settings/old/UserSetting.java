@@ -1,8 +1,9 @@
-package pl.shockah.dunlin.settings;
+package pl.shockah.dunlin.settings.old;
 
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
 import pl.shockah.dunlin.plugin.Plugin;
+import pl.shockah.dunlin.settings.SettingsPlugin;
 import pl.shockah.util.ReadWriteSet;
 
 import java.math.BigInteger;
