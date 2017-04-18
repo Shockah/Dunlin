@@ -7,7 +7,7 @@ import pl.shockah.dunlin.permissions.db.PermissionGroup;
 import pl.shockah.dunlin.permissions.db.PermissionUser;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
-import pl.shockah.dunlin.settings.old.GroupSetting;
+import pl.shockah.dunlin.settings.Setting;
 import pl.shockah.dunlin.settings.SettingsPlugin;
 import pl.shockah.json.JSONList;
 
@@ -27,7 +27,7 @@ public class OwnerPlugin extends Plugin {
 	private StatusCommand statusCommand;
 	private UserCommand userCommand;
 
-	protected GroupSetting<String> announceChannelSetting;
+	protected Setting<String> announceChannelSetting;
 	
 	public OwnerPlugin(PluginManager manager, Info info) {
 		super(manager, info);
@@ -65,7 +65,7 @@ public class OwnerPlugin extends Plugin {
 		);
 
 		settingsPlugin.register(
-				announceChannelSetting = GroupSetting.ofString(settingsPlugin, this, "announceChannel", ".")
+				announceChannelSetting = Setting.ofString(settingsPlugin, this, "announceChannel", ".")
 		);
 	}
 
