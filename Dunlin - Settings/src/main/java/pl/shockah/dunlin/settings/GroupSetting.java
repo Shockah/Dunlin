@@ -1,5 +1,6 @@
 package pl.shockah.dunlin.settings;
 
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import pl.shockah.dunlin.Scope;
@@ -74,6 +75,21 @@ public class GroupSetting<T> extends Setting<T> {
 		if (value != null)
 			return value;
 		
+		return defaultValue;
+	}
+
+	//TODO: properly abstract it out
+	public T get(Guild guild) {
+		TextChannel channel = guild.getPublicChannel();
+
+		T value = get(Scope.Server, channel);
+		if (value != null)
+			return value;
+
+		value = get(Scope.Global, channel);
+		if (value != null)
+			return value;
+
 		return defaultValue;
 	}
 	

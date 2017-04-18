@@ -221,6 +221,7 @@ public class SettingsPlugin extends Plugin {
 		setUserSettingValue(user, String.format("%s.%s", plugin.info.packageName(), setting), value);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setUserSettingValue(User user, String fullSettingName, Object value) {
 		settingsJson.getObjectOrNew(fullSettingName).put(user.getId(), value);
 

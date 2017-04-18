@@ -22,6 +22,7 @@ import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.dunlin.settings.EnumGroupSetting;
 import pl.shockah.dunlin.settings.GroupSetting;
+import pl.shockah.dunlin.settings.GroupSettingListener;
 import pl.shockah.dunlin.settings.SettingsPlugin;
 import pl.shockah.util.ReadWriteMap;
 
@@ -42,6 +43,9 @@ public class MusicPlugin extends ListenerPlugin {
 	public GroupSetting<PlaylistDisplayMode> playlistDisplayModeSetting;
 	public GroupSetting<String> dedicatedChannelSetting;
 	public GroupSetting<Integer> entriesPerPageSetting;
+	public GroupSetting<Integer> volumeSetting;
+
+	protected GroupSettingListener<Integer> volumeSettingListener;
 
 	public AudioPlayerManager audioPlayerManager;
 	protected final ReadWriteMap<Guild, GuildAudioManager> guildAudioManagers = new ReadWriteMap<>(new HashMap<>());
@@ -65,6 +69,17 @@ public class MusicPlugin extends ListenerPlugin {
 		settingsPlugin.register(
 				entriesPerPageSetting = GroupSetting.ofInt(settingsPlugin, this, "entriesPerPage", 10)
 		);
+		settingsPlugin.register(
+				volumeSetting = GroupSetting.ofInt(settingsPlugin, this, "volume", 10)
+		);
+
+		//TODO: fix - value passed is BigInteger but known type is Integer
+		/*volumeSetting.registerListener(
+				volumeSettingListener = (setting, value, scope, channel) -> {
+					Guild guild = channel.getGuild();
+					getGuildAudioManager(guild).audioPlayer.setVolume(setting.get(guild));
+				}
+		);*/
 
 		audioPlayerManager = new DefaultAudioPlayerManager();
 		audioPlayerManager.registerSourceManager(new YoutubeAudioSourceManager(false));
@@ -83,6 +98,8 @@ public class MusicPlugin extends ListenerPlugin {
 
 		settingsPlugin.unregister(playlistDisplayModeSetting);
 		settingsPlugin.unregister(dedicatedChannelSetting);
+		settingsPlugin.unregister(entriesPerPageSetting);
+		settingsPlugin.unregister(volumeSetting);
 
 		guildAudioManagers.iterateValues(guildAudioManager -> {
 			try {
@@ -94,7 +111,9 @@ public class MusicPlugin extends ListenerPlugin {
 
 	public GuildAudioManager getGuildAudioManager(Guild guild) {
 		return guildAudioManagers.writeOperation(guildAudioManagers -> {
-			return guildAudioManagers.computeIfAbsent(guild, k -> new GuildAudioManager(this, k));
+			GuildAudioManager guildAudioManager = guildAudioManagers.computeIfAbsent(guild, k -> new GuildAudioManager(this, k));
+			guildAudioManager.audioPlayer.setVolume(volumeSetting.get(guild));
+			return guildAudioManager;
 		});
 	}
 
