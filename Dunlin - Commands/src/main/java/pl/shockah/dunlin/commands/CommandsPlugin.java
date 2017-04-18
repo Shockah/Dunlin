@@ -105,15 +105,21 @@ public class CommandsPlugin extends ListenerPlugin {
 					listeners.iterate(listener -> {
 						listener.onCommandReceived(event, pattern, commandPatternMatch.command, commandPatternMatch.textInput);
 					});
-					callCommand(commandPatternMatch.command, commandPatternMatch.textInput, event);
+					callCommand(pattern, commandPatternMatch.command, commandPatternMatch.textInput, event);
 					iterator.stop();
 				}
 			}
 		});
+
+		if (!matchedCommand.value) {
+			listeners.iterate(listener -> {
+				listener.onNonCommandMessageReceived(event);
+			});
+		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public void callCommand(Command<?, ?> command, String textInput, MessageReceivedEvent event) {
+	public void callCommand(CommandPattern<?> pattern, Command<?, ?> command, String textInput, MessageReceivedEvent event) {
 		Message message = event.getMessage();
 		Command<Object, Object> plainCommand = (Command<Object, Object>)command;
 		try {
@@ -123,19 +129,13 @@ public class CommandsPlugin extends ListenerPlugin {
 			} else if (input instanceof ParseCommandResult<?>) {
 				ParseCommandResult<?> parseCommandResult = (ParseCommandResult<?>)input;
 				CommandResult<Object> output = plainCommand.execute(message, parseCommandResult.get());
-							listeners.iterate(listener -> {
-								listener.onCommandExecuted(event, pattern, commandPatternMatch.command, commandPatternMatch.textInput, output);
-							});
+				listeners.iterate(listener -> {
+					listener.onCommandExecuted(event, pattern, command, textInput, output);
+				});
 				respond(event, output.getMessage(message, parseCommandResult.get()));
 			}
 		} catch (Exception e) {
 			respond(event, ErrorCommandResultImpl.messageFromThrowable(e));
-		}
-
-		if (!matchedCommand.value) {
-			listeners.iterate(listener -> {
-				listener.onNonCommandMessageReceived(event);
-			});
 		}
 	}
 
