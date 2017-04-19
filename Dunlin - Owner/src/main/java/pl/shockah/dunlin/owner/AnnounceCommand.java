@@ -6,12 +6,12 @@ import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
-import pl.shockah.dunlin.Scope;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ErrorCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
+import pl.shockah.dunlin.settings.GuildSettingScope;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,7 +55,7 @@ public class AnnounceCommand extends NamedCommand<String, List<TextChannel>> {
                 .flatMap(List::stream)
                 .forEach(guild -> {
                     TextChannel channel = null;
-                    String channelName = ownerPlugin.announceChannelSetting.get(Scope.Server, message.getTextChannel());
+                    String channelName = ownerPlugin.announceChannelSetting.get(new GuildSettingScope(message.getGuild()));
 
                     if (channelName != null)
                         channel = guild.getTextChannelsByName(channelName, true).stream().findFirst().orElse(null);

@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import org.apache.commons.lang3.StringUtils;
 import pl.shockah.dunlin.music.GuildAudioManager;
+import pl.shockah.dunlin.settings.GuildSettingScope;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -59,7 +60,7 @@ public class MessagePlaylist extends Playlist {
 				page.set(Math.max(page.get() - 1, 0));
 				updatePlaylistMessage();
 			} else if (emoji.equals(GuildAudioManager.EMOJI_ARROW_RIGHT)) {
-				int perPage = manager.plugin.entriesPerPageSetting.get(message);
+				int perPage = manager.plugin.entriesPerPageSetting.get(new GuildSettingScope(message.getGuild()));
 				int pages = (int)Math.ceil(1.0 * tracks.size() / perPage);
 				page.set(Math.min(page.get() + 1, Math.max(pages - 1, 0)));
 				updatePlaylistMessage();
@@ -75,7 +76,7 @@ public class MessagePlaylist extends Playlist {
 
 	protected void updatePlaylistMessage() {
 		tracks.readOperation(tracks -> {
-			int perPage = manager.plugin.entriesPerPageSetting.get(message);
+			int perPage = manager.plugin.entriesPerPageSetting.get(new GuildSettingScope(message.getGuild()));
 			if (!tracks.isEmpty()) {
 				while (page.get() * perPage > tracks.size())
 					page.decrementAndGet();

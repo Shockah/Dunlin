@@ -14,6 +14,7 @@ import pl.shockah.dunlin.music.db.MessagePlaylistEntry;
 import pl.shockah.dunlin.music.playlist.DedicatedChannelPlaylist;
 import pl.shockah.dunlin.music.playlist.MessagePlaylist;
 import pl.shockah.dunlin.music.playlist.Playlist;
+import pl.shockah.dunlin.settings.GuildSettingScope;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -75,7 +76,7 @@ public class GuildAudioManager extends AudioEventAdapter implements AudioSendHan
 
     private Playlist createPlaylistImplementation(Message message) {
         synchronized (lock) {
-            PlaylistDisplayMode playlistDisplayMode = plugin.playlistDisplayModeSetting.get(message);
+            PlaylistDisplayMode playlistDisplayMode = plugin.playlistDisplayModeSetting.get(new GuildSettingScope(message.getGuild()));
             switch (playlistDisplayMode) {
                 case DedicatedChannel:
                 case PinnedMessage: {
@@ -121,7 +122,7 @@ public class GuildAudioManager extends AudioEventAdapter implements AudioSendHan
     }
 
     private TextChannel getDedicatedChannel(Message message) {
-        String channelName = plugin.dedicatedChannelSetting.get(message);
+        String channelName = plugin.dedicatedChannelSetting.get(new GuildSettingScope(message.getGuild()));
         if (channelName == null)
             return message.getTextChannel();
         return message.getGuild().getTextChannelsByName(channelName, true).get(0);

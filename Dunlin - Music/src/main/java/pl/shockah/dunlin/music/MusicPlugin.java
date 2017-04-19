@@ -20,9 +20,9 @@ import pl.shockah.dunlin.music.playlist.Playlist;
 import pl.shockah.dunlin.permissions.PermissionsPlugin;
 import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
-import pl.shockah.dunlin.settings.EnumGroupSetting;
-import pl.shockah.dunlin.settings.GroupSetting;
-import pl.shockah.dunlin.settings.GroupSettingListener;
+import pl.shockah.dunlin.settings.GuildSettingScope;
+import pl.shockah.dunlin.settings.Setting;
+import pl.shockah.dunlin.settings.SettingListener;
 import pl.shockah.dunlin.settings.SettingsPlugin;
 import pl.shockah.util.ReadWriteMap;
 
@@ -40,12 +40,12 @@ public class MusicPlugin extends ListenerPlugin {
 	public SettingsPlugin settingsPlugin;
 
 	private QueueCommand queueCommand;
-	public GroupSetting<PlaylistDisplayMode> playlistDisplayModeSetting;
-	public GroupSetting<String> dedicatedChannelSetting;
-	public GroupSetting<Integer> entriesPerPageSetting;
-	public GroupSetting<Integer> volumeSetting;
+	public Setting<PlaylistDisplayMode> playlistDisplayModeSetting;
+	public Setting<String> dedicatedChannelSetting;
+	public Setting<Integer> entriesPerPageSetting;
+	public Setting<Integer> volumeSetting;
 
-	protected GroupSettingListener<Integer> volumeSettingListener;
+	protected SettingListener<Integer> volumeSettingListener;
 
 	public AudioPlayerManager audioPlayerManager;
 	protected final ReadWriteMap<Guild, GuildAudioManager> guildAudioManagers = new ReadWriteMap<>(new HashMap<>());
@@ -61,16 +61,16 @@ public class MusicPlugin extends ListenerPlugin {
 		);
 
 		settingsPlugin.register(
-				playlistDisplayModeSetting = new EnumGroupSetting<>(settingsPlugin, PlaylistDisplayMode.class, this, "playlistDisplayMode", PlaylistDisplayMode.PinnedMessage)
+				playlistDisplayModeSetting = Setting.ofEnum(settingsPlugin, this, "playlistDisplayMode", PlaylistDisplayMode.PinnedMessage, PlaylistDisplayMode.class)
 		);
 		settingsPlugin.register(
-				dedicatedChannelSetting = GroupSetting.ofString(settingsPlugin, this, "dedicatedChannel", null)
+				dedicatedChannelSetting = Setting.ofString(settingsPlugin, this, "dedicatedChannel", null)
 		);
 		settingsPlugin.register(
-				entriesPerPageSetting = GroupSetting.ofInt(settingsPlugin, this, "entriesPerPage", 10)
+				entriesPerPageSetting = Setting.ofInt(settingsPlugin, this, "entriesPerPage", 10)
 		);
 		settingsPlugin.register(
-				volumeSetting = GroupSetting.ofInt(settingsPlugin, this, "volume", 10)
+				volumeSetting = Setting.ofInt(settingsPlugin, this, "volume", 10)
 		);
 
 		//TODO: fix - value passed is BigInteger but known type is Integer
@@ -112,7 +112,7 @@ public class MusicPlugin extends ListenerPlugin {
 	public GuildAudioManager getGuildAudioManager(Guild guild) {
 		return guildAudioManagers.writeOperation(guildAudioManagers -> {
 			GuildAudioManager guildAudioManager = guildAudioManagers.computeIfAbsent(guild, k -> new GuildAudioManager(this, k));
-			guildAudioManager.audioPlayer.setVolume(volumeSetting.get(guild));
+			guildAudioManager.audioPlayer.setVolume(volumeSetting.get(new GuildSettingScope(guild)));
 			return guildAudioManager;
 		});
 	}

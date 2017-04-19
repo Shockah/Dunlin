@@ -9,7 +9,7 @@ import pl.shockah.dunlin.commands.result.ErrorCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ParseCommandResult;
 import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
-import pl.shockah.dunlin.settings.GroupSetting;
+import pl.shockah.dunlin.settings.Setting;
 import pl.shockah.dunlin.settings.SettingsPlugin;
 import pl.shockah.util.Box;
 import pl.shockah.util.ReadWriteSet;
@@ -20,7 +20,7 @@ public class CommandsPlugin extends ListenerPlugin {
 	@Dependency
 	private SettingsPlugin settingsPlugin;
 	
-	protected GroupSetting<String> prefixesSetting;
+	protected Setting<String> prefixesSetting;
 
 	protected final ReadWriteSet<CommandListener> listeners = new ReadWriteSet<>(new LinkedHashSet<>());
 	protected final ReadWriteSet<CommandPattern<? extends Command<Object, Object>>> patterns = new ReadWriteSet<>(new LinkedHashSet<>());
@@ -35,7 +35,7 @@ public class CommandsPlugin extends ListenerPlugin {
 	@Override
 	protected void onLoad() {
 		settingsPlugin.register(
-			prefixesSetting = GroupSetting.ofString(settingsPlugin, this, "prefixes", ".")
+			prefixesSetting = Setting.ofString(settingsPlugin, this, "prefixes", ".")
 		);
 		
 		defaultCommandPattern = new DefaultCommandPattern(this);
