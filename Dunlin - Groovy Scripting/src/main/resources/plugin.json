@@ -1,0 +1,14 @@
+{
+	"packageName": "pl.shockah.dunlin.groovyscripting",
+	"baseClass": "pl.shockah.dunlin.groovyscripting.GroovyScriptingPlugin",
+	"enabledByDefault": true,
+	"dependsOn": [
+		"pl.shockah.dunlin.commands",
+		"pl.shockah.dunlin.permissions",
+		"pl.shockah.dunlin.groovy"
+	],
+
+	"name": "Groovy Scripting",
+	"author": "Shockah",
+	"description": ""
+}

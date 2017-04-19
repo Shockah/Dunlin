@@ -1,17 +1,5 @@
 dependencies {
 	compileOnly project(':Dunlin')
-	compileOnly project(':Dunlin - Commands')
-	compileOnly project(':Dunlin - Permissions')
 
 	compile 'org.codehaus.groovy:groovy-all:2.4.8'
-	compile 'com.github.Shockah:groovy-sandbox:9a9a1eeb64153f9ef8d4fd461c7553625a15175e'
 }
-
-/*shadowJar {
-	dependencies {
-		exclude(project(':Dunlin'))
-		exclude(project(':Dunlin - Commands'))
-		exclude(project(':Dunlin - Permissions'))
-		exclude(dependency('*:*:*'))
-	}
-}*/

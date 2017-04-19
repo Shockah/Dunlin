@@ -1,4 +1,4 @@
-package pl.shockah.dunlin.groovy;
+package pl.shockah.dunlin.groovyscripting;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

@@ -1,4 +1,4 @@
-package pl.shockah.dunlin.groovy;
+package pl.shockah.dunlin.groovyscripting;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyRuntimeException;
@@ -15,9 +15,9 @@ import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
 import java.lang.reflect.InvocationTargetException;
 
 public class EvalCommand extends NamedCommand<String, Object> {
-    protected final GroovyPlugin plugin;
+    protected final GroovyScriptingPlugin plugin;
 
-    public EvalCommand(GroovyPlugin plugin) {
+    public EvalCommand(GroovyScriptingPlugin plugin) {
         super("groovy", "gr");
         this.plugin = plugin;
     }

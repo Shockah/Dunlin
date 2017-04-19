@@ -2,10 +2,6 @@
 	"packageName": "pl.shockah.dunlin.groovy",
 	"baseClass": "pl.shockah.dunlin.groovy.GroovyPlugin",
 	"enabledByDefault": true,
-	"dependsOn": [
-		"pl.shockah.dunlin.commands",
-		"pl.shockah.dunlin.permissions"
-	],
 
 	"name": "Groovy",
 	"author": "Shockah",
