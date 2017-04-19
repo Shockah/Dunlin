@@ -1,7 +1,6 @@
 package pl.shockah.dunlin.groovyscripting;
 
 import groovy.lang.Binding;
-import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import groovy.transform.TimedInterrupt;
 import net.dv8tion.jda.core.AccountType;
@@ -20,8 +19,6 @@ import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.json.JSONObject;
 import pl.shockah.util.func.Func1;
 
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Map;
 
 public class GroovyScriptingPlugin extends Plugin {
@@ -167,14 +164,5 @@ public class GroovyScriptingPlugin extends Plugin {
 		if (sandbox != null)
 			sandbox.register();
 		return shell;
-	}
-
-	@ClassLoaderProvider("groovy")
-	public URLClassLoader createGroovyPluginClassLoader(ClassLoader parentClassLoader, URL[] urls) {
-		GroovyClassLoader cl = new GroovyClassLoader(parentClassLoader);
-		for (URL url : urls) {
-			cl.addURL(url);
-		}
-		return cl;
 	}
 }
