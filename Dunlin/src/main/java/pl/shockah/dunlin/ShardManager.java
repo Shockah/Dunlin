@@ -47,7 +47,7 @@ public class ShardManager {
 		JDABuilder builder = new JDABuilder(accountType);
 		builder.setToken(apiConfig.getString("token"));
 		apiConfig.onString("game", game -> builder.setGame(Game.of(game)));
-		builder.addListener(eventListenerManager);
+		builder.addEventListener(eventListenerManager);
 		return builder;
 	}
 
