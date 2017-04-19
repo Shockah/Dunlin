@@ -1,10 +1,12 @@
 package pl.shockah.dunlin.commands;
 
+import net.dv8tion.jda.core.entities.Message;
+import pl.shockah.dunlin.settings.MessageSettingScope;
+import pl.shockah.util.ReadWriteSet;
+
 import java.util.LinkedHashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.dv8tion.jda.core.entities.Message;
-import pl.shockah.util.ReadWriteSet;
 
 public class DefaultCommandPattern extends CommandPattern<NamedCommand<?, ?>> {
 	public static final String PARAMETERIZED_PATTERN = "^[%s]([^\\s]*?)(?:\\s(.*))?$";
@@ -19,7 +21,7 @@ public class DefaultCommandPattern extends CommandPattern<NamedCommand<?, ?>> {
 	@Override
 	public boolean matches(Message message) {
 		String content = message.getRawContent();
-		for (String prefix : plugin.prefixesSetting.get(message).split("\\s")) {
+		for (String prefix : plugin.prefixesSetting.get(new MessageSettingScope(message)).split("\\s")) {
 			if (Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix), Pattern.DOTALL | Pattern.MULTILINE).matcher(content).find())
 				return true;
 		}
@@ -31,7 +33,7 @@ public class DefaultCommandPattern extends CommandPattern<NamedCommand<?, ?>> {
 		String commandName = null;
 		String input = null;
 		String content = message.getRawContent();
-		for (String prefix : plugin.prefixesSetting.get(message).split("\\s")) {
+		for (String prefix : plugin.prefixesSetting.get(new MessageSettingScope(message)).split("\\s")) {
 			Matcher m = Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix), Pattern.DOTALL | Pattern.MULTILINE).matcher(content);
 			if (m.find()) {
 				commandName = m.group(1);

@@ -18,6 +18,11 @@ public class PrivateSetting<T> extends Setting<T> {
 		baseSetting.setForScope(scope, value);
 	}
 
+	@Override
+	public T parseValue(String textInput) {
+		return baseSetting.parseValue(textInput);
+	}
+
 	public static <T> PrivateSetting<T> of(Setting<T> setting) {
 		return new PrivateSetting<>(setting);
 	}

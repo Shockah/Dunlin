@@ -30,4 +30,9 @@ public class MessageSettingScope extends SettingScope {
     private UserSettingScope downscopeToUser() {
         return new UserSettingScope(message.getAuthor());
     }
+
+    @Override
+    public String name() {
+        throw new UnsupportedOperationException();
+    }
 }
