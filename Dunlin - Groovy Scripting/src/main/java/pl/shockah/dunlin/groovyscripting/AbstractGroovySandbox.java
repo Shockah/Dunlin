@@ -1,4 +1,4 @@
-package pl.shockah.dunlin.groovy;
+package pl.shockah.dunlin.groovyscripting;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.groovy.sandbox.GroovyInterceptor;

@@ -1,4 +1,4 @@
-package pl.shockah.dunlin.groovy;
+package pl.shockah.dunlin.groovyscripting;
 
 import net.dv8tion.jda.core.*;
 import net.dv8tion.jda.core.entities.*;
