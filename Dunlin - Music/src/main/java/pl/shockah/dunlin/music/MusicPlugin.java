@@ -73,13 +73,14 @@ public class MusicPlugin extends ListenerPlugin {
 				volumeSetting = Setting.ofInt(settingsPlugin, this, "volume", 10)
 		);
 
-		//TODO: fix - value passed is BigInteger but known type is Integer
-		/*volumeSetting.registerListener(
-				volumeSettingListener = (setting, value, scope, channel) -> {
-					Guild guild = channel.getGuild();
-					getGuildAudioManager(guild).audioPlayer.setVolume(setting.get(guild));
+		volumeSetting.registerListener(
+				volumeSettingListener = (setting, scope, value) -> {
+					if (!(scope instanceof GuildSettingScope))
+						return;
+					GuildSettingScope guildScope = (GuildSettingScope)scope;
+					getGuildAudioManager(guildScope.guild).audioPlayer.setVolume(setting.get(guildScope));
 				}
-		);*/
+		);
 
 		audioPlayerManager = new DefaultAudioPlayerManager();
 		audioPlayerManager.registerSourceManager(new YoutubeAudioSourceManager(false));
