@@ -61,7 +61,7 @@ public class MusicPlugin extends ListenerPlugin {
 		);
 
 		settingsPlugin.register(
-				playlistDisplayModeSetting = Setting.ofEnum(settingsPlugin, this, "playlistDisplayMode", PlaylistDisplayMode.PinnedMessage, PlaylistDisplayMode.class)
+				playlistDisplayModeSetting = Setting.ofEnum(settingsPlugin, this, "playlistDisplayMode", PlaylistDisplayMode.PinnedMessage)
 		);
 		settingsPlugin.register(
 				dedicatedChannelSetting = Setting.ofString(settingsPlugin, this, "dedicatedChannel", null)
