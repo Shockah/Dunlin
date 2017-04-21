@@ -145,7 +145,11 @@ public abstract class Setting<T> {
         };
     }
 
-    public static <E extends Enum<E>> Setting<E> ofEnum(SettingsPlugin settingsPlugin, Plugin plugin, String name, E defaultValue, Class<E> clazz) {
-        return new EnumSetting<>(settingsPlugin, plugin, name, defaultValue, clazz);
+    public static <E extends Enum<E>> Setting<E> ofEnum(SettingsPlugin settingsPlugin, Plugin plugin, String name, E defaultValue) {
+        return new EnumSetting<>(settingsPlugin, plugin, name, defaultValue);
+    }
+
+    public static <E extends Enum<E>> Setting<E> ofEnum(SettingsPlugin settingsPlugin, Plugin plugin, String name, Class<E> clazz) {
+        return new EnumSetting<>(settingsPlugin, plugin, name, clazz);
     }
 }
