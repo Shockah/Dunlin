@@ -5,8 +5,14 @@ import pl.shockah.dunlin.plugin.Plugin;
 public class EnumSetting<T extends Enum<T>> extends Setting<T> {
 	public final Class<T> clazz;
 
-	public EnumSetting(SettingsPlugin settingsPlugin, Plugin plugin, String name, T defaultValue, Class<T> clazz) {
+	@SuppressWarnings("unchecked")
+	public EnumSetting(SettingsPlugin settingsPlugin, Plugin plugin, String name, T defaultValue) {
 		super(settingsPlugin, plugin, name, defaultValue);
+		clazz = (Class<T>)defaultValue.getClass();
+	}
+
+	public EnumSetting(SettingsPlugin settingsPlugin, Plugin plugin, String name, Class<T> clazz) {
+		super(settingsPlugin, plugin, name, null);
 		this.clazz = clazz;
 	}
 
