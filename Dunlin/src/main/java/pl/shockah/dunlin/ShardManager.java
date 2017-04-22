@@ -5,6 +5,7 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import pl.shockah.json.JSONObject;
@@ -62,6 +63,15 @@ public class ShardManager {
 			User user = jda.getUserById(userId);
 			if (user != null)
 				return user;
+		}
+		return null;
+	}
+
+	public TextChannel getTextChannelById(String textChannelId) {
+		for (JDA jda : shards) {
+			TextChannel textChannel = jda.getTextChannelById(textChannelId);
+			if (textChannel != null)
+				return textChannel;
 		}
 		return null;
 	}

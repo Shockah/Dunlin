@@ -1,6 +1,7 @@
 include 'Dunlin'
 include 'Dunlin - Commands'
 include 'Dunlin - Console Output'
+include 'Dunlin - Factoids'
 include 'Dunlin - Groovy'
 include 'Dunlin - Groovy Scripting'
 include 'Dunlin - Owner'
