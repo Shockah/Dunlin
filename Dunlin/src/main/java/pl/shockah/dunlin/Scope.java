@@ -1,5 +1,9 @@
 package pl.shockah.dunlin;
 
-public enum Scope {
-	Global, Server, Channel;
+public abstract class Scope {
+    public Scope downscope() {
+        return null;
+    }
+
+    public abstract String name();
 }

@@ -1,15 +1,17 @@
 package pl.shockah.dunlin.commands;
 
+import net.dv8tion.jda.core.entities.Message;
+import pl.shockah.util.ReadWriteMap;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Collectors;
-import pl.shockah.util.ReadWriteMap;
 
 public class DefaultNamedCommandProvider extends NamedCommandProvider<Object, Object> {
 	protected final ReadWriteMap<String, NamedCommand<Object, Object>> commands = new ReadWriteMap<>(new HashMap<>());
 	
 	@Override
-	public NamedCommand<Object, Object> provide(String name) {
+	public NamedCommand<Object, Object> provide(Message message, String name) {
 		return commands.get(name.toLowerCase());
 	}
 	

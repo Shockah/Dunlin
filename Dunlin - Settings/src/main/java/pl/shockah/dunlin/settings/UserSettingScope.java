@@ -1,11 +1,18 @@
 package pl.shockah.dunlin.settings;
 
 import net.dv8tion.jda.core.entities.User;
+import pl.shockah.dunlin.Scope;
 
 public class UserSettingScope extends SettingScope {
     public final User user;
 
     public UserSettingScope(User user) {
+        super(new Scope() {
+            @Override
+            public String name() {
+                return String.format("User: %s#%s", user.getName(), user.getDiscriminator());
+            }
+        });
         this.user = user;
     }
 
@@ -22,10 +29,5 @@ public class UserSettingScope extends SettingScope {
     @Override
     public SettingScope downscope() {
         return new GlobalSettingScope();
-    }
-
-    @Override
-    public String name() {
-        return String.format("User: %s#%s", user.getName(), user.getDiscriminator());
     }
 }
