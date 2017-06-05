@@ -21,7 +21,7 @@ public class ChainCommandPattern extends CommandPattern<ChainCommand> {
 		String content = message.getRawContent();
 		for (String prefix : defaultCommandPattern.plugin.prefixesSetting.get(new MessageSettingScope(message)).split("\\s")) {
 			Matcher m = Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix), Pattern.DOTALL | Pattern.MULTILINE).matcher(content);
-			if (m.find() && m.group(1).split("\\>").length >= 2)
+			if (m.find() && m.group(1).split(">").length >= 2)
 				return true;
 		}
 		return false;
@@ -41,10 +41,10 @@ public class ChainCommandPattern extends CommandPattern<ChainCommand> {
 			}
 		}
 		
-		Command<?, ?>[] commands = Stream.of(commandNamesString.split("\\>"))
+		Command<?, ?>[] commands = Stream.of(commandNamesString.split(">"))
 			.map(commandName ->
 				defaultCommandPattern.namedCommandProviders.firstResult(provider ->
-					(NamedCommand<?, ?>)provider.provide(commandName))).toArray(size -> new Command<?, ?>[size]);
+					(NamedCommand<?, ?>)provider.provide(commandName))).toArray(Command[]::new);
 		
 		for (Command<?, ?> command : commands) {
 			if (command == null)

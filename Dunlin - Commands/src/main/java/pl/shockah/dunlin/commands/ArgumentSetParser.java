@@ -1,12 +1,13 @@
 package pl.shockah.dunlin.commands;
 
+import pl.shockah.util.Box;
+import pl.shockah.util.UnexpectedException;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import pl.shockah.util.Box;
-import pl.shockah.util.UnexpectedException;
 
 public class ArgumentSetParser<T extends ArgumentSet> {
 	public static final String SPLIT_PATTERN = "(?<=\\s+)(?!\\s)|(?<!\\s)(?=\\s+)";
@@ -110,7 +111,7 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 					return (T)enumConst;
 				}
 			}
-		} catch (NumberFormatException e2) {
+		} catch (NumberFormatException ignored) {
 		}
 		
 		throw new IllegalArgumentException(String.format("Cannot parse `%s` as enum `%s`.", rawValue, clazz.getSimpleName()));
