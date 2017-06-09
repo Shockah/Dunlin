@@ -14,7 +14,6 @@ import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
 import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
@@ -63,7 +62,7 @@ public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
                 .filter(user -> !user.isBot())
                 .collect(Collectors.toList());
         List<User> allBots = allUsersAndBots.stream()
-                .filter(user -> user.isBot())
+                .filter(User::isBot)
                 .collect(Collectors.toList());
 
         output.users = allUsers.size();

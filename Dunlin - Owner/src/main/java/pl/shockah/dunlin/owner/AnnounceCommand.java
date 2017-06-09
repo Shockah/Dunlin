@@ -61,7 +61,7 @@ public class AnnounceCommand extends NamedCommand<String, List<TextChannel>> {
                         channel = guild.getTextChannelsByName(channelName, true).stream().findFirst().orElse(null);
 
                     if (channel == null)
-                        channel = guild.getTextChannels().stream().filter(guildChannel -> guildChannel.canTalk()).findFirst().orElse(null);
+                        channel = guild.getTextChannels().stream().filter(TextChannel::canTalk).findFirst().orElse(null);
 
                     if (channel != null) {
                         results.add(channel);

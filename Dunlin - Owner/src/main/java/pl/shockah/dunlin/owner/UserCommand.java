@@ -15,8 +15,6 @@ import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
 import pl.shockah.dunlin.util.TimeDuration;
 
-import java.sql.Date;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -74,7 +72,7 @@ public class UserCommand extends NamedCommand<User, User> {
 			if (user == null) {
 				try {
 					user = ownerPlugin.manager.app.getShardManager().getUserById((String.valueOf(Long.parseLong(textInput))));
-				} catch (Exception e) {
+				} catch (Exception ignored) {
 				}
 			}
 		}

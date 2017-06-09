@@ -12,8 +12,6 @@ import pl.shockah.dunlin.commands.result.ErrorCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
 
-import java.lang.reflect.InvocationTargetException;
-
 public class EvalCommand extends NamedCommand<String, Object> {
     protected final GroovyScriptingPlugin plugin;
 
@@ -40,11 +38,7 @@ public class EvalCommand extends NamedCommand<String, Object> {
             plugin.injectVariables(binding, message);
             return new ValueCommandResultImpl<>(this, plugin.getShell(binding, message.getAuthor()).evaluate(input));
         } catch (GroovyRuntimeException e) {
-            Throwable throwable = e;
-            while (throwable instanceof InvocationTargetException && throwable.getCause() != null) {
-                throwable = throwable.getCause();
-            }
-            return new ErrorCommandResultImpl<>(this, ErrorCommandResultImpl.messageFromThrowable(throwable));
+            return new ErrorCommandResultImpl<>(this, ErrorCommandResultImpl.messageFromThrowable(e));
         }
     }
 

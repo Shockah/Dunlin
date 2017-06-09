@@ -76,7 +76,7 @@ public abstract class AbstractGroovySandbox extends GroovyInterceptor {
 						if (!isInstanceMethodAllowed(clazz, methodName))
 							throw new SecurityException(String.format("%s instance method call not allowed.", method));
 					}
-				} catch (NoSuchMethodException e2) {
+				} catch (NoSuchMethodException ignored) {
 				}
 			}
 		} else {
@@ -96,7 +96,7 @@ public abstract class AbstractGroovySandbox extends GroovyInterceptor {
 						if (!isInstanceMethodAllowed(receiver, methodName))
 							throw new SecurityException(String.format("%s instance method call not allowed.", method));
 					}
-				} catch (NoSuchMethodException e2) {
+				} catch (NoSuchMethodException ignored) {
 				}
 			}
 		}
@@ -123,7 +123,7 @@ public abstract class AbstractGroovySandbox extends GroovyInterceptor {
 						if (!isInstanceMethodAllowed(clazz, methodName, value))
 							throw new SecurityException(String.format("%s instance method call not allowed.", method));
 					}
-				} catch (NoSuchMethodException e2) {
+				} catch (NoSuchMethodException ignored) {
 				}
 			}
 		} else {
@@ -143,7 +143,7 @@ public abstract class AbstractGroovySandbox extends GroovyInterceptor {
 						if (!isInstanceMethodAllowed(receiver, methodName, value))
 							throw new SecurityException(String.format("%s instance method call not allowed.", method));
 					}
-				} catch (NoSuchMethodException e2) {
+				} catch (NoSuchMethodException ignored) {
 				}
 			}
 		}

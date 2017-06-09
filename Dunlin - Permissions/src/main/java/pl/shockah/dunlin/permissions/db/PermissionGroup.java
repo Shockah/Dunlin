@@ -5,8 +5,6 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.User;
 import pl.shockah.dunlin.db.DbObject;
 import pl.shockah.dunlin.db.DbObject.TableVersion;
 import pl.shockah.dunlin.db.ForeignCollectionWrapper;
@@ -68,12 +66,12 @@ public class PermissionGroup extends DbObject<PermissionGroup> {
 	}
 
 	public boolean hasPermission(String permission) {
-		for (String myPermission : permissions) {
+		L: for (String myPermission : permissions) {
 			String[] spl = myPermission.split("\\.");
 			String[] splArg = permission.split("\\.");
 
 			if (spl.length > splArg.length)
-				return false;
+				continue;
 
 			for (int i = 0; i < spl.length; i++) {
 				String s = spl[i];
@@ -82,7 +80,7 @@ public class PermissionGroup extends DbObject<PermissionGroup> {
 				if (s.equals("*"))
 					return true;
 				if (!s.equals(arg))
-					return false;
+					continue L;
 			}
 			return true;
 		}
