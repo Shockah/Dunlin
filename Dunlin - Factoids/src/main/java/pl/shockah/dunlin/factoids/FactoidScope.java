@@ -1,6 +1,7 @@
 package pl.shockah.dunlin.factoids;
 
 import com.j256.ormlite.stmt.QueryBuilder;
+import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.Scope;
 import pl.shockah.dunlin.factoids.db.Factoid;
 
@@ -29,6 +30,16 @@ public abstract class FactoidScope {
         });
     }
 
-    protected void fillWhereClause(QueryBuilder<Factoid, Integer> qb) throws SQLException {
+    public final Factoid rememberFactoid(FactoidsPlugin plugin, FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory, String name, String content, Message message) {
+        return plugin.manager.app.getDatabaseManager().create(Factoid.class, obj -> {
+            obj.setType(factory.type);
+            obj.setName(name.toLowerCase());
+            obj.setContent(content);
+            setupFactoidRemember(obj, message);
+        });
     }
+
+    protected abstract void fillWhereClause(QueryBuilder<Factoid, Integer> qb) throws SQLException;
+
+    protected abstract void setupFactoidRemember(Factoid factoid, Message message);
 }

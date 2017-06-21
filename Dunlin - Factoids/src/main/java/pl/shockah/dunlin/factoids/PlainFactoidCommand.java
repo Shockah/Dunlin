@@ -6,7 +6,7 @@ import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
 import pl.shockah.dunlin.factoids.db.Factoid;
 
-public class PlainFactoidCommand extends FactoidCommand<String, String> {
+public class PlainFactoidCommand extends AbstractFactoidCommand<String, String> {
     public PlainFactoidCommand(Factoid factoid, String name, String... altNames) {
         super(factoid, name, altNames);
     }

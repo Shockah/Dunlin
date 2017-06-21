@@ -10,18 +10,18 @@ import java.util.HashMap;
 
 public class FactoidCommandProvider extends NamedCommandProvider<Object, Object> {
     protected final FactoidsPlugin plugin;
-    protected final ReadWriteMap<String, FactoidCommandFactory<? extends FactoidCommand<?, ?>>> factories = new ReadWriteMap<>(new HashMap<>());
+    protected final ReadWriteMap<String, FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>>> factories = new ReadWriteMap<>(new HashMap<>());
 
     public FactoidCommandProvider(FactoidsPlugin plugin) {
         this.plugin = plugin;
     }
 
-    public void registerFactory(FactoidCommandFactory<? extends FactoidCommand<?, ?>> factory) {
-        factories.put(factory.type, factory);
+    public void registerFactory(FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory) {
+        factories.put(factory.type.toLowerCase(), factory);
     }
 
-    public void unregisterFactory(FactoidCommandFactory<? extends FactoidCommand<?, ?>> factory) {
-        factories.remove(factory.type);
+    public void unregisterFactory(FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory) {
+        factories.remove(factory.type.toLowerCase());
     }
 
     @SuppressWarnings("unchecked")
@@ -31,7 +31,7 @@ public class FactoidCommandProvider extends NamedCommandProvider<Object, Object>
         if (factoid == null)
             return null;
 
-        FactoidCommandFactory<? extends FactoidCommand<?, ?>> factory = factories.get(factoid.getType());
+        FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory = factories.get(factoid.getType().toLowerCase());
         if (factory == null)
             throw new IllegalStateException(String.format("Unknown factoid type `%s`.", factoid.getType()));
 

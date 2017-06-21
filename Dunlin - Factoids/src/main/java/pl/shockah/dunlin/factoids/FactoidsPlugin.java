@@ -26,11 +26,15 @@ public class FactoidsPlugin extends Plugin {
 		super(manager, info);
 	}
 
-	public void registerFactory(FactoidCommandFactory<? extends FactoidCommand<?, ?>> factory) {
+	public FactoidCommandProvider getFactoidCommandProvider() {
+		return commandProvider;
+	}
+
+	public void registerFactory(FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory) {
 		commandProvider.registerFactory(factory);
 	}
 
-	public void unregisterFactory(FactoidCommandFactory<? extends FactoidCommand<?, ?>> factory) {
+	public void unregisterFactory(FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory) {
 		commandProvider.unregisterFactory(factory);
 	}
 	

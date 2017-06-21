@@ -2,7 +2,7 @@ package pl.shockah.dunlin.factoids;
 
 import pl.shockah.dunlin.factoids.db.Factoid;
 
-public abstract class FactoidCommandFactory<T extends FactoidCommand> {
+public abstract class FactoidCommandFactory<T extends AbstractFactoidCommand> {
 	public final String type;
 
 	public FactoidCommandFactory(String type) {

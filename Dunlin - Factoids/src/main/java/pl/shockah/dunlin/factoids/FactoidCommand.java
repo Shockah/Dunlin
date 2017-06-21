@@ -1,13 +1,18 @@
 package pl.shockah.dunlin.factoids;
 
-import pl.shockah.dunlin.commands.NamedCommand;
-import pl.shockah.dunlin.factoids.db.Factoid;
+import pl.shockah.dunlin.commands.NamedCompositeCommand;
 
-public abstract class FactoidCommand<Input, Output> extends NamedCommand<Input, Output> {
-    protected final Factoid factoid;
+public class FactoidCommand extends NamedCompositeCommand<Object> {
+	public final FactoidsPlugin plugin;
 
-    public FactoidCommand(Factoid factoid, String name, String... altNames) {
-        super(name, altNames);
-        this.factoid = factoid;
-    }
+	public final RememberSubcommand rememberSubcommand;
+
+	public FactoidCommand(FactoidsPlugin plugin) {
+		super("factoid");
+		this.plugin = plugin;
+
+		registerSubcommand(
+				rememberSubcommand = new RememberSubcommand(plugin)
+		);
+	}
 }

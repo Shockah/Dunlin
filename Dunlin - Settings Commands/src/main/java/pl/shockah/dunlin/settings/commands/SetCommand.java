@@ -21,7 +21,7 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 	
 	@Override
 	public CommandResult<Input> parseInput(Message message, String textInput) {
-		return new ParseCommandResultImpl<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(this, message));
+		return new ParseCommandResultImpl<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(settingsCommandsPlugin.settingsPlugin, message));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -71,8 +71,8 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 				throw new IllegalArgumentException("Missing `value` argument.");
 		}
 
-		public Input toInput(SetCommand command, Message message) {
-			Setting<?> setting = command.settingsCommandsPlugin.settingsPlugin.getSettingByName(settingName);
+		public Input toInput(SettingsPlugin settingsPlugin, Message message) {
+			Setting<?> setting = settingsPlugin.getSettingByName(settingName);
 			SettingScope settingScope = null;
 			switch (scope) {
 				case Global:

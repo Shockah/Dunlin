@@ -21,7 +21,7 @@ public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output
 	
 	@Override
 	public CommandResult<Input> parseInput(Message message, String textInput) {
-		return new ParseCommandResultImpl<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(this, message));
+		return new ParseCommandResultImpl<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(settingsPlugin, message));
 	}
 	
 	@Override
@@ -44,8 +44,8 @@ public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output
 		@Argument("setting")
 		public String settingName;
 		
-		public Input toInput(GetCommand command, Message message) {
-			Setting<?> setting = command.settingsPlugin.getSettingByName(settingName);
+		public Input toInput(SettingsPlugin settingsPlugin, Message message) {
+			Setting<?> setting = settingsPlugin.getSettingByName(settingName);
 			SettingScope settingScope = null;
 			switch (scope) {
 				case Global:
