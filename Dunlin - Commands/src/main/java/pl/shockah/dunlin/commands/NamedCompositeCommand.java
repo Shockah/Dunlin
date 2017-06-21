@@ -31,7 +31,7 @@ public class NamedCompositeCommand<Output> extends NamedCommand<NamedCompositeCo
 	@Override
 	public CommandResult<Input> parseInput(Message message, String textInput) {
 		String[] split = textInput.split("\\s+");
-		Command<Object, Object> command = provider.provide(split[0]);
+		Command<Object, Object> command = provider.provide(message, split[0]);
 		String newTextInput = textInput.substring(split[0].length() + 1);
 		if (command == null && defaultCommand != null) {
 			command = (Command<Object, Object>)defaultCommand;

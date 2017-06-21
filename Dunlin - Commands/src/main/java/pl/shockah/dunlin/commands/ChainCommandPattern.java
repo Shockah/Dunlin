@@ -44,7 +44,7 @@ public class ChainCommandPattern extends CommandPattern<ChainCommand> {
 		Command<?, ?>[] commands = Stream.of(commandNamesString.split(">"))
 			.map(commandName ->
 				defaultCommandPattern.namedCommandProviders.firstResult(provider ->
-					(NamedCommand<?, ?>)provider.provide(commandName))).toArray(Command[]::new);
+					(NamedCommand<?, ?>)provider.provide(message, commandName))).toArray(Command[]::new);
 		
 		for (Command<?, ?> command : commands) {
 			if (command == null)

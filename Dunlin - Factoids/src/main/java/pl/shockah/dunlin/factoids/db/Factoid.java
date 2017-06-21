@@ -19,6 +19,10 @@ import java.util.Date;
 @DatabaseTable(tableName = "pl_shockah_dunlin_factoids_db_Factoid")
 @DbObject.TableVersion(1)
 public class Factoid extends DbObject<Factoid> {
+	@DatabaseField(columnName = NAME, canBeNull = false)
+	private String name;
+	public static final String NAME = "name";
+
 	@DatabaseField(columnName = GUILD_ID, canBeNull = true)
 	private String guildId;
 	public static final String GUILD_ID = "guildId";
@@ -59,6 +63,14 @@ public class Factoid extends DbObject<Factoid> {
 	public Factoid(Dao<Factoid, Integer> dao) {
 		super(dao);
 		date = new Date();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getGuildId() {

@@ -25,12 +25,22 @@ public class FactoidsPlugin extends Plugin {
 	public FactoidsPlugin(PluginManager manager, Info info) {
 		super(manager, info);
 	}
+
+	public void registerFactory(FactoidCommandFactory<? extends FactoidCommand<?, ?>> factory) {
+		commandProvider.registerFactory(factory);
+	}
+
+	public void unregisterFactory(FactoidCommandFactory<? extends FactoidCommand<?, ?>> factory) {
+		commandProvider.unregisterFactory(factory);
+	}
 	
 	@Override
 	protected void onLoad() {
 		commandsPlugin.registerNamedCommandProvider(
 				commandProvider = new FactoidCommandProvider(this)
 		);
+
+		registerFactory(new PlainFactoidCommandFactory());
 
 		/*commandsPlugin.registerNamedCommand(
 			setCommand = new SetCommand(this)
