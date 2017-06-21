@@ -19,8 +19,7 @@ public class FactoidsPlugin extends Plugin {
 
 	private FactoidCommandProvider commandProvider;
 	
-	//private RememberCommand rememberCommand;
-	//private ForgetCommand forgetCommand;
+	private FactoidCommand factoidCommand;
 	
 	public FactoidsPlugin(PluginManager manager, Info info) {
 		super(manager, info);
@@ -46,20 +45,16 @@ public class FactoidsPlugin extends Plugin {
 
 		registerFactory(new PlainFactoidCommandFactory());
 
-		/*commandsPlugin.registerNamedCommand(
-			setCommand = new SetCommand(this)
-		);
 		commandsPlugin.registerNamedCommand(
-			getCommand = new GetCommand(settingsPlugin)
-		);*/
+			factoidCommand = new FactoidCommand(this)
+		);
 	}
 	
 	@Override
 	protected void onUnload() {
 		commandsPlugin.unregisterNamedCommandProvider(commandProvider);
 
-		//commandsPlugin.unregisterNamedCommand(setCommand);
-		//commandsPlugin.unregisterNamedCommand(getCommand);
+		commandsPlugin.unregisterNamedCommand(factoidCommand);
 	}
 
 	public Factoid getMatchingFactoid(FactoidScope scope, String name) {
