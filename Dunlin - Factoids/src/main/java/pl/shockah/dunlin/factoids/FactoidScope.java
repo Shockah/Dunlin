@@ -24,7 +24,9 @@ public abstract class FactoidScope {
 
     public final Factoid getFactoid(FactoidsPlugin plugin, String name) {
         return plugin.manager.app.getDatabaseManager().selectFirst(Factoid.class, qb -> {
-            qb.where().eq(Factoid.FORGOTTEN, false);
+            qb.where()
+                    .eq(Factoid.FORGOTTEN, false).and()
+                    .eq(Factoid.NAME, name.toLowerCase());
             fillWhereClause(qb);
             qb.orderBy(Factoid.DATE, false);
         });
