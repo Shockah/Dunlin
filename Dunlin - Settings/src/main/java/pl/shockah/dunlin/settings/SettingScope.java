@@ -17,7 +17,7 @@ public abstract class SettingScope {
 
     protected abstract void setRaw(Setting<?> setting, Object raw);
 
-    public final String name() {
+    public final String getName() {
         return scope.name();
     }
 }

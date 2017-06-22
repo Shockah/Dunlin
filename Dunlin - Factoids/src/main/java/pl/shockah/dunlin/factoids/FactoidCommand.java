@@ -6,6 +6,7 @@ public class FactoidCommand extends NamedCompositeCommand<Object> {
 	public final FactoidsPlugin plugin;
 
 	public final RememberSubcommand rememberSubcommand;
+	public final InfoSubcommand infoSubcommand;
 
 	public FactoidCommand(FactoidsPlugin plugin) {
 		super("factoid");
@@ -13,6 +14,9 @@ public class FactoidCommand extends NamedCompositeCommand<Object> {
 
 		registerSubcommand(
 				rememberSubcommand = new RememberSubcommand(plugin)
+		);
+		registerSubcommand(
+				infoSubcommand = new InfoSubcommand(plugin)
 		);
 	}
 }

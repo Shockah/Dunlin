@@ -18,7 +18,7 @@ public abstract class FactoidScope {
         return null;
     }
 
-    public final String name() {
+    public final String getName() {
         return scope.name();
     }
 

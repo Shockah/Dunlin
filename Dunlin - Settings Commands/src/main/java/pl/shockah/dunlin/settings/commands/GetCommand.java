@@ -32,7 +32,7 @@ public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output
 	@Override
 	public Message formatOutput(Message message, Input input, Output output) {
 		return new MessageBuilder().setEmbed(new EmbedBuilder()
-				.setTitle(String.format("%s in scope %s", output.setting.getFullName(), output.scope.name()), null)
+				.setTitle(String.format("%s in scope %s", output.setting.getFullName(), output.scope.getName()), null)
 				.setDescription(String.valueOf(output.value))
 		.build()).build();
 	}
