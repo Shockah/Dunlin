@@ -1,10 +1,13 @@
 package pl.shockah.dunlin.factoids;
 
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.commands.ArgumentSet;
 import pl.shockah.dunlin.commands.ArgumentSetParser;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.CommandResult;
+import pl.shockah.dunlin.commands.result.ErrorCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
 import pl.shockah.dunlin.factoids.db.Factoid;
@@ -36,8 +39,13 @@ public class ForgetSubcommand extends NamedCommand<ForgetSubcommand.Input, Facto
 
 	@Override
 	public Message formatOutput(Message message, Input input, Factoid factoid) {
-		//TODO: `No such factoid` error message
-		return null;
+		if (factoid == null)
+			return new MessageBuilder().setEmbed(new EmbedBuilder()
+					.setColor(ErrorCommandResultImpl.EMBED_COLOR)
+					.setDescription(String.format("No factoid `%s` found in scope `%s`.", input.name, input.scope.getName()))
+					.build()).build();
+		else
+			return null;
 	}
 
 	public static final class Arguments extends ArgumentSet {

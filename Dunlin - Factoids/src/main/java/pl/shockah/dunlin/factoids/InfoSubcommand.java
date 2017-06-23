@@ -9,6 +9,7 @@ import pl.shockah.dunlin.commands.ArgumentSet;
 import pl.shockah.dunlin.commands.ArgumentSetParser;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.CommandResult;
+import pl.shockah.dunlin.commands.result.ErrorCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
 import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
 import pl.shockah.dunlin.factoids.db.Factoid;
@@ -34,6 +35,13 @@ public class InfoSubcommand extends NamedCommand<InfoSubcommand.Input, Factoid> 
 
 	@Override
 	public Message formatOutput(Message message, Input input, Factoid factoid) {
+		if (factoid == null) {
+			return new MessageBuilder().setEmbed(new EmbedBuilder()
+					.setColor(ErrorCommandResultImpl.EMBED_COLOR)
+					.setDescription(String.format("No factoid `%s` found in scope `%s`.", input.name, input.scope.getName()))
+					.build()).build();
+		}
+
 		User author = factoid.getAuthor(plugin.manager.app.getShardManager());
 		Member member = message.getGuild().getMember(author);
 		String authorName = member == null ? author.getName() : member.getEffectiveName();
