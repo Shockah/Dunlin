@@ -42,7 +42,7 @@ public class RememberSubcommand extends NamedCommand<RememberSubcommand.Input, F
 		public String name;
 
 		@Argument
-		public String type;
+		public String type = PlainFactoidCommandFactory.TYPE;
 
 		@Argument
 		public String content;
@@ -66,6 +66,14 @@ public class RememberSubcommand extends NamedCommand<RememberSubcommand.Input, F
 			FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory = plugin.getFactoidCommandProvider().factories.get(type);
 
 			return new Input(factoidScope, factory, name, content);
+		}
+
+		@Override
+		public void finalValidation() {
+			if (name == null)
+				throw new IllegalArgumentException("`name` argument is required.");
+			if (content == null)
+				throw new IllegalArgumentException("`content` argument is required.");
 		}
 	}
 

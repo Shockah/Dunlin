@@ -16,7 +16,7 @@ public class GlobalFactoidScope extends FactoidScope {
 
     @Override
     protected void fillWhereClause(QueryBuilder<Factoid, Integer> qb) throws SQLException {
-        qb.where().and()
+        qb.where()
                 .eq(Factoid.SCOPE_TYPE, SCOPE_TYPE);
     }
 

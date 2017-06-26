@@ -35,4 +35,8 @@ task copyPlugins(type: Copy) {
 run {
 	dependsOn copyPlugins
 	workingDir 'run'
+
+	if (System.getProperty('DEBUG', 'false') == 'true') {
+		jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'
+	}
 }

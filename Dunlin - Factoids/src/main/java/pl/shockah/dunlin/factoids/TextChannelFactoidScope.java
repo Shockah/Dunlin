@@ -25,7 +25,7 @@ public class TextChannelFactoidScope extends FactoidScope {
 
     @Override
     protected void fillWhereClause(QueryBuilder<Factoid, Integer> qb) throws SQLException {
-        qb.where().and()
+        qb.where()
                 .eq(Factoid.SCOPE_TYPE, SCOPE_TYPE).and()
                 .eq(Factoid.GUILD_ID, textChannelScope.textChannel.getGuild().getId()).and()
                 .eq(Factoid.CHANNEL_ID, textChannelScope.textChannel.getId());

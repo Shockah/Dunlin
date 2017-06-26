@@ -2,7 +2,7 @@ package pl.shockah.dunlin.factoids;
 
 import pl.shockah.dunlin.commands.NamedCompositeCommand;
 
-public class FactoidCommand extends NamedCompositeCommand<Object> {
+public class FactoidCommand extends NamedCompositeCommand {
 	public final FactoidsPlugin plugin;
 
 	public final RememberSubcommand rememberSubcommand;
