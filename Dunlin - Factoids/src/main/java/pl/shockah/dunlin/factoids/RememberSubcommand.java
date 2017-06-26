@@ -5,8 +5,9 @@ import pl.shockah.dunlin.commands.ArgumentSet;
 import pl.shockah.dunlin.commands.ArgumentSetParser;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.CommandResult;
-import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
-import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
+import pl.shockah.dunlin.commands.result.ParseResult;
+import pl.shockah.dunlin.commands.result.ValueCommandResult;
+import pl.shockah.dunlin.commands.result.ValueParseResult;
 import pl.shockah.dunlin.factoids.db.Factoid;
 
 public class RememberSubcommand extends NamedCommand<RememberSubcommand.Input, Factoid> {
@@ -18,15 +19,15 @@ public class RememberSubcommand extends NamedCommand<RememberSubcommand.Input, F
 	}
 
 	@Override
-	public CommandResult<Input> parseInput(Message message, String textInput) {
-		return new ParseCommandResultImpl<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(plugin, message));
+	public ParseResult<Input> parseInput(Message message, String textInput) {
+		return new ValueParseResult<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(plugin, message));
 	}
 
 	@Override
 	public CommandResult<Factoid> execute(Message message, Input input) {
 		Factoid factoid = input.scope.rememberFactoid(plugin, input.factory, input.name, input.content, message);
 		message.addReaction("\uD83D\uDC4C").queue();
-		return new ValueCommandResultImpl<>(this, factoid);
+		return new ValueCommandResult<>(this, factoid);
 	}
 
 	@Override

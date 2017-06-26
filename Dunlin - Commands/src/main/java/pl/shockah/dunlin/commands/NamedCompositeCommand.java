@@ -28,7 +28,7 @@ public class NamedCompositeCommand extends NamedCommand<NamedCompositeCommand.In
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public CommandResult<Input> parseInput(Message message, String textInput) {
+	public ParseResult<Input> parseInput(Message message, String textInput) {
 		String[] split = textInput.split("\\s+");
 		Command<Object, Object> command = provider.provide(message, split[0]);
 		String newTextInput = textInput.substring(split[0].length() + 1);
@@ -38,21 +38,21 @@ public class NamedCompositeCommand extends NamedCommand<NamedCompositeCommand.In
 		}
 		if (command == null)
 			throw new IllegalArgumentException(String.format("Unknown subcommand: `%s`.", split[0]));
-		CommandResult<Object> parseResult = command.parseInput(message, newTextInput);
-		if (parseResult instanceof ErrorCommandResult<?>)
-			return new ErrorCommandResultImpl<Input>(this, parseResult.getMessage(message, textInput));
+		ParseResult<Object> parseResult = command.parseInput(message, newTextInput);
+		if (parseResult instanceof ErrorParseResult<?>)
+			return new ErrorParseResult<>(this, ((ErrorParseResult<?>)parseResult).message);
 		else
-			return new ParseCommandResultImpl<>(this, new Data(command, ((ParseCommandResult<Object>)parseResult).get()));
+			return new ValueParseResult<>(this, new Input(command, ((ValueParseResult<Object>)parseResult).value));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public CommandResult<Object> execute(Message message, Input input) {
-		CommandResult<?> result = ((Command<Object, ?>)input.command).execute(message, input.input);
+		CommandResult<?> result = ((Command<Object, ?>)input.subcommand).execute(message, input.subcommandInput);
 		if (result instanceof ErrorCommandResult<?>)
 			return (ErrorCommandResult<Object>)result;
 		else
-			return new ValueCommandResultImpl<>(this, new Input(input.command, result));
+			return new ValueCommandResult<>(this, new Input(input.subcommand, result));
 	}
 
 	@SuppressWarnings("unchecked")

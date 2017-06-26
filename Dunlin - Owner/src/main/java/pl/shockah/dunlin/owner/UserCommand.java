@@ -9,10 +9,7 @@ import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang3.StringUtils;
 import pl.shockah.dunlin.commands.NamedCommand;
-import pl.shockah.dunlin.commands.result.CommandResult;
-import pl.shockah.dunlin.commands.result.ErrorCommandResultImpl;
-import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
-import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
+import pl.shockah.dunlin.commands.result.*;
 import pl.shockah.dunlin.util.TimeDuration;
 
 import java.util.Arrays;
@@ -33,7 +30,7 @@ public class UserCommand extends NamedCommand<User, User> {
 	}
 
 	@Override
-	public CommandResult<User> parseInput(Message message, String textInput) {
+	public ParseResult<User> parseInput(Message message, String textInput) {
 		User user = null;
 
 		if (StringUtils.isBlank(textInput)) {
@@ -78,17 +75,17 @@ public class UserCommand extends NamedCommand<User, User> {
 		}
 
 		if (user == null)
-			return new ErrorCommandResultImpl<>(this, new MessageBuilder().setEmbed(new EmbedBuilder()
-					.setColor(ErrorCommandResultImpl.EMBED_COLOR)
+			return new ErrorParseResult<>(this, new MessageBuilder().setEmbed(new EmbedBuilder()
+					.setColor(ErrorCommandResult.EMBED_COLOR)
 					.setDescription(String.format("Cannot find user `%s`.", textInput))
 					.build()).build());
 
-		return new ParseCommandResultImpl<>(this, user);
+		return new ValueParseResult<>(this, user);
 	}
 
 	@Override
 	public CommandResult<User> execute(Message message, User input) {
-		return new ValueCommandResultImpl<>(this, input);
+		return new ValueCommandResult<>(this, input);
 	}
 
 	@Override

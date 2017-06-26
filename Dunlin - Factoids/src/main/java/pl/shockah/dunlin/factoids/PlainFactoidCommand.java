@@ -2,8 +2,9 @@ package pl.shockah.dunlin.factoids;
 
 import net.dv8tion.jda.core.entities.*;
 import pl.shockah.dunlin.commands.result.CommandResult;
-import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
-import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
+import pl.shockah.dunlin.commands.result.ParseResult;
+import pl.shockah.dunlin.commands.result.ValueCommandResult;
+import pl.shockah.dunlin.commands.result.ValueParseResult;
 import pl.shockah.dunlin.factoids.db.Factoid;
 
 public class PlainFactoidCommand extends AbstractFactoidCommand<String, String> {
@@ -12,8 +13,8 @@ public class PlainFactoidCommand extends AbstractFactoidCommand<String, String> 
     }
 
     @Override
-    public CommandResult<String> parseInput(Message message, String textInput) {
-        return new ParseCommandResultImpl<>(this, textInput);
+    public ParseResult<String> parseInput(Message message, String textInput) {
+        return new ValueParseResult<>(this, textInput);
     }
 
     @Override
@@ -58,6 +59,6 @@ public class PlainFactoidCommand extends AbstractFactoidCommand<String, String> 
             output = output.replaceAll("(?iu)%(channelmention|chanmention)%", channel.getAsMention());
         }
 
-        return new ValueCommandResultImpl<>(this, output);
+        return new ValueCommandResult<>(this, output);
     }
 }

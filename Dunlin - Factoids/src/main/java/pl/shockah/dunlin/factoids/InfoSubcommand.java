@@ -8,10 +8,7 @@ import net.dv8tion.jda.core.entities.User;
 import pl.shockah.dunlin.commands.ArgumentSet;
 import pl.shockah.dunlin.commands.ArgumentSetParser;
 import pl.shockah.dunlin.commands.NamedCommand;
-import pl.shockah.dunlin.commands.result.CommandResult;
-import pl.shockah.dunlin.commands.result.ErrorCommandResultImpl;
-import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
-import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
+import pl.shockah.dunlin.commands.result.*;
 import pl.shockah.dunlin.factoids.db.Factoid;
 
 public class InfoSubcommand extends NamedCommand<InfoSubcommand.Input, Factoid> {
@@ -23,21 +20,21 @@ public class InfoSubcommand extends NamedCommand<InfoSubcommand.Input, Factoid> 
 	}
 
 	@Override
-	public CommandResult<Input> parseInput(Message message, String textInput) {
-		return new ParseCommandResultImpl<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(message));
+	public ParseResult<Input> parseInput(Message message, String textInput) {
+		return new ValueParseResult<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(message));
 	}
 
 	@Override
 	public CommandResult<Factoid> execute(Message message, Input input) {
 		Factoid factoid = plugin.getMatchingFactoid(input.scope, input.name);
-		return new ValueCommandResultImpl<>(this, factoid);
+		return new ValueCommandResult<>(this, factoid);
 	}
 
 	@Override
 	public Message formatOutput(Message message, Input input, Factoid factoid) {
 		if (factoid == null) {
 			return new MessageBuilder().setEmbed(new EmbedBuilder()
-					.setColor(ErrorCommandResultImpl.EMBED_COLOR)
+					.setColor(ErrorCommandResult.EMBED_COLOR)
 					.setDescription(String.format("No factoid `%s` found in scope `%s`.", input.name, input.scope.getName()))
 					.build()).build();
 		}

@@ -7,10 +7,7 @@ import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import org.apache.commons.lang3.StringUtils;
 import pl.shockah.dunlin.commands.NamedCommand;
-import pl.shockah.dunlin.commands.result.CommandResult;
-import pl.shockah.dunlin.commands.result.ErrorCommandResultImpl;
-import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
-import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
+import pl.shockah.dunlin.commands.result.*;
 
 public class EvalCommand extends NamedCommand<String, Object> {
     protected final GroovyScriptingPlugin plugin;
@@ -21,14 +18,14 @@ public class EvalCommand extends NamedCommand<String, Object> {
     }
 
     @Override
-    public CommandResult<String> parseInput(Message message, String textInput) {
+    public ParseResult<String> parseInput(Message message, String textInput) {
         textInput = textInput.trim();
         if (textInput.startsWith("```") && textInput.endsWith("```")) {
             textInput = textInput.substring(0, textInput.length() - 3);
             String[] split = textInput.split("\\r?\\n|\\r");
             textInput = StringUtils.join(split, "\n", 1, split.length);
         }
-        return new ParseCommandResultImpl<>(this, textInput);
+        return new ValueParseResult<>(this, textInput);
     }
 
     @Override
@@ -36,9 +33,9 @@ public class EvalCommand extends NamedCommand<String, Object> {
         try {
             Binding binding = new Binding();
             plugin.injectVariables(binding, message);
-            return new ValueCommandResultImpl<>(this, plugin.getShell(binding, message.getAuthor()).evaluate(input));
+            return new ValueCommandResult<>(this, plugin.getShell(binding, message.getAuthor()).evaluate(input));
         } catch (GroovyRuntimeException e) {
-            return new ErrorCommandResultImpl<>(this, ErrorCommandResultImpl.messageFromThrowable(e));
+            return new ErrorCommandResult<>(this, ErrorCommandResult.messageFromThrowable(e));
         }
     }
 

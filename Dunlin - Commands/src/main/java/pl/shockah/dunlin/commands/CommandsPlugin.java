@@ -3,10 +3,7 @@ package pl.shockah.dunlin.commands;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import pl.shockah.dunlin.commands.result.CommandResult;
-import pl.shockah.dunlin.commands.result.ErrorCommandResult;
-import pl.shockah.dunlin.commands.result.ErrorCommandResultImpl;
-import pl.shockah.dunlin.commands.result.ParseCommandResult;
+import pl.shockah.dunlin.commands.result.*;
 import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.dunlin.settings.Setting;
@@ -106,19 +103,19 @@ public class CommandsPlugin extends ListenerPlugin {
 						listener.onCommandReceived(event, pattern, commandPatternMatch.command, commandPatternMatch.textInput);
 					});
 					try {
-						CommandResult<Object> input = commandPatternMatch.command.parseInput(message, commandPatternMatch.textInput);
-						if (input instanceof ErrorCommandResult<?>) {
-							respond(event, input.getMessage(message, null));
-						} else if (input instanceof ParseCommandResult<?>) {
-							ParseCommandResult<?> parseCommandResult = (ParseCommandResult<?>)input;
-							CommandResult<Object> output = commandPatternMatch.command.execute(message, parseCommandResult.get());
+						ParseResult<Object> input = commandPatternMatch.command.parseInput(message, commandPatternMatch.textInput);
+						if (input instanceof ErrorParseResult<?>) {
+							respond(event, ((ErrorParseResult<?>)input).message);
+						} else if (input instanceof ValueParseResult<?>) {
+							ValueParseResult<?> valueParseResult = (ValueParseResult<?>)input;
+							CommandResult<Object> output = commandPatternMatch.command.execute(message, valueParseResult.value);
 							listeners.iterate(listener -> {
 								listener.onCommandExecuted(event, pattern, commandPatternMatch.command, commandPatternMatch.textInput, output);
 							});
-							respond(event, output.getMessage(message, parseCommandResult.get()));
+							respond(event, output.getMessage(message, valueParseResult.value));
 						}
 					} catch (Exception e) {
-						respond(event, ErrorCommandResultImpl.messageFromThrowable(e));
+						respond(event, ErrorCommandResult.messageFromThrowable(e));
 					}
 					iterator.stop();
 				}
