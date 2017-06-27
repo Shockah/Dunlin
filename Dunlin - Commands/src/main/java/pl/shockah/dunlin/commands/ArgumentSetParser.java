@@ -1,5 +1,6 @@
 package pl.shockah.dunlin.commands;
 
+import org.apache.commons.lang3.StringUtils;
 import pl.shockah.util.Box;
 import pl.shockah.util.UnexpectedException;
 
@@ -10,7 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ArgumentSetParser<T extends ArgumentSet> {
-	public static final String SPLIT_PATTERN = "(?<=\\s+)(?!\\s)|(?<!\\s)(?=\\s+)";
+	public static final String SPLIT_PATTERN = "(?m)(?<=\\s+)(?!\\s)|(?<!\\s)(?=\\s+)";
 	public static final Pattern ARGUMENT_NAME_PATTERN = Pattern.compile("\\-(\\S+)");
 	
 	public final Class<T> clazz;
@@ -26,7 +27,7 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 			
 			String[] split = textInput.split(SPLIT_PATTERN);
 			if (split.length != 0) {
-				int offset = split[0].matches("\\s+") ? 1 : 0;
+				int offset = split[0].matches("(?m)\\s+") ? 1 : 0;
 				for (int i = offset; i < split.length; i += 2) {
 					Matcher m = ARGUMENT_NAME_PATTERN.matcher(split[i]);
 					if (m.find()) {
@@ -45,8 +46,7 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 					}
 					
 					if (process.defaultArgument != null) {
-						Box<Integer> index = new Box<>(i + 2);
-						String rawValue = parseRawValue(split, index);
+						String rawValue = StringUtils.join(split, "", i, split.length);
 						putArgumentValue(process.defaultArgument, rawValue);
 						break;
 					}

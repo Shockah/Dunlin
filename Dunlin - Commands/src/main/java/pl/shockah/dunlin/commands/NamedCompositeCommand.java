@@ -3,7 +3,7 @@ package pl.shockah.dunlin.commands;
 import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.commands.result.*;
 
-public class NamedCompositeCommand extends NamedCommand<NamedCompositeCommand.Input, Object> {
+public class NamedCompositeCommand extends NamedCommand<NamedCompositeCommand.Input, NamedCompositeCommand.Output> {
 	public final Command<?, ?> defaultCommand;
 	public final DefaultNamedCommandProvider provider = new DefaultNamedCommandProvider();
 
@@ -47,28 +47,37 @@ public class NamedCompositeCommand extends NamedCommand<NamedCompositeCommand.In
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public CommandResult<Object> execute(Message message, Input input) {
-		CommandResult<?> result = ((Command<Object, ?>)input.subcommand).execute(message, input.subcommandInput);
+	public CommandResult<Output> execute(Message message, Input input) {
+		CommandResult<?> result = ((Command<Object, ?>)input.subcommand).execute(message, input.value);
 		if (result instanceof ErrorCommandResult<?>)
-			return (ErrorCommandResult<Object>)result;
+			return (ErrorCommandResult<Output>)result;
 		else
-			return new ValueCommandResult<>(this, new Input(input.subcommand, result));
+			return new ValueCommandResult<>(this, new Output(input.subcommand, result));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Message formatOutput(Message message, Input input, Object output) {
-		return super.formatOutput(message, input, output); //FIXME
-		//return ((CommandResult<Data>)output.input).getMessage(message, output.input);
+	public Message formatOutput(Message message, Input input, Output output) {
+		return ((CommandResult<Object>)output.result).getMessage(message, input.value);
 	}
 
 	public static final class Input {
 		public final Command<?, ?> subcommand;
-		public final Object subcommandInput;
+		public final Object value;
 
-		public Input(Command<?, ?> subcommand, Object subcommandInput) {
+		public Input(Command<?, ?> subcommand, Object value) {
 			this.subcommand = subcommand;
-			this.subcommandInput = subcommandInput;
+			this.value = value;
+		}
+	}
+
+	public static final class Output {
+		public final Command<?, ?> subcommand;
+		public final CommandResult<?> result;
+
+		public Output(Command<?, ?> subcommand, CommandResult<?> result) {
+			this.subcommand = subcommand;
+			this.result = result;
 		}
 	}
 }

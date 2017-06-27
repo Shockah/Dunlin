@@ -3,6 +3,7 @@ package pl.shockah.dunlin.commands.result;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import pl.shockah.dunlin.commands.Command;
@@ -41,8 +42,11 @@ public final class ErrorCommandResult<T> extends CommandResult<T> {
 		EmbedBuilder embedBuilder = new EmbedBuilder()
 				.setColor(EMBED_COLOR)
 				.setDescription(String.format(MESSAGE_FORMAT, stackTrace));
-		if (!StringUtils.isBlank(message))
+		if (!StringUtils.isBlank(message)) {
+			if (message.length() > MessageEmbed.TITLE_MAX_LENGTH)
+				message = message.substring(0, MessageEmbed.TITLE_MAX_LENGTH);
 			embedBuilder.setTitle(message, null);
+		}
 
 		return new MessageBuilder().setEmbed(embedBuilder.build()).build();
 	}

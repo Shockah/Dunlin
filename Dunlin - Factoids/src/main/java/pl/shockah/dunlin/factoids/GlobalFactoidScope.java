@@ -1,6 +1,6 @@
 package pl.shockah.dunlin.factoids;
 
-import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.GlobalScope;
 import pl.shockah.dunlin.factoids.db.Factoid;
@@ -15,8 +15,8 @@ public class GlobalFactoidScope extends FactoidScope {
     }
 
     @Override
-    protected void fillWhereClause(QueryBuilder<Factoid, Integer> qb) throws SQLException {
-        qb.where()
+    protected void fillWhereClause(Where<Factoid, Integer> where) throws SQLException {
+        where.and()
                 .eq(Factoid.SCOPE_TYPE, SCOPE_TYPE);
     }
 

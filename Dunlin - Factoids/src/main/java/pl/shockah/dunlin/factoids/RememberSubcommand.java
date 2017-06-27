@@ -45,7 +45,7 @@ public class RememberSubcommand extends NamedCommand<RememberSubcommand.Input, F
 		@Argument
 		public String type = PlainFactoidCommandFactory.TYPE;
 
-		@Argument
+		@Argument(isDefault = true)
 		public String content;
 
 		public Input toInput(FactoidsPlugin plugin, Message message) {
