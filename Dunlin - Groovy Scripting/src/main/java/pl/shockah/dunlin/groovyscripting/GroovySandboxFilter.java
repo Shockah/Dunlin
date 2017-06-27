@@ -145,7 +145,7 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 			if (isClassAllowed(clazz))
 				return true;
 			return getMethods(clazz, method, args).stream().anyMatch(this::isMethodAllowed);
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		return super.isClassMethodAllowed(clazz, method, args);
 	}
@@ -156,7 +156,7 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 			if (isClassAllowed(obj.getClass()))
 				return true;
 			return getMethods(obj.getClass(), method, args).stream().anyMatch(this::isMethodAllowed);
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		return super.isInstanceMethodAllowed(obj, method, args);
 	}
@@ -165,7 +165,7 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 	public boolean isClassFieldGetAllowed(Class<?> clazz, String field) {
 		try {
 			return isFieldAllowed(clazz.getField(field));
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		return super.isClassFieldGetAllowed(clazz, field);
 	}
@@ -174,7 +174,7 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 	public boolean isClassFieldSetAllowed(Class<?> clazz, String field, Object value) {
 		try {
 			return isFieldAllowed(clazz.getField(field));
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		return super.isClassFieldSetAllowed(clazz, field, value);
 	}
@@ -183,7 +183,7 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 	public boolean isInstanceFieldGetAllowed(Object obj, String field) {
 		try {
 			return isFieldAllowed(obj.getClass().getField(field));
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		return super.isInstanceFieldGetAllowed(obj, field);
 	}
@@ -192,7 +192,7 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 	public boolean isInstanceFieldSetAllowed(Object obj, String field, Object value) {
 		try {
 			return isFieldAllowed(obj.getClass().getField(field));
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		return super.isInstanceFieldSetAllowed(obj, field, value);
 	}

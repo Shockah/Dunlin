@@ -3,6 +3,7 @@ package pl.shockah.dunlin.commands;
 import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ErrorCommandResult;
+import pl.shockah.dunlin.commands.result.ParseResult;
 import pl.shockah.dunlin.commands.result.ValueCommandResult;
 
 public class ChainCommand extends Command<Object, Object> {
@@ -14,7 +15,7 @@ public class ChainCommand extends Command<Object, Object> {
 	}
 	
 	@Override
-	public CommandResult<Object> parseInput(Message message, String textInput) {
+	public ParseResult<Object> parseInput(Message message, String textInput) {
 		return commands[0].parseInput(message, textInput);
 	}
 
@@ -24,10 +25,8 @@ public class ChainCommand extends Command<Object, Object> {
 		for (int i = 1; i < commands.length; i++) {
 			if (lastResult instanceof ErrorCommandResult<?>)
 				return lastResult;
-			else if (lastResult instanceof ValueCommandResult<?>)
-				lastResult = commands[i].execute(message, ((ValueCommandResult<?>)lastResult).get());
 			else
-				throw new IllegalArgumentException("Unknown CommandResult type.");
+				lastResult = commands[i].execute(message, ((ValueCommandResult<?>)lastResult).value);
 		}
 		return lastResult;
 	}

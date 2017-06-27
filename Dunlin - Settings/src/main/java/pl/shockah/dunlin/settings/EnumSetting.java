@@ -47,7 +47,7 @@ public class EnumSetting<T extends Enum<T>> extends Setting<T> {
 					return (T)enumConst;
 				}
 			}
-		} catch (NumberFormatException e2) {
+		} catch (NumberFormatException ignored) {
 		}
 
 		throw new IllegalArgumentException(String.format("Cannot parse `%s` as enum `%s`.", textInput, clazz.getSimpleName()));

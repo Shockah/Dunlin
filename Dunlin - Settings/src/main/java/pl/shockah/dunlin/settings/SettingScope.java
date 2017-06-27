@@ -1,6 +1,14 @@
 package pl.shockah.dunlin.settings;
 
+import pl.shockah.dunlin.Scope;
+
 public abstract class SettingScope {
+    public final Scope scope;
+
+    public SettingScope(Scope scope) {
+        this.scope = scope;
+    }
+
     public SettingScope downscope() {
         return null;
     }
@@ -9,5 +17,7 @@ public abstract class SettingScope {
 
     protected abstract void setRaw(Setting<?> setting, Object raw);
 
-    public abstract String name();
+    public final String getName() {
+        return scope.name();
+    }
 }

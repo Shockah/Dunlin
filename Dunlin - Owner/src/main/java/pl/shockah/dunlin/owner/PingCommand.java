@@ -4,8 +4,9 @@ import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.CommandResult;
-import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
-import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
+import pl.shockah.dunlin.commands.result.ParseResult;
+import pl.shockah.dunlin.commands.result.ValueCommandResult;
+import pl.shockah.dunlin.commands.result.ValueParseResult;
 
 import java.time.temporal.ChronoUnit;
 
@@ -15,8 +16,8 @@ public class PingCommand extends NamedCommand<Void, Long> {
 	}
 
 	@Override
-	public CommandResult<Void> parseInput(Message message, String textInput) {
-		return new ParseCommandResultImpl<>(this, null);
+	public ParseResult<Void> parseInput(Message message, String textInput) {
+		return new ValueParseResult<>(this, null);
 	}
 
 	@Override
@@ -24,7 +25,7 @@ public class PingCommand extends NamedCommand<Void, Long> {
 		Message testMessage = message.getChannel().sendMessage("Pinging...").complete();
 		long ping = message.getCreationTime().until(testMessage.getCreationTime(), ChronoUnit.MILLIS);
 		testMessage.delete().queue();
-		return new ValueCommandResultImpl<>(this, ping);
+		return new ValueCommandResult<>(this, ping);
 	}
 
 	@Override

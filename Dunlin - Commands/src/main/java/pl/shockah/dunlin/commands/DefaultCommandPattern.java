@@ -46,7 +46,7 @@ public class DefaultCommandPattern extends CommandPattern<NamedCommand<?, ?>> {
 			return null;
 		
 		final String f_commandName = commandName;
-		NamedCommand<?, ?> command = namedCommandProviders.firstResult(provider -> (NamedCommand<?, ?>)provider.provide(f_commandName));
+		NamedCommand<?, ?> command = namedCommandProviders.firstResult(provider -> (NamedCommand<?, ?>)provider.provide(message, f_commandName));
 		return command != null ? new CommandPatternMatch<>(command, input) : null;
 	}
 	

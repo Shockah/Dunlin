@@ -7,8 +7,9 @@ import pl.shockah.dunlin.commands.ArgumentSet;
 import pl.shockah.dunlin.commands.ArgumentSetParser;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.CommandResult;
-import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
-import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
+import pl.shockah.dunlin.commands.result.ParseResult;
+import pl.shockah.dunlin.commands.result.ValueCommandResult;
+import pl.shockah.dunlin.commands.result.ValueParseResult;
 import pl.shockah.dunlin.settings.*;
 
 public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output> {
@@ -20,19 +21,19 @@ public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output
 	}
 	
 	@Override
-	public CommandResult<Input> parseInput(Message message, String textInput) {
-		return new ParseCommandResultImpl<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(this, message));
+	public ParseResult<Input> parseInput(Message message, String textInput) {
+		return new ValueParseResult<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(settingsPlugin, message));
 	}
 	
 	@Override
 	public CommandResult<Output> execute(Message message, Input input) {
-		return new ValueCommandResultImpl<>(this, input.getOutput(message));
+		return new ValueCommandResult<>(this, input.getOutput(message));
 	}
 
 	@Override
 	public Message formatOutput(Message message, Input input, Output output) {
 		return new MessageBuilder().setEmbed(new EmbedBuilder()
-				.setTitle(String.format("%s in scope %s", output.setting.getFullName(), output.scope.name()), null)
+				.setTitle(String.format("%s in scope %s", output.setting.getFullName(), output.scope.getName()), null)
 				.setDescription(String.valueOf(output.value))
 		.build()).build();
 	}
@@ -44,8 +45,8 @@ public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output
 		@Argument("setting")
 		public String settingName;
 		
-		public Input toInput(GetCommand command, Message message) {
-			Setting<?> setting = command.settingsPlugin.getSettingByName(settingName);
+		public Input toInput(SettingsPlugin settingsPlugin, Message message) {
+			Setting<?> setting = settingsPlugin.getSettingByName(settingName);
 			SettingScope settingScope = null;
 			switch (scope) {
 				case Global:

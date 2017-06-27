@@ -6,6 +6,7 @@ public class MessageSettingScope extends SettingScope {
     public final Message message;
 
     public MessageSettingScope(Message message) {
+        super(null);
         this.message = message;
     }
 
@@ -29,10 +30,5 @@ public class MessageSettingScope extends SettingScope {
 
     private UserSettingScope downscopeToUser() {
         return new UserSettingScope(message.getAuthor());
-    }
-
-    @Override
-    public String name() {
-        throw new UnsupportedOperationException();
     }
 }

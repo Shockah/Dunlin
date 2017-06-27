@@ -8,13 +8,13 @@ import net.dv8tion.jda.core.entities.*;
 import pl.shockah.dunlin.ShardManager;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.CommandResult;
-import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
-import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
+import pl.shockah.dunlin.commands.result.ParseResult;
+import pl.shockah.dunlin.commands.result.ValueCommandResult;
+import pl.shockah.dunlin.commands.result.ValueParseResult;
 
 import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
@@ -26,12 +26,12 @@ public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
     }
 
     @Override
-    public CommandResult<Void> parseInput(Message message, String textInput) {
-        return new ParseCommandResultImpl<>(this, null);
+    public ParseResult<Void> parseInput(Message message, String textInput) {
+        return new ValueParseResult<>(this, null);
     }
 
     @Override
-    public CommandResult<StatusCommand.Output> execute(Message message, Void aVoid) {
+    public CommandResult<Output> execute(Message message, Void aVoid) {
         Output output = new Output();
         ShardManager shardManager = ownerPlugin.manager.app.getShardManager();
 
@@ -63,7 +63,7 @@ public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
                 .filter(user -> !user.isBot())
                 .collect(Collectors.toList());
         List<User> allBots = allUsersAndBots.stream()
-                .filter(user -> user.isBot())
+                .filter(User::isBot)
                 .collect(Collectors.toList());
 
         output.users = allUsers.size();
@@ -93,7 +93,7 @@ public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
 
         output.cpuLoad = ((com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean()).getProcessCpuLoad();
 
-        return new ValueCommandResultImpl<>(this, output);
+        return new ValueCommandResult<>(this, output);
     }
 
     @Override

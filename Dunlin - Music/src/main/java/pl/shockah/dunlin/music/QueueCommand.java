@@ -12,10 +12,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.commands.NamedCommand;
-import pl.shockah.dunlin.commands.result.CommandResult;
-import pl.shockah.dunlin.commands.result.ErrorCommandResultImpl;
-import pl.shockah.dunlin.commands.result.ParseCommandResultImpl;
-import pl.shockah.dunlin.commands.result.ValueCommandResultImpl;
+import pl.shockah.dunlin.commands.result.*;
 import pl.shockah.util.Box;
 
 import java.net.MalformedURLException;
@@ -31,7 +28,7 @@ public class QueueCommand extends NamedCommand<AudioItem, AudioItem> {
     }
 
     @Override
-    public CommandResult<AudioItem> parseInput(Message message, String textInput) {
+    public ParseResult<AudioItem> parseInput(Message message, String textInput) {
     	Box<AudioItem> item = new Box<>();
 	    CountDownLatch latch = new CountDownLatch(1);
 
@@ -81,25 +78,25 @@ public class QueueCommand extends NamedCommand<AudioItem, AudioItem> {
 	    } catch (InterruptedException e) {
 	    }
 
-	    return new ParseCommandResultImpl<>(this, item.value);
+	    return new ValueParseResult<>(this, item.value);
     }
 
     @Override
     public CommandResult<AudioItem> execute(Message message, AudioItem input) {
     	if (input == null)
-			return new ValueCommandResultImpl<>(this, null);
+			return new ValueCommandResult<>(this, null);
 
 	    GuildAudioManager manager = plugin.getGuildAudioManager(message.getGuild());
 	    manager.getPlaylist(message).queue(input);
 		message.addReaction("\uD83D\uDC4C").queue();
-        return new ValueCommandResultImpl<>(this, input);
+        return new ValueCommandResult<>(this, input);
     }
 
 	@Override
 	public Message formatOutput(AudioItem output) {
     	if (output == null)
     		return new MessageBuilder().setEmbed(new EmbedBuilder()
-				    .setColor(ErrorCommandResultImpl.EMBED_COLOR)
+				    .setColor(ErrorCommandResult.EMBED_COLOR)
 				    .setDescription("Failed to load.")
 				    .build()).build();
 

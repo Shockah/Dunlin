@@ -78,7 +78,7 @@ public class MusicPlugin extends ListenerPlugin {
 					if (!(scope instanceof GuildSettingScope))
 						return;
 					GuildSettingScope guildScope = (GuildSettingScope)scope;
-					getGuildAudioManager(guildScope.guild).audioPlayer.setVolume(setting.get(guildScope));
+					getGuildAudioManager(guildScope.guildScope.guild).audioPlayer.setVolume(setting.get(guildScope));
 				}
 		);
 
