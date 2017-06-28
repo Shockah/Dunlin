@@ -26,7 +26,8 @@ public class DunlinGroovySandboxFilter extends BasicGroovySandboxFilter {
                     Region.class,
                     Guild.Timeout.class,
                     Guild.VerificationLevel.class,
-                    Guild.NotificationLevel.class
+                    Guild.NotificationLevel.class,
+                    EmbedBuilder.class
             ));
 
             whitelistedMethods.addAll(Arrays.asList(
