@@ -52,7 +52,7 @@ public abstract class AbstractGroovySandbox extends GroovyInterceptor {
 	@Override
 	public Object onNewInstance(Invoker invoker, Class receiver, Object... args) throws Throwable {
 		if (!isConstructorAllowed(receiver, args))
-			throw new SecurityException(String.format("%s constructor not allowed.", receiver.getClass().getName()));
+			throw new SecurityException(String.format("%s constructor not allowed.", receiver.getName()));
 		return super.onNewInstance(invoker, receiver, args);
 	}
 

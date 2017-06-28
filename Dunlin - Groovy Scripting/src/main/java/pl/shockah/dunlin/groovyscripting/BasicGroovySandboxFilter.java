@@ -7,6 +7,7 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class BasicGroovySandboxFilter extends GroovySandboxFilter {
     public BasicGroovySandboxFilter() {
@@ -43,7 +44,8 @@ public class BasicGroovySandboxFilter extends GroovySandboxFilter {
 					String.class,
 	        		Comparable.class,
 					TimeUnit.class,
-					Math.class
+					Math.class,
+			        TimeoutException.class
 			));
 
 		    whitelistedMethods.addAll(Arrays.asList(
