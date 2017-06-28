@@ -6,7 +6,7 @@ public class PlainFactoidCommandFactory extends FactoidCommandFactory<PlainFacto
 	public static final String TYPE = "plain";
 
 	public PlainFactoidCommandFactory() {
-		super(TYPE);
+		super(TYPE, null);
 	}
 
 	@Override

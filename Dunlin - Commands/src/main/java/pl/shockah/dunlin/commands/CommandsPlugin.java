@@ -83,7 +83,7 @@ public class CommandsPlugin extends ListenerPlugin {
 	public void unregisterNamedCommand(NamedCommand<?, ?> namedCommand) {
 		defaultNamedCommandProvider.unregisterNamedCommand((NamedCommand<Object, Object>)namedCommand);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void onMessageReceived(MessageReceivedEvent event) {
