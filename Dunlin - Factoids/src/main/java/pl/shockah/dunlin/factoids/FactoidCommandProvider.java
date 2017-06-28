@@ -1,6 +1,6 @@
 package pl.shockah.dunlin.factoids;
 
-import net.dv8tion.jda.core.entities.Message;
+import pl.shockah.dunlin.commands.CommandContext;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.NamedCommandProvider;
 import pl.shockah.dunlin.factoids.db.Factoid;
@@ -26,8 +26,8 @@ public class FactoidCommandProvider extends NamedCommandProvider<Object, Object>
 
     @SuppressWarnings("unchecked")
     @Override
-    public NamedCommand<Object, Object> provide(Message message, String name) {
-        Factoid factoid = plugin.getMatchingFactoid(new TextChannelFactoidScope(message.getTextChannel()), name);
+    public NamedCommand<Object, Object> provide(CommandContext context, String name) {
+        Factoid factoid = plugin.getMatchingFactoid(new TextChannelFactoidScope(context.message.getTextChannel()), name);
         if (factoid == null)
             return null;
 

@@ -1,6 +1,5 @@
 package pl.shockah.dunlin.commands;
 
-import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.settings.MessageSettingScope;
 import pl.shockah.util.ReadWriteSet;
 
@@ -19,9 +18,9 @@ public class DefaultCommandPattern extends CommandPattern<NamedCommand<?, ?>> {
 	}
 	
 	@Override
-	public boolean matches(Message message) {
-		String content = message.getRawContent();
-		for (String prefix : plugin.prefixesSetting.get(new MessageSettingScope(message)).split("\\s")) {
+	public boolean matches(CommandContext context) {
+		String content = context.message.getRawContent();
+		for (String prefix : plugin.prefixesSetting.get(new MessageSettingScope(context.message)).split("\\s")) {
 			if (Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix), Pattern.DOTALL | Pattern.MULTILINE).matcher(content).find())
 				return true;
 		}
@@ -29,11 +28,11 @@ public class DefaultCommandPattern extends CommandPattern<NamedCommand<?, ?>> {
 	}
 
 	@Override
-	public CommandPatternMatch<NamedCommand<?, ?>> getCommand(Message message) {
+	public CommandPatternMatch<NamedCommand<?, ?>> getCommand(CommandContext context) {
 		String commandName = null;
 		String input = null;
-		String content = message.getRawContent();
-		for (String prefix : plugin.prefixesSetting.get(new MessageSettingScope(message)).split("\\s")) {
+		String content = context.message.getRawContent();
+		for (String prefix : plugin.prefixesSetting.get(new MessageSettingScope(context.message)).split("\\s")) {
 			Matcher m = Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix), Pattern.DOTALL | Pattern.MULTILINE).matcher(content);
 			if (m.find()) {
 				commandName = m.group(1);
@@ -46,7 +45,7 @@ public class DefaultCommandPattern extends CommandPattern<NamedCommand<?, ?>> {
 			return null;
 		
 		final String f_commandName = commandName;
-		NamedCommand<?, ?> command = namedCommandProviders.firstResult(provider -> (NamedCommand<?, ?>)provider.provide(message, f_commandName));
+		NamedCommand<?, ?> command = namedCommandProviders.firstResult(provider -> (NamedCommand<?, ?>)provider.provide(context, f_commandName));
 		return command != null ? new CommandPatternMatch<>(command, input) : null;
 	}
 	

@@ -28,9 +28,9 @@ public class NamedCompositeCommand extends NamedCommand<NamedCompositeCommand.In
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ParseResult<Input> parseInput(Message message, String textInput) {
+	public ParseResult<Input> parseInput(CommandContext context, String textInput) {
 		String[] split = textInput.split("\\s+");
-		Command<Object, Object> command = provider.provide(message, split[0]);
+		Command<Object, Object> command = provider.provide(context, split[0]);
 		String newTextInput = textInput.substring(split[0].length() + 1);
 		if (command == null && defaultCommand != null) {
 			command = (Command<Object, Object>)defaultCommand;
@@ -38,7 +38,7 @@ public class NamedCompositeCommand extends NamedCommand<NamedCompositeCommand.In
 		}
 		if (command == null)
 			throw new IllegalArgumentException(String.format("Unknown subcommand: `%s`.", split[0]));
-		ParseResult<Object> parseResult = command.parseInput(message, newTextInput);
+		ParseResult<Object> parseResult = command.parseInput(context, newTextInput);
 		if (parseResult instanceof ErrorParseResult<?>)
 			return new ErrorParseResult<>(this, ((ErrorParseResult<?>)parseResult).message);
 		else
@@ -47,8 +47,8 @@ public class NamedCompositeCommand extends NamedCommand<NamedCompositeCommand.In
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public CommandResult<Output> execute(Message message, Input input) {
-		CommandResult<?> result = ((Command<Object, ?>)input.subcommand).execute(message, input.value);
+	public CommandResult<Output> execute(CommandContext context, Input input) {
+		CommandResult<?> result = ((Command<Object, ?>)input.subcommand).execute(context, input.value);
 		if (result instanceof ErrorCommandResult<?>)
 			return (ErrorCommandResult<Output>)result;
 		else
@@ -57,8 +57,8 @@ public class NamedCompositeCommand extends NamedCommand<NamedCompositeCommand.In
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Message formatOutput(Message message, Input input, Output output) {
-		return ((CommandResult<Object>)output.result).getMessage(message, input.value);
+	public Message formatOutput(CommandContext context, Input input, Output output) {
+		return ((CommandResult<Object>)output.result).getMessage(context, input.value);
 	}
 
 	public static final class Input {

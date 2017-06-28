@@ -1,9 +1,7 @@
 package pl.shockah.dunlin.commands;
 
-import net.dv8tion.jda.core.entities.Message;
-
 public abstract class CommandPattern<T extends Command<?, ?>> {
-	public abstract boolean matches(Message message);
+	public abstract boolean matches(CommandContext context);
 	
-	public abstract CommandPatternMatch<T> getCommand(Message message);
+	public abstract CommandPatternMatch<T> getCommand(CommandContext context);
 }

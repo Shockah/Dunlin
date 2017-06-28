@@ -88,6 +88,7 @@ public class CommandsPlugin extends ListenerPlugin {
 	@Override
 	protected void onMessageReceived(MessageReceivedEvent event) {
 		Message message = event.getMessage();
+		CommandContext context = new CommandContext(message);
 		if (message.getAuthor().isBot() || message.getAuthor().isFake())
 			return;
 		if (message.getJDA().getAccountType() == AccountType.CLIENT && !message.getAuthor().equals(message.getJDA().getSelfUser()))
@@ -95,14 +96,14 @@ public class CommandsPlugin extends ListenerPlugin {
 
 		Box<Boolean> matchedCommand = new Box<>(false);
 		patterns.iterate((pattern, iterator) -> {
-			if (pattern.matches(message)) {
-				CommandPatternMatch<Command<Object, Object>> commandPatternMatch = (CommandPatternMatch<Command<Object, Object>>)pattern.getCommand(message);
+			if (pattern.matches(context)) {
+				CommandPatternMatch<Command<Object, Object>> commandPatternMatch = (CommandPatternMatch<Command<Object, Object>>)pattern.getCommand(context);
 				if (commandPatternMatch != null) {
 					matchedCommand.value = true;
 					listeners.iterate(listener -> {
-						listener.onCommandReceived(event, pattern, commandPatternMatch.command, commandPatternMatch.textInput);
+						listener.onCommandReceived(context, pattern, commandPatternMatch.command, commandPatternMatch.textInput);
 					});
-					callCommand(pattern, commandPatternMatch.command, commandPatternMatch.textInput, event);
+					callCommand(pattern, commandPatternMatch.command, commandPatternMatch.textInput, context);
 					iterator.stop();
 				}
 			}
@@ -116,29 +117,28 @@ public class CommandsPlugin extends ListenerPlugin {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void callCommand(CommandPattern<?> pattern, Command<?, ?> command, String textInput, MessageReceivedEvent event) {
-		Message message = event.getMessage();
+	public void callCommand(CommandPattern<?> pattern, Command<?, ?> command, String textInput, CommandContext context) {
 		Command<Object, Object> plainCommand = (Command<Object, Object>)command;
 		try {
-			ParseResult<?> input = plainCommand.parseInput(message, textInput);
+			ParseResult<?> input = plainCommand.parseInput(context, textInput);
 			if (input instanceof ErrorParseResult<?>) {
-				respond(event, ((ErrorParseResult<?>)input).message);
+				respond(context, ((ErrorParseResult<?>)input).message);
 			} else if (input instanceof ValueParseResult<?>) {
 				ValueParseResult<?> valueParseResult = (ValueParseResult<?>)input;
-				CommandResult<Object> output = plainCommand.execute(message, valueParseResult.value);
+				CommandResult<Object> output = plainCommand.execute(context, valueParseResult.value);
 				listeners.iterate(listener -> {
-					listener.onCommandExecuted(event, pattern, command, textInput, output);
+					listener.onCommandExecuted(context, pattern, command, textInput, output);
 				});
-				respond(event, output.getMessage(message, valueParseResult.value));
+				respond(context, output.getMessage(context, valueParseResult.value));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			respond(event, ErrorCommandResult.messageFromThrowable(e));
+			respond(context, ErrorCommandResult.messageFromThrowable(e));
 		}
 	}
 
-	protected void respond(MessageReceivedEvent event, Message response) {
+	protected void respond(CommandContext context, Message response) {
 		if (response != null)
-			event.getChannel().sendMessage(response).queue();
+			context.message.getChannel().sendMessage(response).queue();
 	}
 }

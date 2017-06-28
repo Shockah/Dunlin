@@ -6,6 +6,7 @@ import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
+import pl.shockah.dunlin.commands.CommandContext;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.*;
 import pl.shockah.dunlin.settings.GuildSettingScope;
@@ -23,13 +24,13 @@ public class AnnounceCommand extends NamedCommand<String, List<TextChannel>> {
     }
 
     @Override
-    public ParseResult<String> parseInput(Message message, String textInput) {
+    public ParseResult<String> parseInput(CommandContext context, String textInput) {
         return new ValueParseResult<>(this, textInput);
     }
 
     @Override
-    public CommandResult<List<TextChannel>> execute(Message message, String input) {
-        if (!ownerPlugin.permissionsPlugin.hasPermission(message, ownerPlugin, names[0]))
+    public CommandResult<List<TextChannel>> execute(CommandContext context, String input) {
+        if (!ownerPlugin.permissionsPlugin.hasPermission(context.message, ownerPlugin, names[0]))
             return new ErrorCommandResult<>(this, ownerPlugin.permissionsPlugin.buildMissingPermissionMessage(ownerPlugin, names[0]));
 
         if (StringUtils.isEmpty(input))
@@ -41,7 +42,7 @@ public class AnnounceCommand extends NamedCommand<String, List<TextChannel>> {
         Message announceMessage = new MessageBuilder()
                 .setEmbed(new EmbedBuilder()
                         .setTitle("Announcement", null)
-                        .setAuthor(message.getAuthor().getName(), null, message.getAuthor().getEffectiveAvatarUrl())
+                        .setAuthor(context.message.getAuthor().getName(), null, context.message.getAuthor().getEffectiveAvatarUrl())
                         .setDescription(input)
                 .build())
         .build();
@@ -52,7 +53,7 @@ public class AnnounceCommand extends NamedCommand<String, List<TextChannel>> {
                 .flatMap(List::stream)
                 .forEach(guild -> {
                     TextChannel channel = null;
-                    String channelName = ownerPlugin.announceChannelSetting.get(new GuildSettingScope(message.getGuild()));
+                    String channelName = ownerPlugin.announceChannelSetting.get(new GuildSettingScope(context.message.getGuild()));
 
                     if (channelName != null)
                         channel = guild.getTextChannelsByName(channelName, true).stream().findFirst().orElse(null);

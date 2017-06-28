@@ -4,6 +4,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.commands.ArgumentSet;
 import pl.shockah.dunlin.commands.ArgumentSetParser;
+import pl.shockah.dunlin.commands.CommandContext;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.*;
 import pl.shockah.dunlin.settings.*;
@@ -17,24 +18,24 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 	}
 	
 	@Override
-	public ParseResult<Input> parseInput(Message message, String textInput) {
-		return new ValueParseResult<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(settingsCommandsPlugin.settingsPlugin, message));
+	public ParseResult<Input> parseInput(CommandContext context, String textInput) {
+		return new ValueParseResult<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(settingsCommandsPlugin.settingsPlugin, context.message));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public CommandResult<Setting<?>> execute(Message message, Input input) {
+	public CommandResult<Setting<?>> execute(CommandContext context, Input input) {
 		if (input.scope instanceof GlobalSettingScope) {
-			if (!settingsCommandsPlugin.permissionsPlugin.hasPermission(message, settingsCommandsPlugin, names[0]))
+			if (!settingsCommandsPlugin.permissionsPlugin.hasPermission(context.message, settingsCommandsPlugin, names[0]))
 				return new ErrorCommandResult<>(this, settingsCommandsPlugin.permissionsPlugin.buildMissingPermissionMessage(settingsCommandsPlugin, names[0]));
 		} else if (input.scope instanceof GuildSettingScope) {
-			if (!message.getGuild().getMember(message.getAuthor()).hasPermission(Permission.MANAGE_SERVER)) {
-				if (!settingsCommandsPlugin.permissionsPlugin.hasPermission(message, settingsCommandsPlugin, names[0]))
+			if (!context.message.getGuild().getMember(context.message.getAuthor()).hasPermission(Permission.MANAGE_SERVER)) {
+				if (!settingsCommandsPlugin.permissionsPlugin.hasPermission(context.message, settingsCommandsPlugin, names[0]))
 					return new ErrorCommandResult<>(this, settingsCommandsPlugin.permissionsPlugin.buildMissingPermissionMessage(settingsCommandsPlugin, names[0]));
 			}
 		} else if (input.scope instanceof TextChannelSettingScope) {
-			if (!message.getGuild().getMember(message.getAuthor()).hasPermission(message.getTextChannel(), Permission.MANAGE_CHANNEL)) {
-				if (!settingsCommandsPlugin.permissionsPlugin.hasPermission(message, settingsCommandsPlugin, names[0]))
+			if (!context.message.getGuild().getMember(context.message.getAuthor()).hasPermission(context.message.getTextChannel(), Permission.MANAGE_CHANNEL)) {
+				if (!settingsCommandsPlugin.permissionsPlugin.hasPermission(context.message, settingsCommandsPlugin, names[0]))
 					return new ErrorCommandResult<>(this, settingsCommandsPlugin.permissionsPlugin.buildMissingPermissionMessage(settingsCommandsPlugin, names[0]));
 			}
 		}
@@ -42,7 +43,7 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 		Setting<Object> genericSetting = (Setting<Object>)input.setting;
 		genericSetting.set(input.scope, input.value);
 
-		message.addReaction("\uD83D\uDC4C").queue();
+		context.message.addReaction("\uD83D\uDC4C").queue();
 		return new ValueCommandResult<>(this, input.setting);
 	}
 

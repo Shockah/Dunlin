@@ -2,6 +2,7 @@ package pl.shockah.dunlin.owner;
 
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
+import pl.shockah.dunlin.commands.CommandContext;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ParseResult;
@@ -16,14 +17,14 @@ public class PingCommand extends NamedCommand<Void, Long> {
 	}
 
 	@Override
-	public ParseResult<Void> parseInput(Message message, String textInput) {
+	public ParseResult<Void> parseInput(CommandContext context, String textInput) {
 		return new ValueParseResult<>(this, null);
 	}
 
 	@Override
-	public CommandResult<Long> execute(Message message, Void aVoid) {
-		Message testMessage = message.getChannel().sendMessage("Pinging...").complete();
-		long ping = message.getCreationTime().until(testMessage.getCreationTime(), ChronoUnit.MILLIS);
+	public CommandResult<Long> execute(CommandContext context, Void aVoid) {
+		Message testMessage = context.message.getChannel().sendMessage("Pinging...").complete();
+		long ping = context.message.getCreationTime().until(testMessage.getCreationTime(), ChronoUnit.MILLIS);
 		testMessage.delete().queue();
 		return new ValueCommandResult<>(this, ping);
 	}

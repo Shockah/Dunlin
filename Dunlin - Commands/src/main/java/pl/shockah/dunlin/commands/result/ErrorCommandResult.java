@@ -7,6 +7,7 @@ import net.dv8tion.jda.core.entities.MessageEmbed;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import pl.shockah.dunlin.commands.Command;
+import pl.shockah.dunlin.commands.CommandContext;
 
 import java.awt.*;
 
@@ -23,7 +24,7 @@ public final class ErrorCommandResult<T> extends CommandResult<T> {
 	}
 
 	@Override
-	public Message getMessage(Message originalMessage, T input) {
+	public Message getMessage(CommandContext context, T input) {
 		return message;
 	}
 

@@ -2,6 +2,7 @@ package pl.shockah.dunlin.commands.result;
 
 import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.commands.Command;
+import pl.shockah.dunlin.commands.CommandContext;
 
 import java.awt.*;
 
@@ -17,7 +18,7 @@ public final class ValueCommandResult<T> extends CommandResult<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Message getMessage(Message originalMessage, Object input) {
-		return ((Command<Object, T>)command).formatOutput(originalMessage, input, value);
+	public Message getMessage(CommandContext context, Object input) {
+		return ((Command<Object, T>)command).formatOutput(context, input, value);
 	}
 }
