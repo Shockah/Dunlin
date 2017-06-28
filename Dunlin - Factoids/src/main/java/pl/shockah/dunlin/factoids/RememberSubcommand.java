@@ -38,7 +38,7 @@ public class RememberSubcommand extends NamedCommand<RememberSubcommand.Input, F
 
 	public static final class Arguments extends ArgumentSet {
 		@Argument
-		public Scope scope = Scope.Channel;
+		public Scope scope = Scope.Guild;
 
 		@Argument
 		public String name;

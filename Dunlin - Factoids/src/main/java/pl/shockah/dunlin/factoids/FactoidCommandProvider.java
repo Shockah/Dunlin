@@ -27,7 +27,7 @@ public class FactoidCommandProvider extends NamedCommandProvider<Object, Object>
     @SuppressWarnings("unchecked")
     @Override
     public NamedCommand<Object, Object> provide(Message message, String name) {
-        Factoid factoid = plugin.getFactoid(new TextChannelFactoidScope(message.getTextChannel()), name);
+        Factoid factoid = plugin.getMatchingFactoid(new TextChannelFactoidScope(message.getTextChannel()), name);
         if (factoid == null)
             return null;
 
