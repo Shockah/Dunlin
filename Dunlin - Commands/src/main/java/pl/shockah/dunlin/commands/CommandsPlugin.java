@@ -83,7 +83,7 @@ public class CommandsPlugin extends ListenerPlugin {
 	public void unregisterNamedCommand(NamedCommand<?, ?> namedCommand) {
 		defaultNamedCommandProvider.unregisterNamedCommand((NamedCommand<Object, Object>)namedCommand);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void onMessageReceived(MessageReceivedEvent event) {
@@ -102,22 +102,7 @@ public class CommandsPlugin extends ListenerPlugin {
 					listeners.iterate(listener -> {
 						listener.onCommandReceived(event, pattern, commandPatternMatch.command, commandPatternMatch.textInput);
 					});
-					try {
-						ParseResult<Object> input = commandPatternMatch.command.parseInput(message, commandPatternMatch.textInput);
-						if (input instanceof ErrorParseResult<?>) {
-							respond(event, ((ErrorParseResult<?>)input).message);
-						} else if (input instanceof ValueParseResult<?>) {
-							ValueParseResult<?> valueParseResult = (ValueParseResult<?>)input;
-							CommandResult<Object> output = commandPatternMatch.command.execute(message, valueParseResult.value);
-							listeners.iterate(listener -> {
-								listener.onCommandExecuted(event, pattern, commandPatternMatch.command, commandPatternMatch.textInput, output);
-							});
-							respond(event, output.getMessage(message, valueParseResult.value));
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-						respond(event, ErrorCommandResult.messageFromThrowable(e));
-					}
+					callCommand(pattern, commandPatternMatch.command, commandPatternMatch.textInput, event);
 					iterator.stop();
 				}
 			}
@@ -127,6 +112,28 @@ public class CommandsPlugin extends ListenerPlugin {
 			listeners.iterate(listener -> {
 				listener.onNonCommandMessageReceived(event);
 			});
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void callCommand(CommandPattern<?> pattern, Command<?, ?> command, String textInput, MessageReceivedEvent event) {
+		Message message = event.getMessage();
+		Command<Object, Object> plainCommand = (Command<Object, Object>)command;
+		try {
+			ParseResult<?> input = plainCommand.parseInput(message, textInput);
+			if (input instanceof ErrorParseResult<?>) {
+				respond(event, ((ErrorParseResult<?>)input).message);
+			} else if (input instanceof ValueParseResult<?>) {
+				ValueParseResult<?> valueParseResult = (ValueParseResult<?>)input;
+				CommandResult<Object> output = plainCommand.execute(message, valueParseResult.value);
+				listeners.iterate(listener -> {
+					listener.onCommandExecuted(event, pattern, command, textInput, output);
+				});
+				respond(event, output.getMessage(message, valueParseResult.value));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			respond(event, ErrorCommandResult.messageFromThrowable(e));
 		}
 	}
 
