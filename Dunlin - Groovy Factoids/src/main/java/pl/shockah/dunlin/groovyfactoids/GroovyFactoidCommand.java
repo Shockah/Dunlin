@@ -29,6 +29,7 @@ public class GroovyFactoidCommand extends AbstractFactoidCommand<Object, Object>
 		try {
 			Binding binding = new Binding();
 			scriptingPlugin.injectVariables(binding, message);
+			binding.setVariable("input", o);
 			return new ValueCommandResult<>(this, scriptingPlugin.getShell(binding, message.getAuthor()).evaluate(factoid.getContent()));
 		} catch (GroovyRuntimeException e) {
 			return new ErrorCommandResult<>(this, ErrorCommandResult.messageFromThrowable(e));
