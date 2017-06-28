@@ -92,7 +92,8 @@ public abstract class Setting<T> {
         return new Setting<Integer>(settingsPlugin, plugin, name, defaultValue) {
             @Override
             public Integer getForScope(SettingScope scope) {
-                return ((BigInteger)scope.getRaw(this)).intValue();
+                BigInteger value = (BigInteger)scope.getRaw(this);
+                return value == null ? null : value.intValue();
             }
 
             @Override

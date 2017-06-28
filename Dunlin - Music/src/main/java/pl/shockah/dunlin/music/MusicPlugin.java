@@ -13,6 +13,7 @@ import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
+import pl.shockah.dunlin.commands.CommandContext;
 import pl.shockah.dunlin.commands.CommandsPlugin;
 import pl.shockah.dunlin.music.playlist.DedicatedChannelPlaylist;
 import pl.shockah.dunlin.music.playlist.MessagePlaylist;
@@ -179,7 +180,7 @@ public class MusicPlugin extends ListenerPlugin {
 			if (((DedicatedChannelPlaylist)playlist).channel != textChannel)
 				return;
 			//TODO: do it properly
-			commandsPlugin.callCommand(null, queueCommand, event.getMessage().getRawContent(), event);
+			commandsPlugin.callCommand(null, queueCommand, event.getMessage().getRawContent(), new CommandContext(event.getMessage()));
 		});
 	}
 }

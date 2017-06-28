@@ -11,6 +11,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
+import pl.shockah.dunlin.commands.CommandContext;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.*;
 import pl.shockah.util.Box;
@@ -28,7 +29,7 @@ public class QueueCommand extends NamedCommand<AudioItem, AudioItem> {
     }
 
     @Override
-    public ParseResult<AudioItem> parseInput(Message message, String textInput) {
+    public ParseResult<AudioItem> parseInput(CommandContext context, String textInput) {
     	Box<AudioItem> item = new Box<>();
 	    CountDownLatch latch = new CountDownLatch(1);
 
@@ -82,13 +83,13 @@ public class QueueCommand extends NamedCommand<AudioItem, AudioItem> {
     }
 
     @Override
-    public CommandResult<AudioItem> execute(Message message, AudioItem input) {
+    public CommandResult<AudioItem> execute(CommandContext context, AudioItem input) {
     	if (input == null)
 			return new ValueCommandResult<>(this, null);
 
-	    GuildAudioManager manager = plugin.getGuildAudioManager(message.getGuild());
-	    manager.getPlaylist(message).queue(input);
-		message.addReaction("\uD83D\uDC4C").queue();
+	    GuildAudioManager manager = plugin.getGuildAudioManager(context.message.getGuild());
+	    manager.getPlaylist(context.message).queue(input);
+		context.message.addReaction("\uD83D\uDC4C").queue();
         return new ValueCommandResult<>(this, input);
     }
 
