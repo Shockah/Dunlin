@@ -1,6 +1,7 @@
 package pl.shockah.dunlin.factoids;
 
 import net.dv8tion.jda.core.entities.Message;
+import org.apache.commons.lang3.StringUtils;
 import pl.shockah.dunlin.commands.ArgumentSet;
 import pl.shockah.dunlin.commands.ArgumentSetParser;
 import pl.shockah.dunlin.commands.NamedCommand;
@@ -65,6 +66,15 @@ public class RememberSubcommand extends NamedCommand<RememberSubcommand.Input, F
 			}
 
 			FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory = plugin.getFactoidCommandProvider().factories.get(type);
+
+			String content = this.content.trim();
+			if (factory.codeHighlighting != null) {
+				if (content.startsWith("```") && content.endsWith("```")) {
+					content = content.substring(0, content.length() - 3);
+					String[] split = content.split("\\r?\\n|\\r");
+					content = StringUtils.join(split, "\n", 1, split.length);
+				}
+			}
 
 			return new Input(factoidScope, factory, name, content);
 		}
