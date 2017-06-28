@@ -2,20 +2,12 @@ package pl.shockah.dunlin.factoids;
 
 import pl.shockah.dunlin.commands.CommandsPlugin;
 import pl.shockah.dunlin.factoids.db.Factoid;
-import pl.shockah.dunlin.permissions.PermissionsPlugin;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
-import pl.shockah.dunlin.settings.SettingsPlugin;
 
 public class FactoidsPlugin extends Plugin {
 	@Dependency
-	protected SettingsPlugin settingsPlugin;
-	
-	@Dependency
 	protected CommandsPlugin commandsPlugin;
-
-	@Dependency
-	protected PermissionsPlugin permissionsPlugin;
 
 	private FactoidCommandProvider commandProvider;
 	
@@ -43,11 +35,11 @@ public class FactoidsPlugin extends Plugin {
 				commandProvider = new FactoidCommandProvider(this)
 		);
 
-		registerFactory(new PlainFactoidCommandFactory());
-
 		commandsPlugin.registerNamedCommand(
 			factoidCommand = new FactoidCommand(this)
 		);
+
+		registerFactory(new PlainFactoidCommandFactory());
 	}
 	
 	@Override
