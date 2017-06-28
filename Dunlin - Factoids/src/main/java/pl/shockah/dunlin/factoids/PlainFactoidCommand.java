@@ -1,6 +1,7 @@
 package pl.shockah.dunlin.factoids;
 
 import net.dv8tion.jda.core.entities.*;
+import pl.shockah.dunlin.commands.CommandContext;
 import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ParseResult;
 import pl.shockah.dunlin.commands.result.ValueCommandResult;
@@ -13,23 +14,23 @@ public class PlainFactoidCommand extends AbstractFactoidCommand<String, String> 
     }
 
     @Override
-    public ParseResult<String> parseInput(Message message, String textInput) {
+    public ParseResult<String> parseInput(CommandContext context, String textInput) {
         return new ValueParseResult<>(this, textInput);
     }
 
     @Override
-    public CommandResult<String> execute(Message message, String input) {
+    public CommandResult<String> execute(CommandContext context, String input) {
         String output = factoid.getContent();
         input = input == null ? "" : input;
-        User user = message.getAuthor();
-        SelfUser bot = message.getJDA().getSelfUser();
+        User user = context.message.getAuthor();
+        SelfUser bot = context.message.getJDA().getSelfUser();
 
         Guild guild = null;
         TextChannel channel = null;
         Member member = null;
-        if (message.getGuild() != null) {
-            guild = message.getGuild();
-            channel = message.getTextChannel();
+        if (context.message.getGuild() != null) {
+            guild = context.message.getGuild();
+            channel = context.message.getTextChannel();
             member = guild.getMember(user);
         }
 

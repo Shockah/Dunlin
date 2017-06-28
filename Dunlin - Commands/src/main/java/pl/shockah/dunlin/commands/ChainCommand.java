@@ -1,6 +1,5 @@
 package pl.shockah.dunlin.commands;
 
-import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ErrorCommandResult;
 import pl.shockah.dunlin.commands.result.ParseResult;
@@ -15,18 +14,18 @@ public class ChainCommand extends Command<Object, Object> {
 	}
 	
 	@Override
-	public ParseResult<Object> parseInput(Message message, String textInput) {
-		return commands[0].parseInput(message, textInput);
+	public ParseResult<Object> parseInput(CommandContext context, String textInput) {
+		return commands[0].parseInput(context, textInput);
 	}
 
 	@Override
-	public CommandResult<Object> execute(Message message, Object input) {
-		CommandResult<Object> lastResult = commands[0].execute(message, input);
+	public CommandResult<Object> execute(CommandContext context, Object input) {
+		CommandResult<Object> lastResult = commands[0].execute(context, input);
 		for (int i = 1; i < commands.length; i++) {
 			if (lastResult instanceof ErrorCommandResult<?>)
 				return lastResult;
 			else
-				lastResult = commands[i].execute(message, ((ValueCommandResult<?>)lastResult).value);
+				lastResult = commands[i].execute(context, ((ValueCommandResult<?>)lastResult).value);
 		}
 		return lastResult;
 	}

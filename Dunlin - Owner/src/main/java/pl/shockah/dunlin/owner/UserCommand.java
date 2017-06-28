@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang3.StringUtils;
+import pl.shockah.dunlin.commands.CommandContext;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.*;
 import pl.shockah.dunlin.util.TimeDuration;
@@ -30,11 +31,11 @@ public class UserCommand extends NamedCommand<User, User> {
 	}
 
 	@Override
-	public ParseResult<User> parseInput(Message message, String textInput) {
+	public ParseResult<User> parseInput(CommandContext context, String textInput) {
 		User user = null;
 
 		if (StringUtils.isBlank(textInput)) {
-			user = message.getAuthor();
+			user = context.message.getAuthor();
 		} else {
 			Matcher matcher;
 
@@ -60,7 +61,7 @@ public class UserCommand extends NamedCommand<User, User> {
 			}
 
 			if (user == null) {
-				user = message.getGuild().getMembers().stream()
+				user = context.message.getGuild().getMembers().stream()
 						.filter(m -> m.getEffectiveName().equalsIgnoreCase(textInput))
 						.map(Member::getUser)
 						.findAny().orElse(null);
@@ -84,13 +85,13 @@ public class UserCommand extends NamedCommand<User, User> {
 	}
 
 	@Override
-	public CommandResult<User> execute(Message message, User input) {
+	public CommandResult<User> execute(CommandContext context, User input) {
 		return new ValueCommandResult<>(this, input);
 	}
 
 	@Override
-	public Message formatOutput(Message message, User input, User output) {
-		Member member = message.getGuild().getMember(output);
+	public Message formatOutput(CommandContext context, User input, User output) {
+		Member member = context.message.getGuild().getMember(output);
 
 		EmbedBuilder embedBuilder = new EmbedBuilder();
 		embedBuilder.setThumbnail(output.getEffectiveAvatarUrl());

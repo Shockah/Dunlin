@@ -6,6 +6,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import org.apache.commons.lang3.StringUtils;
+import pl.shockah.dunlin.commands.CommandContext;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.*;
 
@@ -18,7 +19,7 @@ public class EvalCommand extends NamedCommand<String, Object> {
     }
 
     @Override
-    public ParseResult<String> parseInput(Message message, String textInput) {
+    public ParseResult<String> parseInput(CommandContext context, String textInput) {
         textInput = textInput.trim();
         if (textInput.startsWith("```") && textInput.endsWith("```")) {
             textInput = textInput.substring(0, textInput.length() - 3);
@@ -29,20 +30,20 @@ public class EvalCommand extends NamedCommand<String, Object> {
     }
 
     @Override
-    public CommandResult<Object> execute(Message message, String input) {
+    public CommandResult<Object> execute(CommandContext context, String input) {
         try {
             Binding binding = new Binding();
-            plugin.injectVariables(binding, message);
-            return new ValueCommandResult<>(this, plugin.getShell(binding, message.getAuthor()).evaluate(input));
+            plugin.injectVariables(binding, context.message);
+            return new ValueCommandResult<>(this, plugin.getShell(binding, context.message.getAuthor()).evaluate(input));
         } catch (GroovyRuntimeException e) {
             return new ErrorCommandResult<>(this, ErrorCommandResult.messageFromThrowable(e));
         }
     }
 
     @Override
-    public Message formatOutput(Message message, String s, Object o) {
+    public Message formatOutput(CommandContext context, String input, Object output) {
         return new MessageBuilder().setEmbed(new EmbedBuilder()
-                .setDescription(String.valueOf(o))
+                .setDescription(String.valueOf(output))
                 .build()).build();
     }
 }

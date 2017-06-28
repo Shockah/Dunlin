@@ -5,6 +5,7 @@ import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.commands.ArgumentSet;
 import pl.shockah.dunlin.commands.ArgumentSetParser;
+import pl.shockah.dunlin.commands.CommandContext;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ParseResult;
@@ -21,17 +22,17 @@ public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output
 	}
 	
 	@Override
-	public ParseResult<Input> parseInput(Message message, String textInput) {
-		return new ValueParseResult<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(settingsPlugin, message));
+	public ParseResult<Input> parseInput(CommandContext context, String textInput) {
+		return new ValueParseResult<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(settingsPlugin, context.message));
 	}
 	
 	@Override
-	public CommandResult<Output> execute(Message message, Input input) {
-		return new ValueCommandResult<>(this, input.getOutput(message));
+	public CommandResult<Output> execute(CommandContext context, Input input) {
+		return new ValueCommandResult<>(this, input.getOutput(context.message));
 	}
 
 	@Override
-	public Message formatOutput(Message message, Input input, Output output) {
+	public Message formatOutput(CommandContext context, Input input, Output output) {
 		return new MessageBuilder().setEmbed(new EmbedBuilder()
 				.setTitle(String.format("%s in scope %s", output.setting.getFullName(), output.scope.getName()), null)
 				.setDescription(String.valueOf(output.value))

@@ -6,6 +6,7 @@ import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.*;
 import pl.shockah.dunlin.ShardManager;
+import pl.shockah.dunlin.commands.CommandContext;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ParseResult;
@@ -26,12 +27,12 @@ public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
     }
 
     @Override
-    public ParseResult<Void> parseInput(Message message, String textInput) {
+    public ParseResult<Void> parseInput(CommandContext context, String textInput) {
         return new ValueParseResult<>(this, null);
     }
 
     @Override
-    public CommandResult<Output> execute(Message message, Void aVoid) {
+    public CommandResult<Output> execute(CommandContext context, Void aVoid) {
         Output output = new Output();
         ShardManager shardManager = ownerPlugin.manager.app.getShardManager();
 
@@ -97,8 +98,8 @@ public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
     }
 
     @Override
-    public Message formatOutput(Message message, Void input, Output output) {
-        SelfUser selfUser = message.getJDA().getSelfUser();
+    public Message formatOutput(CommandContext context, Void input, Output output) {
+        SelfUser selfUser = context.message.getJDA().getSelfUser();
         return new MessageBuilder().setEmbed(new EmbedBuilder()
                 .setAuthor(selfUser.getName(), null, selfUser.getEffectiveAvatarUrl())
                 .addField("Servers", String.format("**Shards:** %d/%d\n**Guilds:** %d", output.connectedShards, output.totalShards, output.guilds), true)

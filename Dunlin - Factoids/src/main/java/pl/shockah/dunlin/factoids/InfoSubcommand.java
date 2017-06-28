@@ -7,6 +7,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
 import pl.shockah.dunlin.commands.ArgumentSet;
 import pl.shockah.dunlin.commands.ArgumentSetParser;
+import pl.shockah.dunlin.commands.CommandContext;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.*;
 import pl.shockah.dunlin.factoids.db.Factoid;
@@ -20,18 +21,18 @@ public class InfoSubcommand extends NamedCommand<InfoSubcommand.Input, Factoid> 
 	}
 
 	@Override
-	public ParseResult<Input> parseInput(Message message, String textInput) {
-		return new ValueParseResult<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(message));
+	public ParseResult<Input> parseInput(CommandContext context, String textInput) {
+		return new ValueParseResult<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(context.message));
 	}
 
 	@Override
-	public CommandResult<Factoid> execute(Message message, Input input) {
+	public CommandResult<Factoid> execute(CommandContext context, Input input) {
 		Factoid factoid = plugin.getMatchingFactoid(input.scope, input.name);
 		return new ValueCommandResult<>(this, factoid);
 	}
 
 	@Override
-	public Message formatOutput(Message message, Input input, Factoid factoid) {
+	public Message formatOutput(CommandContext context, Input input, Factoid factoid) {
 		if (factoid == null) {
 			return new MessageBuilder().setEmbed(new EmbedBuilder()
 					.setColor(ErrorCommandResult.EMBED_COLOR)
@@ -40,7 +41,7 @@ public class InfoSubcommand extends NamedCommand<InfoSubcommand.Input, Factoid> 
 		}
 
 		User author = factoid.getAuthor(plugin.manager.app.getShardManager());
-		Member member = message.getGuild().getMember(author);
+		Member member = context.message.getGuild().getMember(author);
 		String authorName = member == null ? author.getName() : member.getEffectiveName();
 
 		String content = factoid.getContent();

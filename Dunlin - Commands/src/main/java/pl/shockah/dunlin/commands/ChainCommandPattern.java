@@ -1,6 +1,5 @@
 package pl.shockah.dunlin.commands;
 
-import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.settings.MessageSettingScope;
 
 import java.util.regex.Matcher;
@@ -17,9 +16,9 @@ public class ChainCommandPattern extends CommandPattern<ChainCommand> {
 	}
 	
 	@Override
-	public boolean matches(Message message) {
-		String content = message.getRawContent();
-		for (String prefix : defaultCommandPattern.plugin.prefixesSetting.get(new MessageSettingScope(message)).split("\\s")) {
+	public boolean matches(CommandContext context) {
+		String content = context.message.getRawContent();
+		for (String prefix : defaultCommandPattern.plugin.prefixesSetting.get(new MessageSettingScope(context.message)).split("\\s")) {
 			Matcher m = Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix), Pattern.DOTALL | Pattern.MULTILINE).matcher(content);
 			if (m.find() && m.group(1).split(">").length >= 2)
 				return true;
@@ -28,11 +27,11 @@ public class ChainCommandPattern extends CommandPattern<ChainCommand> {
 	}
 
 	@Override
-	public CommandPatternMatch<ChainCommand> getCommand(Message message) {
+	public CommandPatternMatch<ChainCommand> getCommand(CommandContext context) {
 		String commandNamesString = null;
 		String input = null;
-		String content = message.getRawContent();
-		for (String prefix : defaultCommandPattern.plugin.prefixesSetting.get(new MessageSettingScope(message)).split("\\s")) {
+		String content = context.message.getRawContent();
+		for (String prefix : defaultCommandPattern.plugin.prefixesSetting.get(new MessageSettingScope(context.message)).split("\\s")) {
 			Matcher m = Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix), Pattern.DOTALL | Pattern.MULTILINE).matcher(content);
 			if (m.find()) {
 				commandNamesString = m.group(1);
@@ -44,7 +43,7 @@ public class ChainCommandPattern extends CommandPattern<ChainCommand> {
 		Command<?, ?>[] commands = Stream.of(commandNamesString.split(">"))
 			.map(commandName ->
 				defaultCommandPattern.namedCommandProviders.firstResult(provider ->
-					(NamedCommand<?, ?>)provider.provide(message, commandName))).toArray(Command[]::new);
+					(NamedCommand<?, ?>)provider.provide(context, commandName))).toArray(Command[]::new);
 		
 		for (Command<?, ?> command : commands) {
 			if (command == null)

@@ -6,11 +6,11 @@ import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.commands.result.ParseResult;
 
 public abstract class Command<Input, Output> {
-	public abstract ParseResult<Input> parseInput(Message message, String textInput);
+	public abstract ParseResult<Input> parseInput(CommandContext context, String textInput);
 	
-	public abstract CommandResult<Output> execute(Message message, Input input);
+	public abstract CommandResult<Output> execute(CommandContext context, Input input);
 	
-	public Message formatOutput(Message message, Input input, Output output) {
+	public Message formatOutput(CommandContext context, Input input, Output output) {
 		return formatOutput(output);
 	}
 
