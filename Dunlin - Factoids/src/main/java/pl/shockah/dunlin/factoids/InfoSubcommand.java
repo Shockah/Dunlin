@@ -49,11 +49,11 @@ public class InfoSubcommand extends NamedCommand<InfoSubcommand.Input, Factoid> 
 			content = String.format("```%s\n%s\n```", factory.codeHighlighting, content);
 
 		EmbedBuilder embedBuilder = new EmbedBuilder();
-		embedBuilder.setTitle(String.format("%s in scope %s", factoid.getName(), factoid.getScope(plugin.manager.app.getShardManager()).getName()), null);
+		embedBuilder.setTitle(String.format("`%s` in scope `%s`", factoid.getName(), factoid.getScope(plugin.manager.app.getShardManager()).getName()), null);
 		embedBuilder.setAuthor(authorName, null, author.getEffectiveAvatarUrl());
 		embedBuilder.setTimestamp(factoid.getDate().toInstant());
 		embedBuilder.addField("Type", factoid.getType(), true);
-		embedBuilder.setDescription(String.format("```\n%s\n```", content));
+		embedBuilder.setDescription(content);
 		return new MessageBuilder().setEmbed(embedBuilder.build()).build();
 	}
 

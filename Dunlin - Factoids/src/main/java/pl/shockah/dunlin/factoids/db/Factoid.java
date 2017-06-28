@@ -181,7 +181,7 @@ public class Factoid extends DbObject<Factoid> {
 			case "Guild":
 				return new GuildFactoidScope(manager.getGuildById(guildId));
 			case "TextChannel":
-				return new TextChannelFactoidScope(manager.getTextChannelById(guildId));
+				return new TextChannelFactoidScope(manager.getTextChannelById(channelId));
 		}
 		throw new IllegalStateException();
 	}
@@ -193,7 +193,7 @@ public class Factoid extends DbObject<Factoid> {
 			case "Guild":
 				return new GuildFactoidScope(jda.getGuildById(guildId));
 			case "TextChannel":
-				return new TextChannelFactoidScope(jda.getTextChannelById(guildId));
+				return new TextChannelFactoidScope(jda.getTextChannelById(channelId));
 		}
 		throw new IllegalStateException();
 	}
