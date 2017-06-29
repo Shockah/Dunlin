@@ -29,7 +29,7 @@ public class AnnounceCommand extends NamedCommand<String, List<TextChannel>> {
     }
 
     @Override
-    public CommandResult<List<TextChannel>> execute(CommandContext context, String input) {
+    public CommandResult<String, List<TextChannel>> execute(CommandContext context, String input) {
         if (!ownerPlugin.permissionsPlugin.hasPermission(context.message, ownerPlugin, names[0]))
             return new ErrorCommandResult<>(this, ownerPlugin.permissionsPlugin.buildMissingPermissionMessage(ownerPlugin, names[0]));
 
@@ -67,7 +67,6 @@ public class AnnounceCommand extends NamedCommand<String, List<TextChannel>> {
                     }
                 });
 
-        ownerPlugin.manager.reload();
         return new ValueCommandResult<>(this, results);
     }
 

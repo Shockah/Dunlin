@@ -85,7 +85,7 @@ public class UserCommand extends NamedCommand<User, User> {
 	}
 
 	@Override
-	public CommandResult<User> execute(CommandContext context, User input) {
+	public CommandResult<User, User> execute(CommandContext context, User input) {
 		return new ValueCommandResult<>(this, input);
 	}
 

@@ -19,13 +19,13 @@ public class ChainCommand extends Command<Object, Object> {
 	}
 
 	@Override
-	public CommandResult<Object> execute(CommandContext context, Object input) {
-		CommandResult<Object> lastResult = commands[0].execute(context, input);
+	public CommandResult<Object, Object> execute(CommandContext context, Object input) {
+		CommandResult<Object, Object> lastResult = commands[0].execute(context, input);
 		for (int i = 1; i < commands.length; i++) {
-			if (lastResult instanceof ErrorCommandResult<?>)
+			if (lastResult instanceof ErrorCommandResult<?, ?>)
 				return lastResult;
 			else
-				lastResult = commands[i].execute(context, ((ValueCommandResult<?>)lastResult).value);
+				lastResult = commands[i].execute(context, ((ValueCommandResult<?, ?>)lastResult).value);
 		}
 		return lastResult;
 	}

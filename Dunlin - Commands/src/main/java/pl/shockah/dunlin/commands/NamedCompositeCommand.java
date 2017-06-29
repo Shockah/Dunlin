@@ -47,10 +47,10 @@ public class NamedCompositeCommand extends NamedCommand<NamedCompositeCommand.In
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public CommandResult<Output> execute(CommandContext context, Input input) {
-		CommandResult<?> result = ((Command<Object, ?>)input.subcommand).execute(context, input.value);
-		if (result instanceof ErrorCommandResult<?>)
-			return (ErrorCommandResult<Output>)result;
+	public CommandResult<Input, Output> execute(CommandContext context, Input input) {
+		CommandResult<?, ?> result = ((Command<Object, ?>)input.subcommand).execute(context, input.value);
+		if (result instanceof ErrorCommandResult<?, ?>)
+			return (ErrorCommandResult<Input, Output>)result;
 		else
 			return new ValueCommandResult<>(this, new Output(input.subcommand, result));
 	}
@@ -58,7 +58,7 @@ public class NamedCompositeCommand extends NamedCommand<NamedCompositeCommand.In
 	@SuppressWarnings("unchecked")
 	@Override
 	public Message formatOutput(CommandContext context, Input input, Output output) {
-		return ((CommandResult<Object>)output.result).getMessage(context, input.value);
+		return ((CommandResult<Object, Object>)output.result).getMessage(context, input.value);
 	}
 
 	public static final class Input {
@@ -73,9 +73,9 @@ public class NamedCompositeCommand extends NamedCommand<NamedCompositeCommand.In
 
 	public static final class Output {
 		public final Command<?, ?> subcommand;
-		public final CommandResult<?> result;
+		public final CommandResult<?, ?> result;
 
-		public Output(Command<?, ?> subcommand, CommandResult<?> result) {
+		public Output(Command<?, ?> subcommand, CommandResult<?, ?> result) {
 			this.subcommand = subcommand;
 			this.result = result;
 		}

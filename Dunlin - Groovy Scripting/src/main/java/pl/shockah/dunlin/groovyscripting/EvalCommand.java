@@ -30,7 +30,7 @@ public class EvalCommand extends NamedCommand<String, Object> {
     }
 
     @Override
-    public CommandResult<Object> execute(CommandContext context, String input) {
+    public CommandResult<String, Object> execute(CommandContext context, String input) {
         try {
             Binding binding = new Binding();
             plugin.injectVariables(binding, context.message);

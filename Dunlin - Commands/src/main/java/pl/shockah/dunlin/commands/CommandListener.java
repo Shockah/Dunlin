@@ -5,6 +5,6 @@ import pl.shockah.dunlin.commands.result.CommandResult;
 
 public interface CommandListener {
     void onCommandReceived(CommandContext context, CommandPattern<?> pattern, Command<?, ?> command, String textInput);
-    void onCommandExecuted(CommandContext context, CommandPattern<?> pattern, Command<?, ?> command, String textInput, CommandResult<Object> result);
+    void onCommandExecuted(CommandContext context, CommandPattern<?> pattern, Command<?, ?> command, String textInput, CommandResult<?, ?> result);
     void onNonCommandMessageReceived(MessageReceivedEvent event);
 }

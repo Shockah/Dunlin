@@ -32,7 +32,7 @@ public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
     }
 
     @Override
-    public CommandResult<Output> execute(CommandContext context, Void aVoid) {
+    public CommandResult<Void, Output> execute(CommandContext context, Void aVoid) {
         Output output = new Output();
         ShardManager shardManager = ownerPlugin.manager.app.getShardManager();
 
