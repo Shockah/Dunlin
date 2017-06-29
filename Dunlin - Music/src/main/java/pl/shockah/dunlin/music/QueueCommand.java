@@ -62,7 +62,7 @@ public class QueueCommand extends NamedCommand<AudioItem, AudioItem> {
 							else
 								item.value = audio;
 						}
-					} catch (Exception e2) {
+					} catch (Exception ignored) {
 					}
 					latch.countDown();
 				}
@@ -76,14 +76,14 @@ public class QueueCommand extends NamedCommand<AudioItem, AudioItem> {
 
 	    try {
 		    latch.await();
-	    } catch (InterruptedException e) {
+	    } catch (InterruptedException ignored) {
 	    }
 
 	    return new ValueParseResult<>(this, item.value);
     }
 
     @Override
-    public CommandResult<AudioItem> execute(CommandContext context, AudioItem input) {
+    public CommandResult<AudioItem, AudioItem> execute(CommandContext context, AudioItem input) {
     	if (input == null)
 			return new ValueCommandResult<>(this, null);
 
