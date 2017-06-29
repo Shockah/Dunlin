@@ -27,7 +27,7 @@ public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output
 	}
 	
 	@Override
-	public CommandResult<Output> execute(CommandContext context, Input input) {
+	public CommandResult<Input, Output> execute(CommandContext context, Input input) {
 		return new ValueCommandResult<>(this, input.getOutput(context.message));
 	}
 

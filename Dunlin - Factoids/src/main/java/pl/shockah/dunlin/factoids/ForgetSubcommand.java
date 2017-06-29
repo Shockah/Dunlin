@@ -24,26 +24,29 @@ public class ForgetSubcommand extends NamedCommand<ForgetSubcommand.Input, Facto
 	}
 
 	@Override
-	public CommandResult<Factoid> execute(CommandContext context, Input input) {
+	public CommandResult<Input, Factoid> execute(CommandContext context, Input input) {
 		Factoid factoid = plugin.getFactoid(input.scope, input.name);
-		if (factoid != null) {
+		if (factoid != null)
 			factoid.update(obj -> {
 				obj.setForgotten(true);
 			});
-			context.message.addReaction("\uD83D\uDC4C").queue();
-		}
 		return new ValueCommandResult<>(this, factoid);
 	}
 
 	@Override
-	public Message formatOutput(CommandContext context, Input input, Factoid factoid) {
-		if (factoid == null)
-			return new MessageBuilder().setEmbed(new EmbedBuilder()
-					.setColor(ErrorCommandResult.EMBED_COLOR)
-					.setDescription(String.format("No factoid `%s` found in scope `%s`.", input.name, input.scope.getName()))
-					.build()).build();
+	public void output(CommandContext context, Input input, CommandResult<Input, Factoid> outputResult) {
+		if (outputResult instanceof ValueCommandResult<?, ?> && ((ValueCommandResult<Input, Factoid>)outputResult).value == null)
+			context.message.addReaction("\uD83D\uDC4C").queue();
 		else
-			return null;
+			super.output(context, input, outputResult);
+	}
+
+	@Override
+	public Message formatOutput(CommandContext context, Input input, Factoid factoid) {
+		return new MessageBuilder().setEmbed(new EmbedBuilder()
+				.setColor(ErrorCommandResult.EMBED_COLOR)
+				.setDescription(String.format("No factoid `%s` found in scope `%s`.", input.name, input.scope.getName()))
+				.build()).build();
 	}
 
 	public static final class Arguments extends ArgumentSet {

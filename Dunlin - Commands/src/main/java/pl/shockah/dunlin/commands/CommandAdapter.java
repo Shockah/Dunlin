@@ -9,7 +9,7 @@ public class CommandAdapter implements CommandListener {
     }
 
     @Override
-    public void onCommandExecuted(CommandContext context, CommandPattern<?> pattern, Command<?, ?> command, String textInput, CommandResult<Object> result) {
+    public void onCommandExecuted(CommandContext context, CommandPattern<?> pattern, Command<?, ?> command, String textInput, CommandResult<?, ?> result) {
     }
 
     @Override

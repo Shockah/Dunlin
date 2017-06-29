@@ -22,7 +22,7 @@ public class PingCommand extends NamedCommand<Void, Long> {
 	}
 
 	@Override
-	public CommandResult<Long> execute(CommandContext context, Void aVoid) {
+	public CommandResult<Void, Long> execute(CommandContext context, Void aVoid) {
 		Message testMessage = context.message.getChannel().sendMessage("Pinging...").complete();
 		long ping = context.message.getCreationTime().until(testMessage.getCreationTime(), ChronoUnit.MILLIS);
 		testMessage.delete().queue();

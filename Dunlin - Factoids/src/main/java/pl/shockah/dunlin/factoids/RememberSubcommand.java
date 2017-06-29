@@ -26,15 +26,14 @@ public class RememberSubcommand extends NamedCommand<RememberSubcommand.Input, F
 	}
 
 	@Override
-	public CommandResult<Factoid> execute(CommandContext context, Input input) {
+	public CommandResult<Input, Factoid> execute(CommandContext context, Input input) {
 		Factoid factoid = input.scope.rememberFactoid(plugin, input.factory, input.name, input.content, context.message);
-		context.message.addReaction("\uD83D\uDC4C").queue();
 		return new ValueCommandResult<>(this, factoid);
 	}
 
 	@Override
-	public Message formatOutput(Factoid factoid) {
-		return null;
+	public void output(CommandContext context, Input input, CommandResult<Input, Factoid> outputResult) {
+		context.message.addReaction("\uD83D\uDC4C").queue();
 	}
 
 	public static final class Arguments extends ArgumentSet {

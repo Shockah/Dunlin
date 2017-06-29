@@ -124,12 +124,12 @@ public class CommandsPlugin extends ListenerPlugin {
 			if (input instanceof ErrorParseResult<?>) {
 				respond(context, ((ErrorParseResult<?>)input).message);
 			} else if (input instanceof ValueParseResult<?>) {
-				ValueParseResult<?> valueParseResult = (ValueParseResult<?>)input;
-				CommandResult<Object> output = plainCommand.execute(context, valueParseResult.value);
+				ValueParseResult<Object> valueParseResult = (ValueParseResult<Object>)input;
+				CommandResult<Object, Object> output = plainCommand.execute(context, valueParseResult.value);
 				listeners.iterate(listener -> {
 					listener.onCommandExecuted(context, pattern, command, textInput, output);
 				});
-				respond(context, output.getMessage(context, valueParseResult.value));
+				plainCommand.output(context, valueParseResult.value, output);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

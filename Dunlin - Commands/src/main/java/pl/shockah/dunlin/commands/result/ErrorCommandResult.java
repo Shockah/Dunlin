@@ -11,20 +11,21 @@ import pl.shockah.dunlin.commands.CommandContext;
 
 import java.awt.*;
 
-public final class ErrorCommandResult<T> extends CommandResult<T> {
+public final class ErrorCommandResult<Input, Output> extends CommandResult<Input, Output> {
 	public static final int MAX_MESSAGE_LENGTH = 2000;
 	public static final String MESSAGE_FORMAT = "```\n%s\n```";
 	public static final Color EMBED_COLOR = new Color(1f, 0.35f, 0.35f);
 
 	public final Message message;
 
-	public ErrorCommandResult(Command<?, T> command, Message message) {
-		super(command);
+	@SuppressWarnings("unchecked")
+	public ErrorCommandResult(Command<Input, ?> command, Message message) {
+		super((Command<Input, Output>)command);
 		this.message = message;
 	}
 
 	@Override
-	public Message getMessage(CommandContext context, T input) {
+	public Message getMessage(CommandContext context, Input input) {
 		return message;
 	}
 

@@ -26,7 +26,7 @@ public class GroovyFactoidCommand extends AbstractFactoidCommand<Object, Object>
 	}
 
 	@Override
-	public CommandResult<Object> execute(CommandContext context, Object o) {
+	public CommandResult<Object, Object> execute(CommandContext context, Object o) {
 		try {
 			Binding binding = new Binding();
 			scriptingPlugin.injectVariables(binding, context.message);

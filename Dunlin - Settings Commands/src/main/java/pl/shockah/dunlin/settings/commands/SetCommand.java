@@ -24,7 +24,7 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public CommandResult<Setting<?>> execute(CommandContext context, Input input) {
+	public CommandResult<Input, Setting<?>> execute(CommandContext context, Input input) {
 		if (input.scope instanceof GlobalSettingScope) {
 			if (!settingsCommandsPlugin.permissionsPlugin.hasPermission(context.message, settingsCommandsPlugin, names[0]))
 				return new ErrorCommandResult<>(this, settingsCommandsPlugin.permissionsPlugin.buildMissingPermissionMessage(settingsCommandsPlugin, names[0]));
@@ -43,13 +43,12 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 		Setting<Object> genericSetting = (Setting<Object>)input.setting;
 		genericSetting.set(input.scope, input.value);
 
-		context.message.addReaction("\uD83D\uDC4C").queue();
 		return new ValueCommandResult<>(this, input.setting);
 	}
 
 	@Override
-	public Message formatOutput(Setting<?> setting) {
-		return null;
+	public void output(CommandContext context, Input input, CommandResult<Input, Setting<?>> outputResult) {
+		context.message.addReaction("\uD83D\uDC4C").queue();
 	}
 
 	public static final class Arguments extends ArgumentSet {

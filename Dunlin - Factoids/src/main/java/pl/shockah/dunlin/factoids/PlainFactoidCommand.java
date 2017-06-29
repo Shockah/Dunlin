@@ -19,7 +19,7 @@ public class PlainFactoidCommand extends AbstractFactoidCommand<String, String> 
     }
 
     @Override
-    public CommandResult<String> execute(CommandContext context, String input) {
+    public CommandResult<String, String> execute(CommandContext context, String input) {
         String output = factoid.getContent();
         input = input == null ? "" : input;
         User user = context.message.getAuthor();

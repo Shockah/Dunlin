@@ -26,7 +26,7 @@ public class InfoSubcommand extends NamedCommand<InfoSubcommand.Input, Factoid> 
 	}
 
 	@Override
-	public CommandResult<Factoid> execute(CommandContext context, Input input) {
+	public CommandResult<Input, Factoid> execute(CommandContext context, Input input) {
 		Factoid factoid = plugin.getMatchingFactoid(input.scope, input.name);
 		return new ValueCommandResult<>(this, factoid);
 	}
