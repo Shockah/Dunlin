@@ -1,0 +1,9 @@
+{
+	"packageName": "pl.shockah.dunlin.hibernate",
+	"baseClass": "pl.shockah.dunlin.hibernate.HibernatePlugin",
+	"enabledByDefault": true,
+
+	"name": "Hibernate",
+	"author": "Shockah",
+	"description": ""
+}
