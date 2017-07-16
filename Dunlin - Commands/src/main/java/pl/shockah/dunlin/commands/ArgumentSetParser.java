@@ -124,11 +124,8 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 			case Bool: {
 				try {
 					boolean value = parseBoolean(rawValue);
-					if (clazz == boolean.class) {
+					if (clazz == boolean.class || clazz == Boolean.class) {
 						putArgumentValueInternal(argument, value);
-						return;
-					} else if (clazz == Boolean.class) {
-						putArgumentValueInternal(argument, (Boolean)value);
 						return;
 					}
 				} catch (Exception e) {

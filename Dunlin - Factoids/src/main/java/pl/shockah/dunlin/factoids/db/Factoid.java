@@ -23,16 +23,16 @@ public class Factoid extends DbObject<Factoid> {
 	private String name;
 	public static final String NAME = "name";
 
-	@DatabaseField(columnName = GUILD_ID, canBeNull = true)
-	private String guildId;
+	@DatabaseField(columnName = GUILD_ID)
+	private Long guildId;
 	public static final String GUILD_ID = "guildId";
 
-	@DatabaseField(columnName = CHANNEL_ID, canBeNull = true)
-	private String channelId;
+	@DatabaseField(columnName = CHANNEL_ID)
+	private Long channelId;
 	public static final String CHANNEL_ID = "channelId";
 
-	@DatabaseField(columnName = AUTHOR_USER_ID, canBeNull = false)
-	private String authorUserId;
+	@DatabaseField(columnName = AUTHOR_USER_ID)
+	private long authorUserId;
 	public static final String AUTHOR_USER_ID = "authorUserId";
 
 	@DatabaseField(columnName = CONTENT, canBeNull = false)
@@ -73,11 +73,11 @@ public class Factoid extends DbObject<Factoid> {
 		this.name = name;
 	}
 
-	public String getGuildId() {
+	public Long getGuildId() {
 		return guildId;
 	}
 
-	public void setGuildId(String guildId) {
+	public void setGuildId(Long guildId) {
 		this.guildId = guildId;
 	}
 
@@ -90,19 +90,19 @@ public class Factoid extends DbObject<Factoid> {
 	}
 
 	public void setGuild(Guild guild) {
-		setGuildId(guild == null ? null : guild.getId());
+		setGuildId(guild == null ? null : guild.getIdLong());
 	}
 
-	public String getChannelId() {
+	public Long getChannelId() {
 		return channelId;
 	}
 
-	public void setChannelId(String channelId) {
+	public void setChannelId(Long channelId) {
 		this.channelId = channelId;
 	}
 
 	public TextChannel getChannel(ShardManager manager) {
-		return manager.getTextChannelById(channelId);
+		return channelId == null ? null : manager.getTextChannelById(channelId);
 	}
 
 	public TextChannel getChannel(JDA jda) {
@@ -111,14 +111,14 @@ public class Factoid extends DbObject<Factoid> {
 
 	public void setChannel(TextChannel channel) {
 		setGuild(channel == null ? null : channel.getGuild());
-		setChannelId(channel == null ? null : channel.getId());
+		setChannelId(channel == null ? null : channel.getIdLong());
 	}
 
-	public String getAuthorUserId() {
+	public long getAuthorUserId() {
 		return authorUserId;
 	}
 
-	public void setAuthorUserId(String authorUserId) {
+	public void setAuthorUserId(long authorUserId) {
 		this.authorUserId = authorUserId;
 	}
 
@@ -131,7 +131,7 @@ public class Factoid extends DbObject<Factoid> {
 	}
 
 	public void setAuthor(User user) {
-		setAuthorUserId(user.getId());
+		setAuthorUserId(user.getIdLong());
 	}
 
 	public String getContent() {

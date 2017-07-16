@@ -29,7 +29,7 @@ public class PermissionsPlugin extends Plugin {
 		DatabaseManager db = manager.app.getDatabaseManager();
 		return db.select(PermissionGroup.class, q -> {
 			QueryBuilder<PermissionUser, Integer> qPermissionUser = db.getDao(PermissionUser.class).queryBuilder();
-			qPermissionUser.where().eq(PermissionUser.USER_ID, user.getId());
+			qPermissionUser.where().eq(PermissionUser.USER_ID, user.getIdLong());
 			q.join(qPermissionUser);
 		});
 	}
@@ -39,8 +39,8 @@ public class PermissionsPlugin extends Plugin {
 		return db.select(PermissionGroup.class, q -> {
 			QueryBuilder<PermissionRole, Integer> qPermissionRole = db.getDao(PermissionRole.class).queryBuilder();
 			qPermissionRole.where()
-					.eq(PermissionRole.GUILD_ID, role.getGuild().getId())
-					.and().eq(PermissionRole.ROLE_ID, role.getId());
+					.eq(PermissionRole.GUILD_ID, role.getGuild().getIdLong())
+					.and().eq(PermissionRole.ROLE_ID, role.getIdLong());
 			q.join(qPermissionRole);
 		});
 	}

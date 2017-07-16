@@ -6,7 +6,7 @@ dependencies {
 	compile 'com.github.Shockah:pl.shockah.plugin:1.3'
 	
 	//Discord
-	compile 'net.dv8tion:JDA:3.0.0_175'
+	compile 'net.dv8tion:JDA:3.2.0_226'
 	
 	//Database / ORM
 	compile group: 'com.h2database', name: 'h2', version: '1.4.193'
@@ -14,7 +14,7 @@ dependencies {
 	compile group: 'com.j256.ormlite', name: 'ormlite-jdbc', version: '5.0'
 	
 	//Utils
-	//compile 'com.github.kevinsawicki:http-request:6.0' //let's try Unirest instead, it's included with JDA
+	//compile 'com.github.kevinsawicki:http-request:6.0'
 	compile group: 'org.jsoup', name: 'jsoup', version: '1.10.2'
 }
 

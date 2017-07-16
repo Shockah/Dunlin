@@ -12,8 +12,8 @@ import pl.shockah.dunlin.db.DbObject.TableVersion;
 @DatabaseTable(tableName = "pl_shockah_dunlin_permissions_db_PermissionUser")
 @TableVersion(1)
 public class PermissionUser extends DbObject<PermissionUser> {
-	@DatabaseField(columnName = USER_ID, canBeNull = false)
-	private String userId;
+	@DatabaseField(columnName = USER_ID)
+	private long userId;
 	public static final String USER_ID = "userId";
 	
 	@DatabaseField(columnName = GROUP, canBeNull = false, foreign = true)
@@ -29,11 +29,11 @@ public class PermissionUser extends DbObject<PermissionUser> {
 		super(dao);
 	}
 	
-	public String getUserId() {
+	public long getUserId() {
 		return userId;
 	}
 	
-	public void setUserId(String userId) {
+	public void setUserId(long userId) {
 		this.userId = userId;
 	}
 	
@@ -56,6 +56,6 @@ public class PermissionUser extends DbObject<PermissionUser> {
 	}
 	
 	public void setUser(User user) {
-		setUserId(user.getId());
+		setUserId(user.getIdLong());
 	}
 }

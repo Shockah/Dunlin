@@ -23,13 +23,13 @@ public abstract class ArgumentSet {
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
-	public static @interface Argument {
+	public @interface Argument {
 		String value() default "";
 		boolean isDefault() default false;
 		ArgumentType type() default ArgumentType.Auto;
 	}
 	
-	public static enum ArgumentType {
+	public enum ArgumentType {
 		@Deprecated Auto, Integer, Decimal, Range, String, Bool, Enum;
 	}
 }

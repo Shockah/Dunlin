@@ -43,7 +43,7 @@ public class OwnerPlugin extends Plugin {
 			});
 			
 			db.create(PermissionUser.class, obj -> {
-				obj.setUserId(getConfig().getString("ownerUserId"));
+				obj.setUserId(getConfig().getLong("ownerUserId"));
 				obj.setGroup(group);
 			});
 		}
