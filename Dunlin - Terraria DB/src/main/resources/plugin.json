@@ -1,0 +1,12 @@
+{
+	"packageName": "pl.shockah.dunlin.terrariadb",
+	"baseClass": "pl.shockah.dunlin.terrariadb.TerrariaDBPlugin",
+	"enabledByDefault": true,
+	"dependsOn": [
+		"pl.shockah.dunlin.commands"
+	],
+
+	"name": "Terraria DB",
+	"author": "Shockah",
+	"description": ""
+}
