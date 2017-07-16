@@ -1,0 +1,5 @@
+dependencies {
+	compileOnly project(':Dunlin')
+
+	compile 'org.codehaus.groovy:groovy-all:2.4.8'
+}

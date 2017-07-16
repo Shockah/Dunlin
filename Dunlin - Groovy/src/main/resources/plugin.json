@@ -1,0 +1,9 @@
+{
+	"packageName": "pl.shockah.dunlin.groovy",
+	"baseClass": "pl.shockah.dunlin.groovy.GroovyPlugin",
+	"enabledByDefault": true,
+
+	"name": "Groovy",
+	"author": "Shockah",
+	"description": ""
+}

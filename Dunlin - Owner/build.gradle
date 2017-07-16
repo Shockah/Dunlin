@@ -1,0 +1,6 @@
+dependencies {
+	compileOnly project(':Dunlin')
+	compileOnly project(':Dunlin - Commands')
+	compileOnly project(':Dunlin - Permissions')
+	compileOnly project(':Dunlin - Settings')
+}

@@ -1,2 +1,14 @@
-/build/*
-/*/bin/*
+/build/
+/.gradle/
+/.idea/
+/*/bin/
+/*/*/bin/
+/*/build/
+/*/*/build/
+/*/.gradle/
+/*/*/.gradle/
+/*/.classpath
+/*/.settings/
+/*/*/.classpath
+/*/*/.settings/
+/Dunlin/run/

@@ -1,0 +1,16 @@
+{
+	"packageName": "pl.shockah.dunlin.groovyfactoids",
+	"baseClass": "pl.shockah.dunlin.groovyfactoids.GroovyFactoidsPlugin",
+	"enabledByDefault": true,
+	"dependsOn": [
+		"pl.shockah.dunlin.commands",
+		"pl.shockah.dunlin.permissions",
+		"pl.shockah.dunlin.groovy",
+		"pl.shockah.dunlin.groovyscripting",
+		"pl.shockah.dunlin.factoids"
+	],
+
+	"name": "Groovy Factoids",
+	"author": "Shockah",
+	"description": ""
+}

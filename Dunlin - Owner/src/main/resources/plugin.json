@@ -1,0 +1,14 @@
+{
+	"packageName": "pl.shockah.dunlin.owner",
+	"baseClass": "pl.shockah.dunlin.owner.OwnerPlugin",
+	"enabledByDefault": true,
+	"dependsOn": [
+		"pl.shockah.dunlin.commands",
+		"pl.shockah.dunlin.permissions",
+		"pl.shockah.dunlin.settings"
+	],
+
+	"name": "Owner",
+	"author": "Shockah",
+	"description": ""
+}

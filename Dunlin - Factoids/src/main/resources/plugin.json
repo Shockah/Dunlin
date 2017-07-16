@@ -1,0 +1,14 @@
+{
+	"packageName": "pl.shockah.dunlin.factoids",
+	"baseClass": "pl.shockah.dunlin.factoids.FactoidsPlugin",
+	"enabledByDefault": true,
+	"dependsOn": [
+		"pl.shockah.dunlin.settings",
+		"pl.shockah.dunlin.commands",
+		"pl.shockah.dunlin.permissions"
+	],
+
+	"name": "Factoids",
+	"author": "Shockah",
+	"description": ""
+}
