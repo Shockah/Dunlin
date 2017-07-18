@@ -1,0 +1,12 @@
+{
+	"packageName": "pl.shockah.dunlin.ircbridge",
+	"baseClass": "pl.shockah.dunlin.ircbridge.IRCBridgePlugin",
+	"enabledByDefault": true,
+	"dependsOn": [
+		"pl.shockah.dunlin.commands"
+	],
+
+	"name": "IRC Bridge",
+	"author": "Shockah",
+	"description": ""
+}

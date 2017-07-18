@@ -1,0 +1,6 @@
+dependencies {
+	compileOnly project(':Dunlin')
+	compileOnly project(':Dunlin - Commands')
+
+	compile group: 'org.pircbotx', name: 'pircbotx', version: '2.1'
+}
