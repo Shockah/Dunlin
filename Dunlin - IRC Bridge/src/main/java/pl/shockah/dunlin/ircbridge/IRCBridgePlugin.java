@@ -34,11 +34,13 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 	public List<IRCBot> ircBots = new ArrayList<>();
 
 	private net.dv8tion.jda.core.entities.User singleUser;
+	private Guild guild;
 	private String avatarUrlFormat;
 	private String normalAvatarReplacement;
 	private String voicedAvatarReplacement;
 	private String opAvatarReplacement;
 	private int avatarVariations;
+	private String awayMessage;
 
 	public IRCBridgePlugin(PluginManager manager, Info info) {
 		super(manager, info);
@@ -61,11 +63,12 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 		try {
 			JSONObject config = new JSONParser().parseObject(new String(Files.readAllBytes(Paths.get("ircbridge.json")), Charset.forName("UTF-8")));
 			JSONObject global = config.getObjectOrEmpty("global");
-			Guild guild = manager.app.getShardManager().getGuildById(global.getLong("guildId"));
+			guild = manager.app.getShardManager().getGuildById(global.getLong("guildId"));
 
 			singleUser = null;
 			global.onLong("singleUserId", singleUserId -> {
 				singleUser = manager.app.getShardManager().getUserById(singleUserId);
+				awayMessage = global.getString("awayMessage", "Discord: {$status}");
 			});
 
 			JSONObject avatars = global.getObject("avatars");
@@ -148,7 +151,7 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 	}
 
 	public String getAvatarUrl(User user, Channel channel) {
-		int variation = (user.getNick().toLowerCase().hashCode() % avatarVariations) + 1;
+		int variation = (Math.abs(user.getNick().toLowerCase().hashCode()) % avatarVariations) + 1;
 		String url = avatarUrlFormat;
 		url = url.replace("{$replacement}", getReplacement(user, channel));
 		url = url.replace("{$variation}", String.valueOf(variation));
@@ -171,15 +174,24 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 		if (event.getUser() != singleUser)
 			return;
 
-		if (event.getPreviousOnlineStatus() != OnlineStatus.ONLINE && event.getGuild().getMember(event.getUser()).getOnlineStatus() == OnlineStatus.ONLINE)
-			setIrcAway(false);
-		else if (event.getPreviousOnlineStatus() == OnlineStatus.ONLINE && event.getGuild().getMember(event.getUser()).getOnlineStatus() != OnlineStatus.ONLINE)
-			setIrcAway(true);
+		if (event.getPreviousOnlineStatus() != event.getGuild().getMember(event.getUser()).getOnlineStatus()) {
+			for (IRCBot bot : ircBots) {
+				if (bot.isConnected())
+					setIrcAway(bot);
+			}
+		}
 	}
 
-	private void setIrcAway(boolean away) {
-		for (IRCBot bot : ircBots) {
-			//TODO:
+	protected void setIrcAway(IRCBot bot) {
+		if (singleUser == null)
+			return;
+
+		if (guild.getMember(singleUser).getOnlineStatus() == OnlineStatus.ONLINE) {
+			bot.setIrcAway(null);
+		} else {
+			String message = awayMessage;
+			message = message.replace("{$status}", guild.getMember(singleUser).getOnlineStatus().getKey());
+			bot.setIrcAway(message);
 		}
 	}
 
