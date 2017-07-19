@@ -1,10 +1,12 @@
 package pl.shockah.dunlin.ircbridge;
 
+import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.user.UserOnlineStatusUpdateEvent;
 import org.pircbotx.Channel;
 import org.pircbotx.Configuration;
 import org.pircbotx.User;
@@ -160,6 +162,25 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 			return voicedAvatarReplacement;
 		else
 			return normalAvatarReplacement;
+	}
+
+	@Override
+	protected void onUserOnlineStatusUpdate(UserOnlineStatusUpdateEvent event) {
+		if (singleUser == null)
+			return;
+		if (event.getUser() != singleUser)
+			return;
+
+		if (event.getPreviousOnlineStatus() != OnlineStatus.ONLINE && event.getGuild().getMember(event.getUser()).getOnlineStatus() == OnlineStatus.ONLINE)
+			setIrcAway(false);
+		else if (event.getPreviousOnlineStatus() == OnlineStatus.ONLINE && event.getGuild().getMember(event.getUser()).getOnlineStatus() != OnlineStatus.ONLINE)
+			setIrcAway(true);
+	}
+
+	private void setIrcAway(boolean away) {
+		for (IRCBot bot : ircBots) {
+			//TODO:
+		}
 	}
 
 	@Override
