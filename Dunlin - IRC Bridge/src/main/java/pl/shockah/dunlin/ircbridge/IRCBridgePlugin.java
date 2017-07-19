@@ -7,6 +7,7 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.user.UserOnlineStatusUpdateEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Channel;
 import org.pircbotx.Configuration;
 import org.pircbotx.User;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 	@Dependency
@@ -107,11 +109,11 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 					String ircChannelName = jChannel.getString("name");
 
 					TextChannel channel;
-					Long channelId = jServer.getOptionalLong("discordChannelId");
+					Long channelId = jChannel.getOptionalLong("discordChannelId");
 					if (channelId != null) {
 						channel = guild.getTextChannelById(channelId);
 					} else {
-						String channelName = jServer.getString("discordChannelName", ircChannelName.substring(1));
+						String channelName = jChannel.getString("discordChannelName", ircChannelName.substring(1));
 						List<TextChannel> channels = guild.getTextChannelsByName(channelName, true);
 						if (!channels.isEmpty())
 							channel = channels.get(0);
@@ -123,8 +125,13 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 					channelMap.put(ircChannelName, channel);
 				}
 
+				List<RelayBotInfo> relayBots = new ArrayList<>();
+				for (JSONObject jRelayBot : jServer.getListOrEmpty("relayBots").ofObjects()) {
+					relayBots.add(new RelayBotInfo(jRelayBot.getString("name"), Pattern.compile(jRelayBot.getString("pattern"))));
+				}
+
 				Configuration configuration = builder.buildConfiguration();
-				IRCBot bot = new IRCBot(this, configuration, channelMap);
+				IRCBot bot = new IRCBot(this, configuration, channelMap, relayBots);
 				bot.getConfiguration().getListenerManager().addListener(bot.listener);
 				new Thread(() -> {
 					try {
@@ -151,9 +158,17 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 	}
 
 	public String getAvatarUrl(User user, Channel channel) {
-		int variation = (Math.abs(user.getNick().toLowerCase().hashCode()) % avatarVariations) + 1;
+		return getAvatarUrl(user.getNick(), getReplacement(user, channel));
+	}
+
+	public String getAvatarUrl(String nick) {
+		return getAvatarUrl(nick, "normal");
+	}
+
+	public String getAvatarUrl(String nick, String replacement) {
+		int variation = (Math.abs(nick.hashCode()) % avatarVariations) + 1;
 		String url = avatarUrlFormat;
-		url = url.replace("{$replacement}", getReplacement(user, channel));
+		url = url.replace("{$replacement}", replacement);
 		url = url.replace("{$variation}", String.valueOf(variation));
 		return url;
 	}
@@ -165,6 +180,40 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 			return voicedAvatarReplacement;
 		else
 			return normalAvatarReplacement;
+	}
+
+	protected void setIrcAway(IRCBot bot) {
+		if (singleUser == null)
+			return;
+
+		if (guild.getMember(singleUser).getOnlineStatus() == OnlineStatus.ONLINE) {
+			bot.setIrcAway(null);
+		} else {
+			String message = awayMessage;
+			message = message.replace("{$status}", guild.getMember(singleUser).getOnlineStatus().getKey());
+			bot.setIrcAway(message);
+		}
+	}
+
+	private void sendMessageToIrcChannel(Message message, Channel channel) {
+		String content = message.getContent();
+		if (!StringUtils.isEmpty(content)) {
+			String[] split = content.split("\\r?\\n|\\r");
+			for (String line : split) {
+				if (singleUser == null)
+					channel.send().message(String.format("<%s> %s", message.getGuild().getMember(message.getAuthor()).getEffectiveName(), line));
+				else
+					channel.send().message(line);
+			}
+		}
+
+		for (Message.Attachment attachment : message.getAttachments()) {
+			String line = String.format("[ Attachment: %s ]", attachment.getUrl());
+			if (singleUser == null)
+				channel.send().message(String.format("<%s> %s", message.getGuild().getMember(message.getAuthor()).getEffectiveName(), line));
+			else
+				channel.send().message(line);
+		}
 	}
 
 	@Override
@@ -179,19 +228,6 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 				if (bot.isConnected())
 					setIrcAway(bot);
 			}
-		}
-	}
-
-	protected void setIrcAway(IRCBot bot) {
-		if (singleUser == null)
-			return;
-
-		if (guild.getMember(singleUser).getOnlineStatus() == OnlineStatus.ONLINE) {
-			bot.setIrcAway(null);
-		} else {
-			String message = awayMessage;
-			message = message.replace("{$status}", guild.getMember(singleUser).getOnlineStatus().getKey());
-			bot.setIrcAway(message);
 		}
 	}
 
@@ -218,17 +254,6 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 					sendMessageToIrcChannel(event.getMessage(), channel);
 				break;
 			}
-		}
-	}
-
-	private void sendMessageToIrcChannel(Message message, Channel channel) {
-		String text = message.getContent();
-		String[] split = text.split("\\r?\\n|\\r");
-		for (String line : split) {
-			if (singleUser == null)
-				channel.send().message(String.format("<%s> %s", message.getGuild().getMember(message.getAuthor()).getEffectiveName(), line));
-			else
-				channel.send().message(line);
 		}
 	}
 }
