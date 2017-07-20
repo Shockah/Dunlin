@@ -18,6 +18,7 @@ import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.json.JSONObject;
 import pl.shockah.json.JSONParser;
+import pl.shockah.plugin.PluginInfo;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -44,7 +45,7 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 	private int avatarVariations;
 	private String awayMessage;
 
-	public IRCBridgePlugin(PluginManager manager, Info info) {
+	public IRCBridgePlugin(PluginManager manager, PluginInfo info) {
 		super(manager, info);
 	}
 
