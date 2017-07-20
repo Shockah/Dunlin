@@ -142,11 +142,12 @@ import net.dv8tion.jda.core.events.user.UserOnlineStatusUpdateEvent;
 import net.dv8tion.jda.core.events.user.UserTypingEvent;
 import net.dv8tion.jda.core.hooks.EventListener;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import pl.shockah.plugin.PluginInfo;
 
 public abstract class ListenerPlugin extends Plugin {
 	public final EventListener listener;
 	
-	public ListenerPlugin(PluginManager manager, Plugin.Info info) {
+	public ListenerPlugin(PluginManager manager, PluginInfo info) {
 		super(manager, info);
 		listener = new MyListener(this);
 	}

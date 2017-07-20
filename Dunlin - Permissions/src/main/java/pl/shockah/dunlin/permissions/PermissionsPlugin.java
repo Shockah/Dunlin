@@ -13,6 +13,7 @@ import pl.shockah.dunlin.permissions.db.PermissionRole;
 import pl.shockah.dunlin.permissions.db.PermissionUser;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
+import pl.shockah.plugin.PluginInfo;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.List;
 public class PermissionsPlugin extends Plugin {
 	public static final Color MISSING_PERMISSION_EMBED_COLOR = new Color(1.0f, 0.35f, 0.35f);
 
-	public PermissionsPlugin(PluginManager manager, Info info) {
+	public PermissionsPlugin(PluginManager manager, PluginInfo info) {
 		super(manager, info);
 	}
 

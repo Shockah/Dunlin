@@ -4,6 +4,7 @@ import pl.shockah.dunlin.commands.CommandsPlugin;
 import pl.shockah.dunlin.factoids.db.Factoid;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
+import pl.shockah.plugin.PluginInfo;
 
 public class FactoidsPlugin extends Plugin {
 	@Dependency
@@ -13,7 +14,7 @@ public class FactoidsPlugin extends Plugin {
 	
 	private FactoidCommand factoidCommand;
 	
-	public FactoidsPlugin(PluginManager manager, Info info) {
+	public FactoidsPlugin(PluginManager manager, PluginInfo info) {
 		super(manager, info);
 	}
 

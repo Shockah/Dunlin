@@ -10,9 +10,10 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageUpdateEvent;
 import org.apache.commons.lang3.StringUtils;
 import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
+import pl.shockah.plugin.PluginInfo;
 
 public class ConsoleOutputPlugin extends ListenerPlugin {
-	public ConsoleOutputPlugin(PluginManager manager, Info info) {
+	public ConsoleOutputPlugin(PluginManager manager, PluginInfo info) {
 		super(manager, info);
 	}
 	

@@ -5,6 +5,7 @@ import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.json.JSONObject;
 import pl.shockah.json.JSONParser;
 import pl.shockah.json.JSONPrettyPrinter;
+import pl.shockah.plugin.PluginInfo;
 import pl.shockah.util.ReadWriteMap;
 import pl.shockah.util.ReadWriteSet;
 
@@ -33,7 +34,7 @@ public class SettingsPlugin extends Plugin {
 	protected final ReadWriteMap<String, Setting<?>> settings = new ReadWriteMap<>(new HashMap<>());
 	protected final ReadWriteSet<SettingsListener> listeners = new ReadWriteSet<>(new LinkedHashSet<>());
 	
-	public SettingsPlugin(PluginManager manager, Info info) {
+	public SettingsPlugin(PluginManager manager, PluginInfo info) {
 		super(manager, info);
 	}
 	
