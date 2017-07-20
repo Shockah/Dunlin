@@ -12,12 +12,12 @@ import pl.shockah.dunlin.db.DbObject.TableVersion;
 @DatabaseTable(tableName = "pl_shockah_dunlin_permissions_db_PermissionRole")
 @TableVersion(1)
 public class PermissionRole extends DbObject<PermissionRole> {
-	@DatabaseField(columnName = GUILD_ID, canBeNull = false)
-	private String guildId;
+	@DatabaseField(columnName = GUILD_ID)
+	private long guildId;
 	public static final String GUILD_ID = "guildId";
 	
-	@DatabaseField(columnName = ROLE_ID, canBeNull = false)
-	private String roleId;
+	@DatabaseField(columnName = ROLE_ID)
+	private long roleId;
 	public static final String ROLE_ID = "roleId";
 	
 	@DatabaseField(columnName = GROUP, canBeNull = false, foreign = true)
@@ -33,19 +33,19 @@ public class PermissionRole extends DbObject<PermissionRole> {
 		super(dao);
 	}
 	
-	public String getGuildId() {
+	public long getGuildId() {
 		return guildId;
 	}
 	
-	public void setGuildId(String guildId) {
+	public void setGuildId(long guildId) {
 		this.guildId = guildId;
 	}
 	
-	public String getRoleId() {
+	public long getRoleId() {
 		return roleId;
 	}
 	
-	public void setRoleId(String roleId) {
+	public void setRoleId(long roleId) {
 		this.roleId = roleId;
 	}
 	
@@ -68,7 +68,7 @@ public class PermissionRole extends DbObject<PermissionRole> {
 	}
 	
 	public void setRole(Role role) {
-		setGuildId(role.getGuild().getId());
-		setRoleId(role.getId());
+		setGuildId(role.getGuild().getIdLong());
+		setRoleId(role.getIdLong());
 	}
 }

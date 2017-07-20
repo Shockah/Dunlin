@@ -13,6 +13,7 @@ import pl.shockah.dunlin.permissions.db.PermissionRole;
 import pl.shockah.dunlin.permissions.db.PermissionUser;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
+import pl.shockah.plugin.PluginInfo;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.List;
 public class PermissionsPlugin extends Plugin {
 	public static final Color MISSING_PERMISSION_EMBED_COLOR = new Color(1.0f, 0.35f, 0.35f);
 
-	public PermissionsPlugin(PluginManager manager, Info info) {
+	public PermissionsPlugin(PluginManager manager, PluginInfo info) {
 		super(manager, info);
 	}
 
@@ -29,7 +30,7 @@ public class PermissionsPlugin extends Plugin {
 		DatabaseManager db = manager.app.getDatabaseManager();
 		return db.select(PermissionGroup.class, q -> {
 			QueryBuilder<PermissionUser, Integer> qPermissionUser = db.getDao(PermissionUser.class).queryBuilder();
-			qPermissionUser.where().eq(PermissionUser.USER_ID, user.getId());
+			qPermissionUser.where().eq(PermissionUser.USER_ID, user.getIdLong());
 			q.join(qPermissionUser);
 		});
 	}
@@ -39,8 +40,8 @@ public class PermissionsPlugin extends Plugin {
 		return db.select(PermissionGroup.class, q -> {
 			QueryBuilder<PermissionRole, Integer> qPermissionRole = db.getDao(PermissionRole.class).queryBuilder();
 			qPermissionRole.where()
-					.eq(PermissionRole.GUILD_ID, role.getGuild().getId())
-					.and().eq(PermissionRole.ROLE_ID, role.getId());
+					.eq(PermissionRole.GUILD_ID, role.getGuild().getIdLong())
+					.and().eq(PermissionRole.ROLE_ID, role.getIdLong());
 			q.join(qPermissionRole);
 		});
 	}

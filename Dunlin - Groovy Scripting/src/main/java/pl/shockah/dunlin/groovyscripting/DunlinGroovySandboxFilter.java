@@ -35,6 +35,7 @@ public class DunlinGroovySandboxFilter extends BasicGroovySandboxFilter {
                     RestAction.class.getMethod("complete", boolean.class),
 
                     ISnowflake.class.getMethod("getId"),
+                    ISnowflake.class.getMethod("getIdLong"),
                     ISnowflake.class.getMethod("getCreationTime"),
 
                     IMentionable.class.getMethod("getAsMention"),

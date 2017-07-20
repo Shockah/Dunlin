@@ -27,7 +27,7 @@ public class GuildFactoidScope extends FactoidScope {
     protected void fillWhereClause(Where<Factoid, Integer> where) throws SQLException {
         where.and()
                 .eq(Factoid.SCOPE_TYPE, SCOPE_TYPE).and()
-                .eq(Factoid.GUILD_ID, guildScope.guild.getId());
+                .eq(Factoid.GUILD_ID, guildScope.guild.getIdLong());
     }
 
     @Override

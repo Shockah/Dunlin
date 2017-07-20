@@ -8,6 +8,7 @@ import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.dunlin.settings.Setting;
 import pl.shockah.dunlin.settings.SettingsPlugin;
+import pl.shockah.plugin.PluginInfo;
 import pl.shockah.util.Box;
 import pl.shockah.util.ReadWriteSet;
 
@@ -25,7 +26,7 @@ public class CommandsPlugin extends ListenerPlugin {
 	protected ChainCommandPattern chainCommandPattern;
 	protected DefaultNamedCommandProvider defaultNamedCommandProvider;
 	
-	public CommandsPlugin(PluginManager manager, Info info) {
+	public CommandsPlugin(PluginManager manager, PluginInfo info) {
 		super(manager, info);
 	}
 	
@@ -100,9 +101,7 @@ public class CommandsPlugin extends ListenerPlugin {
 				CommandPatternMatch<Command<Object, Object>> commandPatternMatch = (CommandPatternMatch<Command<Object, Object>>)pattern.getCommand(context);
 				if (commandPatternMatch != null) {
 					matchedCommand.value = true;
-					listeners.iterate(listener -> {
-						listener.onCommandReceived(context, pattern, commandPatternMatch.command, commandPatternMatch.textInput);
-					});
+					listeners.iterate(listener -> listener.onCommandReceived(context, pattern, commandPatternMatch.command, commandPatternMatch.textInput));
 					callCommand(pattern, commandPatternMatch.command, commandPatternMatch.textInput, context);
 					iterator.stop();
 				}
@@ -126,9 +125,7 @@ public class CommandsPlugin extends ListenerPlugin {
 			} else if (input instanceof ValueParseResult<?>) {
 				ValueParseResult<Object> valueParseResult = (ValueParseResult<Object>)input;
 				CommandResult<Object, Object> output = plainCommand.execute(context, valueParseResult.value);
-				listeners.iterate(listener -> {
-					listener.onCommandExecuted(context, pattern, command, textInput, output);
-				});
+				listeners.iterate(listener -> listener.onCommandExecuted(context, pattern, command, textInput, output));
 				plainCommand.output(context, valueParseResult.value, output);
 			}
 		} catch (Exception e) {

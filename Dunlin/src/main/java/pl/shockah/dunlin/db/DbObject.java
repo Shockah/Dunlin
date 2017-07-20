@@ -1,14 +1,15 @@
 package pl.shockah.dunlin.db;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.misc.BaseDaoEnabled;
+import pl.shockah.util.func.Action1;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.ref.WeakReference;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.misc.BaseDaoEnabled;
-import pl.shockah.util.func.Action1;
 
 public class DbObject<T> extends BaseDaoEnabled<T, Integer> {
 	@DatabaseField(generatedId = true, columnName = ID)
@@ -63,7 +64,7 @@ public class DbObject<T> extends BaseDaoEnabled<T, Integer> {
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
-	public static @interface TableVersion {
+	public @interface TableVersion {
 		int value() default 1;
 	}
 }

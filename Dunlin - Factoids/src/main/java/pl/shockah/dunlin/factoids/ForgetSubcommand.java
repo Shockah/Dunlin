@@ -57,7 +57,7 @@ public class ForgetSubcommand extends NamedCommand<ForgetSubcommand.Input, Facto
 		public String name;
 
 		public Input toInput(Message message) {
-			FactoidScope factoidScope = null;
+			FactoidScope factoidScope;
 			switch (scope) {
 				case Global:
 					factoidScope = new GlobalFactoidScope();

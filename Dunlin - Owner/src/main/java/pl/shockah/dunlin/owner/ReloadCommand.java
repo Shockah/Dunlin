@@ -22,7 +22,7 @@ public class ReloadCommand extends NamedCommand<Void, Void> {
 	    if (!ownerPlugin.permissionsPlugin.hasPermission(context.message, ownerPlugin, names[0]))
             return new ErrorCommandResult<>(this, ownerPlugin.permissionsPlugin.buildMissingPermissionMessage(ownerPlugin, names[0]));
 
-        ownerPlugin.manager.reload();
+        ownerPlugin.manager.reloadAll();
         return new ValueCommandResult<>(this, null);
     }
 

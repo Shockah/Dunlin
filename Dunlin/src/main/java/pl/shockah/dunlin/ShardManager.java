@@ -58,6 +58,12 @@ public class ShardManager {
 		return shards[(int)((Long.parseLong(guildId) >>> 22) % shards.length)].getGuildById(guildId);
 	}
 
+	public Guild getGuildById(long guildId) {
+		if (shards.length == 0)
+			return shards[0].getGuildById(guildId);
+		return shards[(int)((guildId >>> 22) % shards.length)].getGuildById(guildId);
+	}
+
 	public User getUserById(String userId) {
 		for (JDA jda : shards) {
 			User user = jda.getUserById(userId);
@@ -67,7 +73,25 @@ public class ShardManager {
 		return null;
 	}
 
+	public User getUserById(long userId) {
+		for (JDA jda : shards) {
+			User user = jda.getUserById(userId);
+			if (user != null)
+				return user;
+		}
+		return null;
+	}
+
 	public TextChannel getTextChannelById(String textChannelId) {
+		for (JDA jda : shards) {
+			TextChannel textChannel = jda.getTextChannelById(textChannelId);
+			if (textChannel != null)
+				return textChannel;
+		}
+		return null;
+	}
+
+	public TextChannel getTextChannelById(long textChannelId) {
 		for (JDA jda : shards) {
 			TextChannel textChannel = jda.getTextChannelById(textChannelId);
 			if (textChannel != null)
