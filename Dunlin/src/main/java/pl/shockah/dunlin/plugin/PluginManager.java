@@ -1,16 +1,13 @@
 package pl.shockah.dunlin.plugin;
 
 import pl.shockah.dunlin.App;
+import pl.shockah.plugin.PluginInfo;
 
-public class PluginManager extends pl.shockah.plugin.PluginManager<PluginManager, Plugin> {
+public class PluginManager extends pl.shockah.plugin.PluginManager<PluginInfo, PluginManager, Plugin> {
 	public final App app;
 	
 	public PluginManager(App app) {
-		this(Plugin.class, app);
-	}
-	
-	protected PluginManager(Class<Plugin> clazz, App app) {
-		super(clazz);
+		super(PluginInfo.class, Plugin.class);
 		this.app = app;
 	}
 	

@@ -5,6 +5,7 @@ import pl.shockah.dunlin.permissions.PermissionsPlugin;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.dunlin.settings.SettingsPlugin;
+import pl.shockah.plugin.PluginInfo;
 
 public class SettingsCommandsPlugin extends Plugin {
 	@Dependency
@@ -19,7 +20,7 @@ public class SettingsCommandsPlugin extends Plugin {
 	private SetCommand setCommand;
 	private GetCommand getCommand;
 	
-	public SettingsCommandsPlugin(PluginManager manager, Info info) {
+	public SettingsCommandsPlugin(PluginManager manager, PluginInfo info) {
 		super(manager, info);
 	}
 	

@@ -8,6 +8,7 @@ import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.dunlin.settings.Setting;
 import pl.shockah.dunlin.settings.SettingsPlugin;
+import pl.shockah.plugin.PluginInfo;
 import pl.shockah.util.Box;
 import pl.shockah.util.ReadWriteSet;
 
@@ -25,7 +26,7 @@ public class CommandsPlugin extends ListenerPlugin {
 	protected ChainCommandPattern chainCommandPattern;
 	protected DefaultNamedCommandProvider defaultNamedCommandProvider;
 	
-	public CommandsPlugin(PluginManager manager, Info info) {
+	public CommandsPlugin(PluginManager manager, PluginInfo info) {
 		super(manager, info);
 	}
 	

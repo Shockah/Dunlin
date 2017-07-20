@@ -3,12 +3,13 @@ package pl.shockah.dunlin.groovy;
 import groovy.lang.GroovyClassLoader;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
+import pl.shockah.plugin.PluginInfo;
 
 import java.net.URL;
 import java.net.URLClassLoader;
 
 public class GroovyPlugin extends Plugin {
-	public GroovyPlugin(PluginManager manager, Info info) {
+	public GroovyPlugin(PluginManager manager, PluginInfo info) {
 		super(manager, info);
 	}
 

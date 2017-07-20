@@ -4,6 +4,7 @@ import pl.shockah.dunlin.factoids.FactoidsPlugin;
 import pl.shockah.dunlin.groovyscripting.GroovyScriptingPlugin;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
+import pl.shockah.plugin.PluginInfo;
 
 public class GroovyFactoidsPlugin extends Plugin {
 	@Dependency
@@ -14,7 +15,7 @@ public class GroovyFactoidsPlugin extends Plugin {
 
 	private GroovyFactoidCommandFactory factoidCommandFactory;
 	
-	public GroovyFactoidsPlugin(PluginManager manager, Info info) {
+	public GroovyFactoidsPlugin(PluginManager manager, PluginInfo info) {
 		super(manager, info);
 	}
 

@@ -1,15 +1,16 @@
 package pl.shockah.dunlin;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import javax.security.auth.login.LoginException;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import pl.shockah.dunlin.db.DatabaseManager;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.json.JSONObject;
 import pl.shockah.json.JSONParser;
+
+import javax.security.auth.login.LoginException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class App {
 	public static final Path CONFIG_PATH = Paths.get("config.json");
@@ -55,7 +56,7 @@ public class App {
 	}
 	
 	private void main() throws LoginException, IllegalArgumentException, RateLimitedException {
-		pluginManager.reload();
+		pluginManager.reloadAll();
 		shardManager.connect();
 	}
 	

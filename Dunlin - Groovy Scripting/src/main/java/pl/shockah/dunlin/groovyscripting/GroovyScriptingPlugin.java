@@ -17,6 +17,7 @@ import pl.shockah.dunlin.permissions.PermissionsPlugin;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.json.JSONObject;
+import pl.shockah.plugin.PluginInfo;
 import pl.shockah.util.func.Func1;
 
 import java.util.Map;
@@ -32,7 +33,7 @@ public class GroovyScriptingPlugin extends Plugin {
 
 	private EvalCommand evalCommand;
 	
-	public GroovyScriptingPlugin(PluginManager manager, Info info) {
+	public GroovyScriptingPlugin(PluginManager manager, PluginInfo info) {
 		super(manager, info);
 	}
 	
