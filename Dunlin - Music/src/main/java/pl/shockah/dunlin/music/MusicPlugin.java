@@ -25,6 +25,7 @@ import pl.shockah.dunlin.settings.GuildSettingScope;
 import pl.shockah.dunlin.settings.Setting;
 import pl.shockah.dunlin.settings.SettingListener;
 import pl.shockah.dunlin.settings.SettingsPlugin;
+import pl.shockah.plugin.PluginInfo;
 import pl.shockah.util.ReadWriteMap;
 
 import java.io.IOException;
@@ -51,7 +52,7 @@ public class MusicPlugin extends ListenerPlugin {
 	public AudioPlayerManager audioPlayerManager;
 	protected final ReadWriteMap<Guild, GuildAudioManager> guildAudioManagers = new ReadWriteMap<>(new HashMap<>());
 	
-	public MusicPlugin(PluginManager manager, Info info) {
+	public MusicPlugin(PluginManager manager, PluginInfo info) {
 		super(manager, info);
 	}
 	
