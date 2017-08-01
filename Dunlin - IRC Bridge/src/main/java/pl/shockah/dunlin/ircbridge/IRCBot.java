@@ -1,6 +1,7 @@
 package pl.shockah.dunlin.ircbridge;
 
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Channel;
@@ -42,6 +43,26 @@ public class IRCBot extends PircBotX {
 	}
 
 	private class IRCBotListener extends ListenerAdapter {
+		private void sendMessage(MessageChannel channel, String nick, String nickFormat, String message, String avatar) {
+			for (RelayBotInfo relayBot : relayBots) {
+				if (nick.equalsIgnoreCase(relayBot.nick)) {
+					Matcher m = relayBot.pattern.matcher(message);
+					if (m.find()) {
+						nick = String.format("%s *via %s*", m.group("nick"), nick);
+						message = m.group("message");
+						avatar = plugin.getAvatarUrl(nick);
+						break;
+					}
+				}
+			}
+
+			channel.sendMessage(new EmbedBuilder()
+					.setAuthor(String.format(nickFormat, nick), null, avatar)
+					.setDescription(message)
+					.setTimestamp(Instant.now())
+					.build()).queue();
+		}
+
 		@Override
 		public void onConnect(ConnectEvent event) throws Exception {
 			plugin.setIrcAway(IRCBot.this);
@@ -84,23 +105,7 @@ public class IRCBot extends PircBotX {
 			String message = event.getMessage();
 			String avatar = plugin.getAvatarUrl(event.getUser(), event.getChannel());
 
-			for (RelayBotInfo relayBot : relayBots) {
-				if (nick.equalsIgnoreCase(relayBot.nick)) {
-					Matcher m = relayBot.pattern.matcher(message);
-					if (m.find()) {
-						nick = String.format("%s *via %s*", m.group("nick"), nick);
-						message = m.group("message");
-						avatar = plugin.getAvatarUrl(nick);
-						break;
-					}
-				}
-			}
-
-			channel.sendMessage(new EmbedBuilder()
-					.setAuthor(nick, null, avatar)
-					.setDescription(message)
-					.setTimestamp(Instant.now())
-					.build()).queue();
+			sendMessage(channel, nick, "%s", message, avatar);
 		}
 
 		@Override
@@ -113,23 +118,7 @@ public class IRCBot extends PircBotX {
 			String message = event.getMessage();
 			String avatar = plugin.getAvatarUrl(event.getUser(), event.getChannel());
 
-			for (RelayBotInfo relayBot : relayBots) {
-				if (nick.equalsIgnoreCase(relayBot.nick)) {
-					Matcher m = relayBot.pattern.matcher(message);
-					if (m.find()) {
-						nick = String.format("%s *via %s*", m.group("nick"), nick);
-						message = m.group("message");
-						avatar = plugin.getAvatarUrl(nick);
-						break;
-					}
-				}
-			}
-
-			channel.sendMessage(new EmbedBuilder()
-					.setAuthor(nick, null, avatar)
-					.setDescription(String.format("*%s*", message))
-					.setTimestamp(Instant.now())
-					.build()).queue();
+			sendMessage(channel, nick, "*%s*", message, avatar);
 		}
 
 		@Override
@@ -141,12 +130,9 @@ public class IRCBot extends PircBotX {
 			String message = event.getMessage();
 			String avatar = plugin.getAvatarUrl(event.getUser(), null);
 
-			plugin.singleUser.openPrivateChannel().queue(channel -> channel.sendMessage(new EmbedBuilder()
-					.setAuthor(String.format("%s @ %s", nick, getConfiguration().getServers().get(0).getHostname()), null, avatar)
-					.setDescription(message)
-					.setTimestamp(Instant.now())
-					.build()
-			).queue());
+			plugin.singleUser.openPrivateChannel().queue(channel ->
+					sendMessage(channel, nick, String.format("%%s @ %s", getConfiguration().getServers().get(0).getHostname()), message, avatar)
+			);
 		}
 
 		@Override
@@ -159,12 +145,9 @@ public class IRCBot extends PircBotX {
 				String message = event.getMessage();
 				String avatar = plugin.getAvatarUrl(event.getUser(), null);
 
-				plugin.singleUser.openPrivateChannel().queue(channel -> channel.sendMessage(new EmbedBuilder()
-						.setAuthor(String.format("-- %s @ %s", nick, getConfiguration().getServers().get(0).getHostname()), null, avatar)
-						.setDescription(message)
-						.setTimestamp(Instant.now())
-						.build()
-				).queue());
+				plugin.singleUser.openPrivateChannel().queue(channel ->
+						sendMessage(channel, nick, String.format("-- %%s @ %s", getConfiguration().getServers().get(0).getHostname()), message, avatar)
+				);
 			} else {
 				TextChannel channel = channelMap.get(event.getChannel().getName());
 				if (channel == null)
@@ -174,23 +157,7 @@ public class IRCBot extends PircBotX {
 				String message = event.getMessage();
 				String avatar = plugin.getAvatarUrl(event.getUser(), event.getChannel());
 
-				for (RelayBotInfo relayBot : relayBots) {
-					if (nick.equalsIgnoreCase(relayBot.nick)) {
-						Matcher m = relayBot.pattern.matcher(message);
-						if (m.find()) {
-							nick = String.format("%s *via %s*", m.group("nick"), nick);
-							message = m.group("message");
-							avatar = plugin.getAvatarUrl(nick);
-							break;
-						}
-					}
-				}
-
-				channel.sendMessage(new EmbedBuilder()
-						.setAuthor(nick, null, avatar)
-						.setDescription(String.format("-- %s", message))
-						.setTimestamp(Instant.now())
-						.build()).queue();
+				sendMessage(channel, nick, "-- %s", message, avatar);
 			}
 		}
 	}
