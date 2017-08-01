@@ -37,7 +37,7 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 
 	public final ReadWriteList<IRCBot> ircBots = new ReadWriteList<>(new ArrayList<>());
 
-	private net.dv8tion.jda.core.entities.User singleUser;
+	public net.dv8tion.jda.core.entities.User singleUser;
 	private Guild guild;
 	private String avatarUrlFormat;
 	private String normalAvatarReplacement;
@@ -182,6 +182,8 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 	}
 
 	private String getReplacement(User user, Channel channel) {
+		if (channel == null)
+			return normalAvatarReplacement;
 		if (channel.isOp(user))
 			return opAvatarReplacement;
 		else if (channel.hasVoice(user))

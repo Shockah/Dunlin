@@ -8,10 +8,7 @@ import org.pircbotx.Configuration;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.ListenerAdapter;
-import org.pircbotx.hooks.events.ActionEvent;
-import org.pircbotx.hooks.events.ConnectEvent;
-import org.pircbotx.hooks.events.DisconnectEvent;
-import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.events.*;
 
 import java.awt.*;
 import java.time.Instant;
@@ -133,6 +130,68 @@ public class IRCBot extends PircBotX {
 					.setDescription(String.format("*%s*", message))
 					.setTimestamp(Instant.now())
 					.build()).queue();
+		}
+
+		@Override
+		public void onPrivateMessage(PrivateMessageEvent event) throws Exception {
+			if (plugin.singleUser == null)
+				return;
+
+			String nick = event.getUser().getNick();
+			String message = event.getMessage();
+			String avatar = plugin.getAvatarUrl(event.getUser(), null);
+
+			plugin.singleUser.openPrivateChannel().queue(channel -> channel.sendMessage(new EmbedBuilder()
+					.setAuthor(String.format("%s @ %s", nick, getConfiguration().getServers().get(0).getHostname()), null, avatar)
+					.setDescription(message)
+					.setTimestamp(Instant.now())
+					.build()
+			).queue());
+		}
+
+		@Override
+		public void onNotice(NoticeEvent event) throws Exception {
+			if (event.getChannel() == null) {
+				if (plugin.singleUser == null)
+					return;
+
+				String nick = event.getUser().getNick();
+				String message = event.getMessage();
+				String avatar = plugin.getAvatarUrl(event.getUser(), null);
+
+				plugin.singleUser.openPrivateChannel().queue(channel -> channel.sendMessage(new EmbedBuilder()
+						.setAuthor(String.format("-- %s @ %s", nick, getConfiguration().getServers().get(0).getHostname()), null, avatar)
+						.setDescription(message)
+						.setTimestamp(Instant.now())
+						.build()
+				).queue());
+			} else {
+				TextChannel channel = channelMap.get(event.getChannel().getName());
+				if (channel == null)
+					return;
+
+				String nick = event.getUser().getNick();
+				String message = event.getMessage();
+				String avatar = plugin.getAvatarUrl(event.getUser(), event.getChannel());
+
+				for (RelayBotInfo relayBot : relayBots) {
+					if (nick.equalsIgnoreCase(relayBot.nick)) {
+						Matcher m = relayBot.pattern.matcher(message);
+						if (m.find()) {
+							nick = String.format("%s *via %s*", m.group("nick"), nick);
+							message = m.group("message");
+							avatar = plugin.getAvatarUrl(nick);
+							break;
+						}
+					}
+				}
+
+				channel.sendMessage(new EmbedBuilder()
+						.setAuthor(nick, null, avatar)
+						.setDescription(String.format("-- %s", message))
+						.setTimestamp(Instant.now())
+						.build()).queue();
+			}
 		}
 	}
 
