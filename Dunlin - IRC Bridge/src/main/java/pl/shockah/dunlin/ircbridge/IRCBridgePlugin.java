@@ -19,6 +19,7 @@ import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.json.JSONObject;
 import pl.shockah.json.JSONParser;
 import pl.shockah.plugin.PluginInfo;
+import pl.shockah.util.ReadWriteList;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -34,7 +35,7 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 	@Dependency
 	public CommandsPlugin commandsPlugin;
 
-	public List<IRCBot> ircBots = new ArrayList<>();
+	public final ReadWriteList<IRCBot> ircBots = new ReadWriteList<>(new ArrayList<>());
 
 	private net.dv8tion.jda.core.entities.User singleUser;
 	private Guild guild;
@@ -45,6 +46,8 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 	private int avatarVariations;
 	private String awayMessage;
 
+	private OnlineCommand onlineCommand;
+
 	public IRCBridgePlugin(PluginManager manager, PluginInfo info) {
 		super(manager, info);
 	}
@@ -53,8 +56,22 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 	protected void onLoad() {
 		commandsPlugin.registerListener(this);
 
+		commandsPlugin.registerNamedCommand(
+				onlineCommand = new OnlineCommand(this)
+		);
+
 		if (manager.app.getShardManager().shards.length == 0)
 			setupOnLoad();
+	}
+
+	@Override
+	protected void onUnload() {
+		ircBots.iterate(IRCBot::close);
+		ircBots.clear();
+
+		commandsPlugin.unregisterNamedCommand(onlineCommand);
+
+		commandsPlugin.unregisterListener(this);
 	}
 
 	@Override
@@ -148,16 +165,6 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 		}
 	}
 
-	@Override
-	protected void onUnload() {
-		for (IRCBot bot : ircBots) {
-			bot.close();
-		}
-		ircBots.clear();
-
-		commandsPlugin.unregisterListener(this);
-	}
-
 	public String getAvatarUrl(User user, Channel channel) {
 		return getAvatarUrl(user.getNick(), getReplacement(user, channel));
 	}
@@ -225,10 +232,10 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 			return;
 
 		if (event.getPreviousOnlineStatus() != event.getGuild().getMember(event.getUser()).getOnlineStatus()) {
-			for (IRCBot bot : ircBots) {
+			ircBots.iterate(bot -> {
 				if (bot.isConnected())
 					setIrcAway(bot);
-			}
+			});
 		}
 	}
 
@@ -247,14 +254,23 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 		if (singleUser != null && event.getAuthor() != singleUser)
 			return;
 
-		for (IRCBot bot : ircBots) {
-			String channelName = bot.reverseChannelMap.get(event.getTextChannel());
-			if (channelName != null) {
-				Channel channel = bot.getUserChannelDao().getChannel(channelName);
-				if (channel != null)
-					sendMessageToIrcChannel(event.getMessage(), channel);
-				break;
+		Channel channel = getIrcChannel(event.getTextChannel());
+		if (channel != null)
+			sendMessageToIrcChannel(event.getMessage(), channel);
+	}
+
+	public Channel getIrcChannel(TextChannel discordChannel) {
+		return ircBots.readOperation(ircBots -> {
+			for (IRCBot bot : ircBots) {
+				String channelName = bot.reverseChannelMap.get(discordChannel);
+				if (channelName != null) {
+					Channel channel = bot.getUserChannelDao().getChannel(channelName);
+					if (channel != null)
+						return channel;
+					break;
+				}
 			}
-		}
+			return null;
+		});
 	}
 }
