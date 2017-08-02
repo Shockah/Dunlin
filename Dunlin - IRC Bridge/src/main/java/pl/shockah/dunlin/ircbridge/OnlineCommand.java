@@ -13,7 +13,6 @@ import pl.shockah.dunlin.commands.result.ValueCommandResult;
 import pl.shockah.dunlin.commands.result.ValueParseResult;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,7 +63,7 @@ public class OnlineCommand extends NamedCommand<Channel, List<User>> {
 	}
 
 	private void sortList(Channel channel, List<User> users) {
-		Collections.sort(users, (u1, u2) -> {
+		users.sort((u1, u2) -> {
 			boolean op1 = channel.isOp(u1);
 			boolean op2 = channel.isOp(u2);
 			if (op1 != op2)
