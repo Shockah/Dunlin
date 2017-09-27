@@ -6,7 +6,6 @@ import com.j256.ormlite.table.DatabaseTable;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 import pl.shockah.dunlin.ShardManager;
 import pl.shockah.dunlin.db.DbObject;
 import pl.shockah.dunlin.factoids.FactoidScope;
@@ -14,12 +13,12 @@ import pl.shockah.dunlin.factoids.GlobalFactoidScope;
 import pl.shockah.dunlin.factoids.GuildFactoidScope;
 import pl.shockah.dunlin.factoids.TextChannelFactoidScope;
 import pl.shockah.json.JSONObject;
-
-import java.util.Date;
+import pl.shockah.json.JSONParser;
+import pl.shockah.json.JSONPrinter;
 
 @DatabaseTable(tableName = "pl_shockah_dunlin_factoids_db_Factoid")
 @DbObject.TableVersion(1)
-public class Factoid extends DbObject<Factoid> {
+public class FactoidStore extends DbObject<FactoidStore> {
 	@DatabaseField(columnName = NAME, canBeNull = false)
 	private String name;
 	public static final String NAME = "name";
@@ -32,38 +31,21 @@ public class Factoid extends DbObject<Factoid> {
 	private Long channelId;
 	public static final String CHANNEL_ID = "channelId";
 
-	@DatabaseField(columnName = AUTHOR_USER_ID)
-	private long authorUserId;
-	public static final String AUTHOR_USER_ID = "authorUserId";
-
-	@DatabaseField(columnName = CONTENT, canBeNull = false)
-	private String content;
-	public static final String CONTENT = "content";
-
-	@DatabaseField(columnName = FORGOTTEN, canBeNull = false)
-	private boolean forgotten;
-	public static final String FORGOTTEN = "forgotten";
-
-	@DatabaseField(columnName = TYPE, canBeNull = false)
-	private String type;
-	public static final String TYPE = "type";
-
-	@DatabaseField(columnName = DATE, canBeNull = false)
-	private Date date;
-	public static final String DATE = "date";
-
 	@DatabaseField(columnName = SCOPE_TYPE, canBeNull = false)
 	private String scopeType;
 	public static final String SCOPE_TYPE = "scopeType";
 
+	@DatabaseField(columnName = JSON, canBeNull = false)
+	private String json;
+	public static final String JSON = "json";
+
 	@Deprecated //ORMLite-only
-	Factoid() {
+	FactoidStore() {
 		super();
 	}
 
-	public Factoid(Dao<Factoid, Integer> dao) {
+	public FactoidStore(Dao<FactoidStore, Integer> dao) {
 		super(dao);
-		date = new Date();
 	}
 
 	public String getName() {
@@ -115,56 +97,20 @@ public class Factoid extends DbObject<Factoid> {
 		setChannelId(channel == null ? null : channel.getIdLong());
 	}
 
-	public long getAuthorUserId() {
-		return authorUserId;
+	public String getJson() {
+		return json;
 	}
 
-	public void setAuthorUserId(long authorUserId) {
-		this.authorUserId = authorUserId;
+	public void setJson(String json) {
+		this.json = json;
 	}
 
-	public User getAuthor(ShardManager manager) {
-		return manager.getUserById(authorUserId);
+	public JSONObject getJsonObject() {
+		return json == null ? null : new JSONParser().parseObject(json);
 	}
 
-	public User getAuthor(JDA jda) {
-		return jda.getUserById(authorUserId);
-	}
-
-	public void setAuthor(User user) {
-		setAuthorUserId(user.getIdLong());
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-
-	public boolean isForgotten() {
-		return forgotten;
-	}
-
-	public void setForgotten(boolean forgotten) {
-		this.forgotten = forgotten;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
+	public void setJsonObject(JSONObject object) {
+		setJson(object == null ? null : new JSONPrinter().toString(object));
 	}
 
 	public String getScopeType() {
@@ -215,9 +161,5 @@ public class Factoid extends DbObject<Factoid> {
 		} else {
 			throw new IllegalArgumentException();
 		}
-	}
-
-	public JSONObject getStoreObject() {
-		return null;
 	}
 }
