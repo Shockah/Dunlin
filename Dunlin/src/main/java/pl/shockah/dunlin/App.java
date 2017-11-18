@@ -6,6 +6,7 @@ import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.json.JSONObject;
 import pl.shockah.json.JSONParser;
 
+import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,7 +34,7 @@ public class App {
 	private ShardManager shardManager;
 	private DatabaseManager databaseManager;
 	
-	protected Path getConfigPath() {
+	@Nonnull protected Path getConfigPath() {
 		return CONFIG_PATH;
 	}
 	
@@ -67,19 +68,27 @@ public class App {
 		config = new JSONParser().parseObject(new String(Files.readAllBytes(path), "UTF-8"));
 	}
 	
-	public JSONObject getConfig() {
+	@Nonnull public JSONObject getConfig() {
+		if (config == null)
+			throw new IllegalStateException();
 		return config;
 	}
 	
-	public PluginManager getPluginManager() {
+	@Nonnull public PluginManager getPluginManager() {
+		if (pluginManager == null)
+			throw new IllegalStateException();
 		return pluginManager;
 	}
 	
-	public ShardManager getShardManager() {
+	@Nonnull public ShardManager getShardManager() {
+		if (shardManager == null)
+			throw new IllegalStateException();
 		return shardManager;
 	}
 	
-	public DatabaseManager getDatabaseManager() {
+	@Nonnull public DatabaseManager getDatabaseManager() {
+		if (databaseManager == null)
+			throw new IllegalStateException();
 		return databaseManager;
 	}
 }

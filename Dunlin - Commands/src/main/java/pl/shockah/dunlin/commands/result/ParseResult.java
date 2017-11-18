@@ -2,10 +2,12 @@ package pl.shockah.dunlin.commands.result;
 
 import pl.shockah.dunlin.commands.Command;
 
-public abstract class ParseResult<T> {
-	public final Command<T, ?> command;
+import javax.annotation.Nonnull;
 
-	protected ParseResult(Command<T, ?> command) {
+public abstract class ParseResult<T> {
+	@Nonnull public final Command<T, ?> command;
+
+	protected ParseResult(@Nonnull Command<T, ?> command) {
 		this.command = command;
 	}
 }

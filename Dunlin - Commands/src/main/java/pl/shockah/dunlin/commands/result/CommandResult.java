@@ -4,12 +4,15 @@ import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.commands.Command;
 import pl.shockah.dunlin.commands.CommandContext;
 
-public abstract class CommandResult<Input, Output> {
-	public final Command<Input, Output> command;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-	protected CommandResult(Command<Input, Output> command) {
+public abstract class CommandResult<Input, Output> {
+	@Nonnull public final Command<Input, Output> command;
+
+	protected CommandResult(@Nonnull Command<Input, Output> command) {
 		this.command = command;
 	}
 
-	public abstract Message getMessage(CommandContext context, Input input);
+	@Nonnull public abstract Message getMessage(@Nonnull CommandContext context, @Nullable Input input);
 }

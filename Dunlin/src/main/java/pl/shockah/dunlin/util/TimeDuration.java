@@ -1,5 +1,6 @@
 package pl.shockah.dunlin.util;
 
+import javax.annotation.Nonnull;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -15,27 +16,27 @@ public final class TimeDuration {
 		throw new UnsupportedOperationException();
 	}
 
-	public static String format(Instant instant) {
+	@Nonnull public static String format(@Nonnull Instant instant) {
 		return format(LocalDateTime.ofInstant(instant, ZoneOffset.UTC), true);
 	}
 
-	public static String format(Instant instant, boolean clampNegative) {
+	@Nonnull public static String format(@Nonnull Instant instant, boolean clampNegative) {
 		return format(LocalDateTime.ofInstant(instant, ZoneOffset.UTC), LocalDateTime.now(), clampNegative);
 	}
 
-	public static String format(LocalDateTime date) {
+	@Nonnull public static String format(@Nonnull LocalDateTime date) {
 		return format(date, true);
 	}
 
-	public static String format(LocalDateTime date, boolean clampNegative) {
+	@Nonnull public static String format(@Nonnull LocalDateTime date, boolean clampNegative) {
 		return format(date, LocalDateTime.now(), clampNegative);
 	}
 
-	public static String format(Instant i1, Instant i2, boolean clampNegative) {
+	@Nonnull public static String format(@Nonnull Instant i1, @Nonnull Instant i2, boolean clampNegative) {
 		return format(LocalDateTime.ofInstant(i1, ZoneOffset.UTC), LocalDateTime.ofInstant(i2, ZoneOffset.UTC), clampNegative);
 	}
 
-	public static String format(LocalDateTime date1, LocalDateTime date2, boolean clampNegative) {
+	@Nonnull public static String format(@Nonnull LocalDateTime date1, @Nonnull LocalDateTime date2, boolean clampNegative) {
 		LocalDateTime temp = LocalDateTime.from(date1);
 
 		long years = temp.until(date2, ChronoUnit.YEARS);
@@ -89,27 +90,27 @@ public final class TimeDuration {
 		return sb.toString().substring(1);
 	}
 
-	public static LocalDateTime parseFuture(String formatted) {
+	@Nonnull public static LocalDateTime parseFuture(@Nonnull String formatted) {
 		return parse(true, formatted);
 	}
 
-	public static LocalDateTime parsePast(String formatted) {
+	@Nonnull public static LocalDateTime parsePast(@Nonnull String formatted) {
 		return parse(false, formatted);
 	}
 
-	public static LocalDateTime parse(boolean inFuture, String formatted) {
+	@Nonnull public static LocalDateTime parse(boolean inFuture, @Nonnull String formatted) {
 		return parse(LocalDateTime.now(), inFuture, formatted);
 	}
 
-	public static LocalDateTime parseFuture(LocalDateTime base, String formatted) {
+	@Nonnull public static LocalDateTime parseFuture(@Nonnull LocalDateTime base, @Nonnull String formatted) {
 		return parse(base, true, formatted);
 	}
 
-	public static LocalDateTime parsePast(LocalDateTime base, String formatted) {
+	@Nonnull public static LocalDateTime parsePast(@Nonnull LocalDateTime base, @Nonnull String formatted) {
 		return parse(base, false, formatted);
 	}
 
-	public static LocalDateTime parse(LocalDateTime base, boolean inFuture, String formatted) {
+	@Nonnull public static LocalDateTime parse(@Nonnull LocalDateTime base, boolean inFuture, @Nonnull String formatted) {
 		LocalDateTime temp = LocalDateTime.from(base);
 
 		Matcher m = TIME_DURATION_TOKEN_PATTERN.matcher(formatted);

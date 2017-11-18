@@ -4,62 +4,64 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
+import javax.annotation.Nonnull;
+
 public abstract class MessageMedium {
-	public abstract void sendMessage(String message);
+	public abstract void sendMessage(@Nonnull String message);
 	
-	public abstract void sendMessage(Message message);
+	public abstract void sendMessage(@Nonnull Message message);
 	
 	public static class Channel extends MessageMedium implements ChannelMessageMedium {
-		public final TextChannel channel;
+		@Nonnull public final TextChannel channel;
 		
-		public Channel(TextChannel channel) {
+		public Channel(@Nonnull TextChannel channel) {
 			this.channel = channel;
 		}
 		
 		@Override
-		public void sendMessage(String message) {
+		public void sendMessage(@Nonnull String message) {
 			channel.sendMessage(message).queue();
 		}
 		
 		@Override
-		public void sendMessage(Message message) {
+		public void sendMessage(@Nonnull Message message) {
 			channel.sendMessage(message).queue();
 		}
 
 		@Override
-		public TextChannel getChannel() {
+		@Nonnull public TextChannel getChannel() {
 			return channel;
 		}
 	}
 	
 	public static class Private extends MessageMedium implements PrivateMessageMedium {
-		public final User user;
+		@Nonnull public final User user;
 		
-		public Private(User user) {
+		public Private(@Nonnull User user) {
 			this.user = user;
 		}
 		
 		@Override
-		public void sendMessage(String message) {
+		public void sendMessage(@Nonnull String message) {
 			user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue());
 		}
 		
 		@Override
-		public void sendMessage(Message message) {
+		public void sendMessage(@Nonnull Message message) {
 			user.openPrivateChannel().queue(channel -> channel.sendMessage(message).queue());
 		}
 
 		@Override
-		public User getUser() {
+		@Nonnull public User getUser() {
 			return user;
 		}
 	}
 	
 	public interface ChannelMessageMedium {
-		TextChannel getChannel();
+		@Nonnull TextChannel getChannel();
 	}
 	
 	public interface PrivateMessageMedium {
-		User getUser();
+		@Nonnull User getUser();
 	}
 }
