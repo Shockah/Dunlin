@@ -146,20 +146,6 @@ public class FactoidStore extends DbObject<FactoidStore> {
 	}
 
 	public void setScope(FactoidScope scope) {
-		//TODO: code smell
-		if (scope instanceof TextChannelFactoidScope) {
-			setChannel(((TextChannelFactoidScope)scope).textChannelScope.textChannel);
-			setScopeType("TextChannel");
-		} else if (scope instanceof GuildFactoidScope) {
-			setGuild(((GuildFactoidScope)scope).guildScope.guild);
-			setChannelId(null);
-			setScopeType("Guild");
-		} else if (scope instanceof GlobalFactoidScope) {
-			setGuildId(null);
-			setChannelId(null);
-			setScopeType("Global");
-		} else {
-			throw new IllegalArgumentException();
-		}
+		scope.setInFactoidStore(this);
 	}
 }

@@ -5,6 +5,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.GuildScope;
 import pl.shockah.dunlin.factoids.db.Factoid;
+import pl.shockah.dunlin.factoids.db.FactoidStore;
 
 import java.sql.SQLException;
 
@@ -34,5 +35,19 @@ public class GuildFactoidScope extends FactoidScope {
     protected void setupFactoidRemember(Factoid factoid, Message message) {
         factoid.setScopeType(SCOPE_TYPE);
         factoid.setGuild(message.getGuild());
+    }
+
+    @Override
+    public void setInFactoid(Factoid factoid) {
+        factoid.setScopeType("Guild");
+        factoid.setGuild(guildScope.guild);
+        factoid.setChannelId(null);
+    }
+
+    @Override
+    public void setInFactoidStore(FactoidStore store) {
+        store.setScopeType("Guild");
+        store.setGuild(guildScope.guild);
+        store.setChannelId(null);
     }
 }

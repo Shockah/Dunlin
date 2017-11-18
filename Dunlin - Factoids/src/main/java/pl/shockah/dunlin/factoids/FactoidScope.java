@@ -4,6 +4,7 @@ import com.j256.ormlite.stmt.Where;
 import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.Scope;
 import pl.shockah.dunlin.factoids.db.Factoid;
+import pl.shockah.dunlin.factoids.db.FactoidStore;
 
 import java.sql.SQLException;
 
@@ -45,4 +46,8 @@ public abstract class FactoidScope {
     protected abstract void fillWhereClause(Where<Factoid, Integer> where) throws SQLException;
 
     protected abstract void setupFactoidRemember(Factoid factoid, Message message);
+
+    public abstract void setInFactoid(Factoid factoid);
+
+    public abstract void setInFactoidStore(FactoidStore store);
 }

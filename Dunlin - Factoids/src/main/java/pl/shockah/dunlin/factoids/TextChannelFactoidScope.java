@@ -5,6 +5,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import pl.shockah.dunlin.TextChannelScope;
 import pl.shockah.dunlin.factoids.db.Factoid;
+import pl.shockah.dunlin.factoids.db.FactoidStore;
 
 import java.sql.SQLException;
 
@@ -35,5 +36,17 @@ public class TextChannelFactoidScope extends FactoidScope {
     protected void setupFactoidRemember(Factoid factoid, Message message) {
         factoid.setScopeType(SCOPE_TYPE);
         factoid.setChannel(message.getTextChannel());
+    }
+
+    @Override
+    public void setInFactoid(Factoid factoid) {
+        factoid.setScopeType("TextChannel");
+        factoid.setChannel(textChannelScope.textChannel);
+    }
+
+    @Override
+    public void setInFactoidStore(FactoidStore store) {
+        store.setScopeType("TextChannel");
+        store.setChannel(textChannelScope.textChannel);
     }
 }
