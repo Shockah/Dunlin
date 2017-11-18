@@ -203,7 +203,22 @@ public class Factoid extends DbObject<Factoid> {
 		scope.setInFactoid(this);
 	}
 
-	public JSONObject getStoreObject() {
-		return null;
+	public JSONObject getStoreObject(JDA jda) {
+		FactoidStore store = getScope(jda).getFactoidStore(getDatabaseManager(), name);
+		return store == null ? null : store.getJsonObject();
+	}
+
+	public void setStoreObject(JDA jda, JSONObject json) {
+		FactoidStore store = getScope(jda).getFactoidStore(getDatabaseManager(), name);
+		if (store == null) {
+			getDatabaseManager().create(FactoidStore.class, obj -> {
+				obj.setFactoid(this);
+				obj.setJsonObject(json);
+			});
+		} else {
+			store.update(obj -> {
+				obj.setJsonObject(json);
+			});
+		}
 	}
 }

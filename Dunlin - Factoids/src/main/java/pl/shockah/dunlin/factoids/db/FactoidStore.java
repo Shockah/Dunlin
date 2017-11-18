@@ -148,4 +148,11 @@ public class FactoidStore extends DbObject<FactoidStore> {
 	public void setScope(FactoidScope scope) {
 		scope.setInFactoidStore(this);
 	}
+
+	public void setFactoid(Factoid factoid) {
+		setScopeType(factoid.getScopeType());
+		setGuildId(factoid.getGuildId());
+		setChannelId(factoid.getChannelId());
+		setName(factoid.getName());
+	}
 }
