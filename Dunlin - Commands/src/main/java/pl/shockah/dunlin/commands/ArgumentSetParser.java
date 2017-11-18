@@ -1,6 +1,5 @@
 package pl.shockah.dunlin.commands;
 
-import org.apache.commons.lang3.StringUtils;
 import pl.shockah.util.Box;
 import pl.shockah.util.UnexpectedException;
 
@@ -9,6 +8,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class ArgumentSetParser<T extends ArgumentSet> {
 	public static final String SPLIT_PATTERN = "(?m)(?<=\\s+)(?!\\s)|(?<!\\s)(?=\\s+)";
@@ -46,7 +46,7 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 					}
 					
 					if (process.defaultArgument != null) {
-						String rawValue = StringUtils.join(split, "", i, split.length);
+						String rawValue = Arrays.stream(split).skip(i).collect(Collectors.joining(""));
 						putArgumentValue(process.defaultArgument, rawValue);
 						break;
 					}
