@@ -16,9 +16,7 @@ public abstract class FactoidScope {
         this.scope = scope;
     }
 
-    public FactoidScope downscope() {
-        return null;
-    }
+    public abstract FactoidScope downscope();
 
     public final String getName() {
         return scope.name();

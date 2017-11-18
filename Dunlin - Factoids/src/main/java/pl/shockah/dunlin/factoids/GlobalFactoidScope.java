@@ -16,6 +16,11 @@ public class GlobalFactoidScope extends FactoidScope {
     }
 
     @Override
+    public FactoidScope downscope() {
+        return null;
+    }
+
+    @Override
     protected void fillWhereClauseForFactoid(Where<Factoid, Integer> where) throws SQLException {
         where.and()
                 .eq(Factoid.SCOPE_TYPE, SCOPE_TYPE);
