@@ -144,10 +144,12 @@ import net.dv8tion.jda.core.hooks.EventListener;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import pl.shockah.plugin.PluginInfo;
 
+import javax.annotation.Nonnull;
+
 public abstract class ListenerPlugin extends Plugin {
-	public final EventListener listener;
+	@Nonnull public final EventListener listener;
 	
-	public ListenerPlugin(PluginManager manager, PluginInfo info) {
+	public ListenerPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info) {
 		super(manager, info);
 		listener = new MyListener(this);
 	}
@@ -358,9 +360,9 @@ public abstract class ListenerPlugin extends Plugin {
 	protected void onGenericCallVoice(GenericCallVoiceEvent event) {}
 	
 	protected class MyListener extends ListenerAdapter {
-		public final ListenerPlugin plugin;
+		@Nonnull public final ListenerPlugin plugin;
 		
-		public MyListener(ListenerPlugin plugin) {
+		public MyListener(@Nonnull ListenerPlugin plugin) {
 			this.plugin = plugin;
 		}
 

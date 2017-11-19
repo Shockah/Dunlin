@@ -9,22 +9,27 @@ import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.*;
 import pl.shockah.dunlin.settings.*;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
-	private final SettingsCommandsPlugin settingsCommandsPlugin;
+	@Nonnull private final SettingsCommandsPlugin settingsCommandsPlugin;
 	
-	public SetCommand(SettingsCommandsPlugin settingsCommandsPlugin) {
+	public SetCommand(@Nonnull SettingsCommandsPlugin settingsCommandsPlugin) {
 		super("set");
 		this.settingsCommandsPlugin = settingsCommandsPlugin;
 	}
 	
 	@Override
-	public ParseResult<Input> parseInput(CommandContext context, String textInput) {
+	@Nonnull public ParseResult<Input> parseInput(@Nonnull CommandContext context, @Nonnull String textInput) {
 		return new ValueParseResult<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(settingsCommandsPlugin.settingsPlugin, context.message));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public CommandResult<Input, Setting<?>> execute(CommandContext context, Input input) {
+	@Nonnull public CommandResult<Input, Setting<?>> execute(@Nonnull CommandContext context, @Nullable Input input) {
+		if (input == null)
+			throw new IllegalArgumentException();
 		if (input.scope instanceof GlobalSettingScope) {
 			if (!settingsCommandsPlugin.permissionsPlugin.hasPermission(context.message, settingsCommandsPlugin, names[0]))
 				return new ErrorCommandResult<>(this, settingsCommandsPlugin.permissionsPlugin.buildMissingPermissionMessage(settingsCommandsPlugin, names[0]));
@@ -47,13 +52,13 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 	}
 
 	@Override
-	public void output(CommandContext context, Input input, CommandResult<Input, Setting<?>> outputResult) {
+	public void output(@Nonnull CommandContext context, @Nullable Input input, @Nonnull CommandResult<Input, Setting<?>> outputResult) {
 		context.message.addReaction("\uD83D\uDC4C").queue();
 	}
 
 	public static final class Arguments extends ArgumentSet {
 		@Argument
-		public Scope scope = Scope.Guild;
+		@Nonnull public Scope scope = Scope.Guild;
 		
 		@Argument("setting")
 		public String settingName;
@@ -68,7 +73,7 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 				throw new IllegalArgumentException("Missing `value` argument.");
 		}
 
-		public Input toInput(SettingsPlugin settingsPlugin, Message message) {
+		public Input toInput(@Nonnull SettingsPlugin settingsPlugin, @Nonnull Message message) {
 			Setting<?> setting = settingsPlugin.getSettingByName(settingName);
 			SettingScope settingScope = null;
 			switch (scope) {
@@ -92,11 +97,11 @@ public class SetCommand extends NamedCommand<SetCommand.Input, Setting<?>> {
 	}
 
 	public static final class Input {
-		public final SettingScope scope;
-		public final Setting<?> setting;
-		public final Object value;
+		@Nonnull public final SettingScope scope;
+		@Nonnull public final Setting<?> setting;
+		@Nullable public final Object value;
 		
-		public Input(SettingScope scope, Setting<?> setting, Object value) {
+		public Input(@Nonnull SettingScope scope, @Nonnull Setting<?> setting, @Nullable Object value) {
 			this.scope = scope;
 			this.setting = setting;
 			this.value = value;

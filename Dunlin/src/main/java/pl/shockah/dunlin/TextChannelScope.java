@@ -2,20 +2,23 @@ package pl.shockah.dunlin;
 
 import net.dv8tion.jda.core.entities.TextChannel;
 
-public class TextChannelScope extends Scope {
-    public final TextChannel textChannel;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-    public TextChannelScope(TextChannel textChannel) {
+public class TextChannelScope extends Scope {
+    @Nonnull public final TextChannel textChannel;
+
+    public TextChannelScope(@Nonnull TextChannel textChannel) {
         this.textChannel = textChannel;
     }
 
     @Override
-    public Scope downscope() {
+    @Nullable public Scope downscope() {
         return new GuildScope(textChannel.getGuild());
     }
 
     @Override
-    public String name() {
+    @Nonnull public String name() {
         return String.format("Channel: #%s", textChannel.getName());
     }
 }

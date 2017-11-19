@@ -7,6 +7,8 @@ import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.dunlin.settings.SettingsPlugin;
 import pl.shockah.plugin.PluginInfo;
 
+import javax.annotation.Nonnull;
+
 public class SettingsCommandsPlugin extends Plugin {
 	@Dependency
 	protected SettingsPlugin settingsPlugin;
@@ -20,7 +22,7 @@ public class SettingsCommandsPlugin extends Plugin {
 	private SetCommand setCommand;
 	private GetCommand getCommand;
 	
-	public SettingsCommandsPlugin(PluginManager manager, PluginInfo info) {
+	public SettingsCommandsPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info) {
 		super(manager, info);
 	}
 	

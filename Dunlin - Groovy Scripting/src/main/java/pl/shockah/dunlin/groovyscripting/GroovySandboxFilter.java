@@ -1,5 +1,6 @@
 package pl.shockah.dunlin.groovyscripting;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -7,17 +8,17 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GroovySandboxFilter extends AbstractGroovySandbox {
-	protected final List<Package> whitelistedPackages = new ArrayList<>();
-	protected final List<Class<?>> whitelistedClasses = new ArrayList<>();
-	protected final List<Method> whitelistedMethods = new ArrayList<>();
+	@Nonnull protected final List<Package> whitelistedPackages = new ArrayList<>();
+	@Nonnull protected final List<Class<?>> whitelistedClasses = new ArrayList<>();
+	@Nonnull protected final List<Method> whitelistedMethods = new ArrayList<>();
 
-	protected final List<Field> blacklistedFields = new ArrayList<>();
+	@Nonnull protected final List<Field> blacklistedFields = new ArrayList<>();
 
-	protected boolean isPackageAllowed(Package pkg) {
+	protected boolean isPackageAllowed(@Nonnull Package pkg) {
 		return whitelistedPackages.contains(pkg);
 	}
 
-	protected boolean isClassAllowed(Class<?> clazz) {
+	protected boolean isClassAllowed(@Nonnull Class<?> clazz) {
 		if (whitelistedClasses.contains(clazz))
 			return true;
 		if (isPackageAllowed(clazz.getPackage()))
@@ -31,7 +32,7 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 		return false;
 	}
 
-	protected boolean isMethodAllowed(Method method) {
+	protected boolean isMethodAllowed(@Nonnull Method method) {
 		if (whitelistedMethods.contains(method))
 			return true;
 		if (isClassAllowed(method.getDeclaringClass()))
@@ -49,13 +50,13 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 		return false;
 	}
 
-	protected boolean isFieldAllowed(Field field) {
+	protected boolean isFieldAllowed(@Nonnull Field field) {
 		if (blacklistedFields.contains(field))
 			return false;
 		return true;
 	}
 
-	private boolean methodMatches(Method method, String methodName, Object... args) {
+	private boolean methodMatches(@Nonnull Method method, @Nonnull String methodName, @Nonnull Object... args) {
 		if (!method.getName().equals(methodName))
 			return false;
 		Class<?>[] parameters = method.getParameterTypes();
@@ -87,7 +88,7 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 		return true;
 	}
 
-	private boolean methodMatchesWithTypes(Method method, String methodName, Class<?>... args) {
+	private boolean methodMatchesWithTypes(@Nonnull Method method, @Nonnull String methodName, @Nonnull Class<?>... args) {
 		if (!method.getName().equals(methodName))
 			return false;
 		Class<?>[] parameters = method.getParameterTypes();
@@ -119,7 +120,7 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 		return true;
 	}
 
-	private List<Method> getMethods(Class<?> clazz, String methodName, Object... args) {
+	private List<Method> getMethods(@Nonnull Class<?> clazz, @Nonnull String methodName, @Nonnull Object... args) {
 		List<Method> methods = new ArrayList<>();
 
 		for (Method method : clazz.getMethods()) {
@@ -135,12 +136,12 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 	}
 
 	@Override
-	public boolean isConstructorAllowed(Class<?> clazz, Object... args) {
+	public boolean isConstructorAllowed(@Nonnull Class<?> clazz, @Nonnull Object... args) {
 		return isClassAllowed(clazz);
 	}
 
 	@Override
-	public boolean isClassMethodAllowed(Class<?> clazz, String method, Object... args) {
+	public boolean isClassMethodAllowed(@Nonnull Class<?> clazz, @Nonnull String method, @Nonnull Object... args) {
 		try {
 			if (isClassAllowed(clazz))
 				return true;
@@ -151,7 +152,7 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 	}
 
 	@Override
-	public boolean isInstanceMethodAllowed(Object obj, String method, Object... args) {
+	public boolean isInstanceMethodAllowed(@Nonnull Object obj, @Nonnull String method, @Nonnull Object... args) {
 		try {
 			if (isClassAllowed(obj.getClass()))
 				return true;
@@ -162,7 +163,7 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 	}
 
 	@Override
-	public boolean isClassFieldGetAllowed(Class<?> clazz, String field) {
+	public boolean isClassFieldGetAllowed(@Nonnull Class<?> clazz, @Nonnull String field) {
 		try {
 			return isFieldAllowed(clazz.getField(field));
 		} catch (Exception ignored) {
@@ -171,7 +172,7 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 	}
 
 	@Override
-	public boolean isClassFieldSetAllowed(Class<?> clazz, String field, Object value) {
+	public boolean isClassFieldSetAllowed(@Nonnull Class<?> clazz, @Nonnull String field, @Nonnull Object value) {
 		try {
 			return isFieldAllowed(clazz.getField(field));
 		} catch (Exception ignored) {
@@ -180,7 +181,7 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 	}
 
 	@Override
-	public boolean isInstanceFieldGetAllowed(Object obj, String field) {
+	public boolean isInstanceFieldGetAllowed(@Nonnull Object obj, @Nonnull String field) {
 		try {
 			return isFieldAllowed(obj.getClass().getField(field));
 		} catch (Exception ignored) {
@@ -189,7 +190,7 @@ public class GroovySandboxFilter extends AbstractGroovySandbox {
 	}
 
 	@Override
-	public boolean isInstanceFieldSetAllowed(Object obj, String field, Object value) {
+	public boolean isInstanceFieldSetAllowed(@Nonnull Object obj, @Nonnull String field, @Nonnull Object value) {
 		try {
 			return isFieldAllowed(obj.getClass().getField(field));
 		} catch (Exception ignored) {

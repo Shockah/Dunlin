@@ -6,27 +6,28 @@ import pl.shockah.dunlin.commands.NamedCommandProvider;
 import pl.shockah.dunlin.factoids.db.Factoid;
 import pl.shockah.util.ReadWriteMap;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 
 public class FactoidCommandProvider extends NamedCommandProvider<Object, Object> {
-    protected final FactoidsPlugin plugin;
-    protected final ReadWriteMap<String, FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>>> factories = new ReadWriteMap<>(new HashMap<>());
+    @Nonnull protected final FactoidsPlugin plugin;
+    @Nonnull protected final ReadWriteMap<String, FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>>> factories = new ReadWriteMap<>(new HashMap<>());
 
-    public FactoidCommandProvider(FactoidsPlugin plugin) {
+    public FactoidCommandProvider(@Nonnull FactoidsPlugin plugin) {
         this.plugin = plugin;
     }
 
-    public void registerFactory(FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory) {
+    public void registerFactory(@Nonnull FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory) {
         factories.put(factory.type.toLowerCase(), factory);
     }
 
-    public void unregisterFactory(FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory) {
+    public void unregisterFactory(@Nonnull FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory) {
         factories.remove(factory.type.toLowerCase());
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public NamedCommand<Object, Object> provide(CommandContext context, String name) {
+    public NamedCommand<Object, Object> provide(@Nonnull CommandContext context, @Nonnull String name) {
         Factoid factoid = plugin.getMatchingFactoid(new TextChannelFactoidScope(context.message.getTextChannel()), name);
         if (factoid == null)
             return null;

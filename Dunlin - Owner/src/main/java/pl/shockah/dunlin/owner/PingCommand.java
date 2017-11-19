@@ -9,6 +9,8 @@ import pl.shockah.dunlin.commands.result.ParseResult;
 import pl.shockah.dunlin.commands.result.ValueCommandResult;
 import pl.shockah.dunlin.commands.result.ValueParseResult;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.temporal.ChronoUnit;
 
 public class PingCommand extends NamedCommand<Void, Long> {
@@ -17,12 +19,12 @@ public class PingCommand extends NamedCommand<Void, Long> {
 	}
 
 	@Override
-	public ParseResult<Void> parseInput(CommandContext context, String textInput) {
+	@Nonnull public ParseResult<Void> parseInput(@Nonnull CommandContext context, @Nonnull String textInput) {
 		return new ValueParseResult<>(this, null);
 	}
 
 	@Override
-	public CommandResult<Void, Long> execute(CommandContext context, Void aVoid) {
+	@Nonnull public CommandResult<Void, Long> execute(@Nonnull CommandContext context, @Nullable Void aVoid) {
 		Message testMessage = context.message.getChannel().sendMessage("Pinging...").complete();
 		long ping = context.message.getCreationTime().until(testMessage.getCreationTime(), ChronoUnit.MILLIS);
 		testMessage.delete().queue();
@@ -30,7 +32,7 @@ public class PingCommand extends NamedCommand<Void, Long> {
 	}
 
 	@Override
-	public Message formatOutput(Long ms) {
+	@Nullable public Message formatOutput(@Nullable Long ms) {
 		return new MessageBuilder().append(String.format("\uD83D\uDD52 Pong: %dms", ms)).build();
 	}
 }

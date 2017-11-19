@@ -16,35 +16,38 @@ import pl.shockah.json.JSONObject;
 import pl.shockah.json.JSONParser;
 import pl.shockah.json.JSONPrinter;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 @DatabaseTable(tableName = "pl_shockah_dunlin_factoids_db_Factoid")
 @DbObject.TableVersion(1)
 public class FactoidStore extends DbObject<FactoidStore> {
 	@DatabaseField(columnName = NAME, canBeNull = false)
 	private String name;
-	public static final String NAME = "name";
+	@Nonnull public static final String NAME = "name";
 
 	@DatabaseField(columnName = GUILD_ID)
 	private Long guildId;
-	public static final String GUILD_ID = "guildId";
+	@Nonnull public static final String GUILD_ID = "guildId";
 
 	@DatabaseField(columnName = CHANNEL_ID)
 	private Long channelId;
-	public static final String CHANNEL_ID = "channelId";
+	@Nonnull public static final String CHANNEL_ID = "channelId";
 
 	@DatabaseField(columnName = SCOPE_TYPE, canBeNull = false)
 	private String scopeType;
-	public static final String SCOPE_TYPE = "scopeType";
+	@Nonnull public static final String SCOPE_TYPE = "scopeType";
 
 	@DatabaseField(columnName = JSON, canBeNull = false)
 	private String json;
-	public static final String JSON = "json";
+	@Nonnull public static final String JSON = "json";
 
 	@Deprecated //ORMLite-only
 	FactoidStore() {
 		super();
 	}
 
-	public FactoidStore(Dao<FactoidStore, Integer> dao) {
+	public FactoidStore(@Nonnull Dao<FactoidStore, Integer> dao) {
 		super(dao);
 	}
 
@@ -52,64 +55,64 @@ public class FactoidStore extends DbObject<FactoidStore> {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(@Nonnull String name) {
 		this.name = name;
 	}
 
-	public Long getGuildId() {
+	@Nullable public Long getGuildId() {
 		return guildId;
 	}
 
-	public void setGuildId(Long guildId) {
+	public void setGuildId(@Nullable Long guildId) {
 		this.guildId = guildId;
 	}
 
-	public Guild getGuild(ShardManager manager) {
+	@Nullable public Guild getGuild(@Nonnull ShardManager manager) {
 		return manager.getGuildById(guildId);
 	}
 
-	public Guild getGuild(JDA jda) {
+	public Guild getGuild(@Nonnull JDA jda) {
 		return jda.getGuildById(guildId);
 	}
 
-	public void setGuild(Guild guild) {
+	public void setGuild(@Nullable Guild guild) {
 		setGuildId(guild == null ? null : guild.getIdLong());
 	}
 
-	public Long getChannelId() {
+	@Nullable public Long getChannelId() {
 		return channelId;
 	}
 
-	public void setChannelId(Long channelId) {
+	public void setChannelId(@Nullable Long channelId) {
 		this.channelId = channelId;
 	}
 
-	public TextChannel getChannel(ShardManager manager) {
+	@Nullable public TextChannel getChannel(@Nonnull ShardManager manager) {
 		return channelId == null ? null : manager.getTextChannelById(channelId);
 	}
 
-	public TextChannel getChannel(JDA jda) {
+	public TextChannel getChannel(@Nonnull JDA jda) {
 		return jda.getTextChannelById(channelId);
 	}
 
-	public void setChannel(TextChannel channel) {
+	public void setChannel(@Nullable TextChannel channel) {
 		setGuild(channel == null ? null : channel.getGuild());
 		setChannelId(channel == null ? null : channel.getIdLong());
 	}
 
-	public String getJson() {
+	@Nullable public String getJson() {
 		return json;
 	}
 
-	public void setJson(String json) {
+	public void setJson(@Nullable String json) {
 		this.json = json;
 	}
 
-	public JSONObject getJsonObject() {
+	@Nullable public JSONObject getJsonObject() {
 		return json == null ? null : new JSONParser().parseObject(json);
 	}
 
-	public void setJsonObject(JSONObject object) {
+	public void setJsonObject(@Nullable JSONObject object) {
 		setJson(object == null ? null : new JSONPrinter().toString(object));
 	}
 
@@ -117,23 +120,29 @@ public class FactoidStore extends DbObject<FactoidStore> {
 		return scopeType;
 	}
 
-	public void setScopeType(String scopeType) {
+	public void setScopeType(@Nonnull String scopeType) {
 		this.scopeType = scopeType;
 	}
 
-	public FactoidScope getScope(ShardManager manager) {
+	public FactoidScope getScope(@Nonnull ShardManager manager) {
 		switch (scopeType) {
 			case "Global":
 				return new GlobalFactoidScope();
 			case "Guild":
-				return new GuildFactoidScope(manager.getGuildById(guildId));
+				Guild guild = manager.getGuildById(guildId);
+				if (guild == null)
+					throw new IllegalStateException();
+				return new GuildFactoidScope(guild);
 			case "TextChannel":
-				return new TextChannelFactoidScope(manager.getTextChannelById(channelId));
+				TextChannel channel = manager.getTextChannelById(channelId);
+				if (channel == null)
+					throw new IllegalStateException();
+				return new TextChannelFactoidScope(channel);
 		}
 		throw new IllegalStateException();
 	}
 
-	public FactoidScope getScope(JDA jda) {
+	public FactoidScope getScope(@Nonnull JDA jda) {
 		switch (scopeType) {
 			case "Global":
 				return new GlobalFactoidScope();
@@ -145,11 +154,11 @@ public class FactoidStore extends DbObject<FactoidStore> {
 		throw new IllegalStateException();
 	}
 
-	public void setScope(FactoidScope scope) {
+	public void setScope(@Nonnull FactoidScope scope) {
 		scope.setInFactoidStore(this);
 	}
 
-	public void setFactoid(Factoid factoid) {
+	public void setFactoid(@Nonnull Factoid factoid) {
 		setScopeType(factoid.getScopeType());
 		setGuildId(factoid.getGuildId());
 		setChannelId(factoid.getChannelId());

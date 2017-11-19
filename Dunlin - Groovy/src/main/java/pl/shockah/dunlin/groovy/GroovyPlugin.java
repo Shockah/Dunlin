@@ -5,16 +5,17 @@ import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.plugin.PluginInfo;
 
+import javax.annotation.Nonnull;
 import java.net.URL;
 import java.net.URLClassLoader;
 
 public class GroovyPlugin extends Plugin {
-	public GroovyPlugin(PluginManager manager, PluginInfo info) {
+	public GroovyPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info) {
 		super(manager, info);
 	}
 
 	@ClassLoaderProvider("groovy")
-	public URLClassLoader createGroovyPluginClassLoader(ClassLoader parentClassLoader, URL[] urls) {
+	public URLClassLoader createGroovyPluginClassLoader(@Nonnull ClassLoader parentClassLoader, @Nonnull URL[] urls) {
 		GroovyClassLoader cl = new GroovyClassLoader(parentClassLoader);
 		for (URL url : urls) {
 			cl.addURL(url);

@@ -3,13 +3,16 @@ package pl.shockah.dunlin.settings;
 import net.dv8tion.jda.core.entities.User;
 import pl.shockah.dunlin.Scope;
 
-public class UserSettingScope extends SettingScope {
-    public final User user;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-    public UserSettingScope(User user) {
+public class UserSettingScope extends SettingScope {
+    @Nonnull public final User user;
+
+    public UserSettingScope(@Nonnull User user) {
         super(new Scope() {
             @Override
-            public String name() {
+            @Nonnull public String name() {
                 return String.format("User: %s#%s", user.getName(), user.getDiscriminator());
             }
         });
@@ -17,17 +20,17 @@ public class UserSettingScope extends SettingScope {
     }
 
     @Override
-    protected Object getRaw(Setting<?> setting) {
+    @Nullable protected Object getRaw(@Nonnull Setting<?> setting) {
         return setting.settingsPlugin.settingsJson.getObjectOrEmpty("user").getObjectOrEmpty(user.getId()).get(setting.getFullName());
     }
 
     @Override
-    protected void setRaw(Setting<?> setting, Object raw) {
+    protected void setRaw(@Nonnull Setting<?> setting, @Nullable Object raw) {
         setting.settingsPlugin.settingsJson.getObjectOrNew("user").getObjectOrEmpty(user.getId()).put(setting.getFullName(), raw);
     }
 
     @Override
-    public SettingScope downscope() {
+    @Nullable public SettingScope downscope() {
         return new GlobalSettingScope();
     }
 }

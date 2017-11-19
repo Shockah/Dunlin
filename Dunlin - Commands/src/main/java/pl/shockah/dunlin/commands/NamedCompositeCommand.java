@@ -3,32 +3,35 @@ package pl.shockah.dunlin.commands;
 import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.commands.result.*;
 
-public class NamedCompositeCommand extends NamedCommand<NamedCompositeCommand.Input, NamedCompositeCommand.Output> {
-	public final Command<?, ?> defaultCommand;
-	public final DefaultNamedCommandProvider provider = new DefaultNamedCommandProvider();
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-	public NamedCompositeCommand(String name, String... altNames) {
+public class NamedCompositeCommand extends NamedCommand<NamedCompositeCommand.Input, NamedCompositeCommand.Output> {
+	@Nullable public final Command<?, ?> defaultCommand;
+	@Nonnull public final DefaultNamedCommandProvider provider = new DefaultNamedCommandProvider();
+
+	public NamedCompositeCommand(@Nonnull String name, @Nonnull String... altNames) {
 		this(null, name, altNames);
 	}
 
-	public NamedCompositeCommand(Command<?, ?> defaultCommand, String name, String... altNames) {
+	public NamedCompositeCommand(@Nullable Command<?, ?> defaultCommand, @Nonnull String name, @Nonnull String... altNames) {
 		super(name, altNames);
 		this.defaultCommand = defaultCommand;
 	}
 
 	@SuppressWarnings("unchecked")
-	public void registerSubcommand(NamedCommand<?, ?> namedCommand) {
+	public void registerSubcommand(@Nonnull NamedCommand<?, ?> namedCommand) {
 		provider.registerNamedCommand((NamedCommand<Object, Object>)namedCommand);
 	}
 
 	@SuppressWarnings("unchecked")
-	public void unregisterSubcommand(NamedCommand<?, ?> namedCommand) {
+	public void unregisterSubcommand(@Nonnull NamedCommand<?, ?> namedCommand) {
 		provider.unregisterNamedCommand((NamedCommand<Object, Object>)namedCommand);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ParseResult<Input> parseInput(CommandContext context, String textInput) {
+	@Nonnull public ParseResult<Input> parseInput(@Nonnull CommandContext context, @Nonnull String textInput) {
 		String[] split = textInput.split("\\s+");
 		Command<Object, Object> command = provider.provide(context, split[0]);
 		String newTextInput = textInput.substring(split[0].length() + 1);
@@ -47,7 +50,10 @@ public class NamedCompositeCommand extends NamedCommand<NamedCompositeCommand.In
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public CommandResult<Input, Output> execute(CommandContext context, Input input) {
+	@Nonnull public CommandResult<Input, Output> execute(@Nonnull CommandContext context, @Nullable Input input) {
+		if (input == null)
+			throw new IllegalArgumentException();
+
 		CommandResult<?, ?> result = ((Command<Object, ?>)input.subcommand).execute(context, input.value);
 		if (result instanceof ErrorCommandResult<?, ?>)
 			return (ErrorCommandResult<Input, Output>)result;
@@ -57,25 +63,27 @@ public class NamedCompositeCommand extends NamedCommand<NamedCompositeCommand.In
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Message formatOutput(CommandContext context, Input input, Output output) {
+	@Nonnull public Message formatOutput(@Nonnull CommandContext context, @Nullable Input input, @Nullable Output output) {
+		if (input == null || output == null)
+			throw new IllegalArgumentException();
 		return ((CommandResult<Object, Object>)output.result).getMessage(context, input.value);
 	}
 
 	public static final class Input {
-		public final Command<?, ?> subcommand;
-		public final Object value;
+		@Nonnull public final Command<?, ?> subcommand;
+		@Nullable public final Object value;
 
-		public Input(Command<?, ?> subcommand, Object value) {
+		public Input(@Nonnull Command<?, ?> subcommand, @Nullable Object value) {
 			this.subcommand = subcommand;
 			this.value = value;
 		}
 	}
 
 	public static final class Output {
-		public final Command<?, ?> subcommand;
-		public final CommandResult<?, ?> result;
+		@Nonnull public final Command<?, ?> subcommand;
+		@Nonnull public final CommandResult<?, ?> result;
 
-		public Output(Command<?, ?> subcommand, CommandResult<?, ?> result) {
+		public Output(@Nonnull Command<?, ?> subcommand, @Nonnull CommandResult<?, ?> result) {
 			this.subcommand = subcommand;
 			this.result = result;
 		}

@@ -2,22 +2,26 @@ package pl.shockah.dunlin.settings;
 
 import pl.shockah.dunlin.plugin.Plugin;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class EnumSetting<T extends Enum<T>> extends Setting<T> {
-	public final Class<T> clazz;
+	@Nonnull public final Class<T> clazz;
 
 	@SuppressWarnings("unchecked")
-	public EnumSetting(SettingsPlugin settingsPlugin, Plugin plugin, String name, T defaultValue) {
+	public EnumSetting(@Nonnull SettingsPlugin settingsPlugin, @Nonnull Plugin plugin, @Nonnull String name, @Nonnull T defaultValue) {
 		super(settingsPlugin, plugin, name, defaultValue);
 		clazz = (Class<T>)defaultValue.getClass();
 	}
 
-	public EnumSetting(SettingsPlugin settingsPlugin, Plugin plugin, String name, Class<T> clazz) {
+	public EnumSetting(@Nonnull SettingsPlugin settingsPlugin, @Nonnull Plugin plugin, @Nonnull String name, @Nonnull Class<T> clazz) {
 		super(settingsPlugin, plugin, name, null);
 		this.clazz = clazz;
 	}
 
 	@Override
-	public T getForScope(SettingScope scope) {
+	@Nullable
+	public T getForScope(@Nonnull SettingScope scope) {
 		String raw = (String)scope.getRaw(this);
 		if (raw == null)
 			return null;
@@ -25,13 +29,15 @@ public class EnumSetting<T extends Enum<T>> extends Setting<T> {
 	}
 
 	@Override
-	public void setForScope(SettingScope scope, T value) {
+	public void setForScope(@Nonnull SettingScope scope, @Nullable T value) {
+		if (value == null)
+			throw new IllegalArgumentException();
 		scope.setRaw(this, value.name());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public T parseValue(String textInput) {
+	@Nonnull public T parseValue(@Nonnull String textInput) {
 		for (Object obj : clazz.getEnumConstants()) {
 			Enum<?> enumConst = (Enum<?>)obj;
 			if (enumConst.name().equalsIgnoreCase(textInput)) {

@@ -15,6 +15,8 @@ import pl.shockah.dunlin.factoids.GuildFactoidScope;
 import pl.shockah.dunlin.factoids.TextChannelFactoidScope;
 import pl.shockah.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Date;
 
 @DatabaseTable(tableName = "pl_shockah_dunlin_factoids_db_Factoid")
@@ -22,46 +24,46 @@ import java.util.Date;
 public class Factoid extends DbObject<Factoid> {
 	@DatabaseField(columnName = NAME, canBeNull = false)
 	private String name;
-	public static final String NAME = "name";
+	@Nonnull public static final String NAME = "name";
 
 	@DatabaseField(columnName = GUILD_ID)
 	private Long guildId;
-	public static final String GUILD_ID = "guildId";
+	@Nonnull public static final String GUILD_ID = "guildId";
 
 	@DatabaseField(columnName = CHANNEL_ID)
 	private Long channelId;
-	public static final String CHANNEL_ID = "channelId";
+	@Nonnull public static final String CHANNEL_ID = "channelId";
 
 	@DatabaseField(columnName = AUTHOR_USER_ID)
 	private long authorUserId;
-	public static final String AUTHOR_USER_ID = "authorUserId";
+	@Nonnull public static final String AUTHOR_USER_ID = "authorUserId";
 
 	@DatabaseField(columnName = CONTENT, canBeNull = false)
 	private String content;
-	public static final String CONTENT = "content";
+	@Nonnull public static final String CONTENT = "content";
 
 	@DatabaseField(columnName = FORGOTTEN, canBeNull = false)
 	private boolean forgotten;
-	public static final String FORGOTTEN = "forgotten";
+	@Nonnull public static final String FORGOTTEN = "forgotten";
 
 	@DatabaseField(columnName = TYPE, canBeNull = false)
 	private String type;
-	public static final String TYPE = "type";
+	@Nonnull public static final String TYPE = "type";
 
 	@DatabaseField(columnName = DATE, canBeNull = false)
 	private Date date;
-	public static final String DATE = "date";
+	@Nonnull public static final String DATE = "date";
 
 	@DatabaseField(columnName = SCOPE_TYPE, canBeNull = false)
 	private String scopeType;
-	public static final String SCOPE_TYPE = "scopeType";
+	@Nonnull public static final String SCOPE_TYPE = "scopeType";
 
 	@Deprecated //ORMLite-only
 	Factoid() {
 		super();
 	}
 
-	public Factoid(Dao<Factoid, Integer> dao) {
+	public Factoid(@Nonnull Dao<Factoid, Integer> dao) {
 		super(dao);
 		date = new Date();
 	}
@@ -70,47 +72,47 @@ public class Factoid extends DbObject<Factoid> {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(@Nonnull String name) {
 		this.name = name;
 	}
 
-	public Long getGuildId() {
+	@Nullable public Long getGuildId() {
 		return guildId;
 	}
 
-	public void setGuildId(Long guildId) {
+	public void setGuildId(@Nullable Long guildId) {
 		this.guildId = guildId;
 	}
 
-	public Guild getGuild(ShardManager manager) {
+	@Nullable public Guild getGuild(@Nonnull ShardManager manager) {
 		return manager.getGuildById(guildId);
 	}
 
-	public Guild getGuild(JDA jda) {
+	@Nullable public Guild getGuild(@Nonnull JDA jda) {
 		return jda.getGuildById(guildId);
 	}
 
-	public void setGuild(Guild guild) {
+	public void setGuild(@Nullable Guild guild) {
 		setGuildId(guild == null ? null : guild.getIdLong());
 	}
 
-	public Long getChannelId() {
+	@Nullable public Long getChannelId() {
 		return channelId;
 	}
 
-	public void setChannelId(Long channelId) {
+	public void setChannelId(@Nullable Long channelId) {
 		this.channelId = channelId;
 	}
 
-	public TextChannel getChannel(ShardManager manager) {
+	@Nullable public TextChannel getChannel(@Nonnull ShardManager manager) {
 		return channelId == null ? null : manager.getTextChannelById(channelId);
 	}
 
-	public TextChannel getChannel(JDA jda) {
+	@Nullable public TextChannel getChannel(@Nonnull JDA jda) {
 		return jda.getTextChannelById(channelId);
 	}
 
-	public void setChannel(TextChannel channel) {
+	public void setChannel(@Nullable TextChannel channel) {
 		setGuild(channel == null ? null : channel.getGuild());
 		setChannelId(channel == null ? null : channel.getIdLong());
 	}
@@ -123,15 +125,15 @@ public class Factoid extends DbObject<Factoid> {
 		this.authorUserId = authorUserId;
 	}
 
-	public User getAuthor(ShardManager manager) {
+	public User getAuthor(@Nonnull ShardManager manager) {
 		return manager.getUserById(authorUserId);
 	}
 
-	public User getAuthor(JDA jda) {
+	public User getAuthor(@Nonnull JDA jda) {
 		return jda.getUserById(authorUserId);
 	}
 
-	public void setAuthor(User user) {
+	public void setAuthor(@Nonnull User user) {
 		setAuthorUserId(user.getIdLong());
 	}
 
@@ -139,7 +141,7 @@ public class Factoid extends DbObject<Factoid> {
 		return content;
 	}
 
-	public void setContent(String content) {
+	public void setContent(@Nonnull String content) {
 		this.content = content;
 	}
 
@@ -155,7 +157,7 @@ public class Factoid extends DbObject<Factoid> {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(@Nonnull String type) {
 		this.type = type;
 	}
 
@@ -163,7 +165,7 @@ public class Factoid extends DbObject<Factoid> {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(@Nonnull Date date) {
 		this.date = date;
 	}
 
@@ -171,23 +173,29 @@ public class Factoid extends DbObject<Factoid> {
 		return scopeType;
 	}
 
-	public void setScopeType(String scopeType) {
+	public void setScopeType(@Nonnull String scopeType) {
 		this.scopeType = scopeType;
 	}
 
-	public FactoidScope getScope(ShardManager manager) {
+	public FactoidScope getScope(@Nonnull ShardManager manager) {
 		switch (scopeType) {
 			case "Global":
 				return new GlobalFactoidScope();
 			case "Guild":
-				return new GuildFactoidScope(manager.getGuildById(guildId));
+				Guild guild = manager.getGuildById(guildId);
+				if (guild == null)
+					throw new IllegalArgumentException();
+				return new GuildFactoidScope(guild);
 			case "TextChannel":
-				return new TextChannelFactoidScope(manager.getTextChannelById(channelId));
+				TextChannel channel = manager.getTextChannelById(channelId);
+				if (channel == null)
+					throw new IllegalArgumentException();
+				return new TextChannelFactoidScope(channel);
 		}
 		throw new IllegalStateException();
 	}
 
-	public FactoidScope getScope(JDA jda) {
+	@Nonnull public FactoidScope getScope(@Nonnull JDA jda) {
 		switch (scopeType) {
 			case "Global":
 				return new GlobalFactoidScope();
@@ -199,16 +207,16 @@ public class Factoid extends DbObject<Factoid> {
 		throw new IllegalStateException();
 	}
 
-	public void setScope(FactoidScope scope) {
+	public void setScope(@Nonnull FactoidScope scope) {
 		scope.setInFactoid(this);
 	}
 
-	public JSONObject getStoreObject(JDA jda) {
+	@Nullable public JSONObject getStoreObject(@Nonnull JDA jda) {
 		FactoidStore store = getScope(jda).getFactoidStore(getDatabaseManager(), name);
 		return store == null ? null : store.getJsonObject();
 	}
 
-	public void setStoreObject(JDA jda, JSONObject json) {
+	public void setStoreObject(@Nonnull JDA jda, @Nullable JSONObject json) {
 		FactoidStore store = getScope(jda).getFactoidStore(getDatabaseManager(), name);
 		if (store == null) {
 			getDatabaseManager().create(FactoidStore.class, obj -> {

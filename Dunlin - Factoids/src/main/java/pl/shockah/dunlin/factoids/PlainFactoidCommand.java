@@ -8,18 +8,21 @@ import pl.shockah.dunlin.commands.result.ValueCommandResult;
 import pl.shockah.dunlin.commands.result.ValueParseResult;
 import pl.shockah.dunlin.factoids.db.Factoid;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class PlainFactoidCommand extends AbstractFactoidCommand<String, String> {
-    public PlainFactoidCommand(Factoid factoid, String name, String... altNames) {
+    public PlainFactoidCommand(@Nonnull Factoid factoid, @Nonnull String name, @Nonnull String... altNames) {
         super(factoid, name, altNames);
     }
 
     @Override
-    public ParseResult<String> parseInput(CommandContext context, String textInput) {
+    @Nonnull public ParseResult<String> parseInput(@Nonnull CommandContext context, @Nonnull String textInput) {
         return new ValueParseResult<>(this, textInput);
     }
 
     @Override
-    public CommandResult<String, String> execute(CommandContext context, String input) {
+    @Nonnull public CommandResult<String, String> execute(@Nonnull CommandContext context, @Nullable String input) {
         String output = factoid.getContent();
         input = input == null ? "" : input;
         User user = context.message.getAuthor();

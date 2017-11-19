@@ -3,10 +3,12 @@ package pl.shockah.dunlin.commands.result;
 import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.commands.Command;
 
-public final class ErrorParseResult<T> extends ParseResult<T> {
-	public final Message message;
+import javax.annotation.Nonnull;
 
-	public ErrorParseResult(Command<T, ?> command, Message message) {
+public final class ErrorParseResult<T> extends ParseResult<T> {
+	@Nonnull public final Message message;
+
+	public ErrorParseResult(@Nonnull Command<T, ?> command, @Nonnull Message message) {
 		super(command);
 		this.message = message;
 	}

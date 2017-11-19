@@ -14,24 +14,26 @@ import pl.shockah.dunlin.groovyscripting.GroovyScriptingPlugin;
 import pl.shockah.json.JSONObject;
 import pl.shockah.json.JSONPrinter;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 
 public class GroovyFactoidCommand extends AbstractFactoidCommand<Object, Object> {
-	public final GroovyScriptingPlugin scriptingPlugin;
+	@Nonnull public final GroovyScriptingPlugin scriptingPlugin;
 
-	public GroovyFactoidCommand(GroovyScriptingPlugin scriptingPlugin, Factoid factoid, String name, String... altNames) {
+	public GroovyFactoidCommand(@Nonnull GroovyScriptingPlugin scriptingPlugin, @Nonnull Factoid factoid, @Nonnull String name, @Nonnull String... altNames) {
 		super(factoid, name, altNames);
 		this.scriptingPlugin = scriptingPlugin;
 	}
 
 	@Override
-	public ParseResult<Object> parseInput(CommandContext context, String textInput) {
+	@Nonnull public ParseResult<Object> parseInput(@Nonnull CommandContext context, @Nonnull String textInput) {
 		return new ValueParseResult<>(this, textInput);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public CommandResult<Object, Object> execute(CommandContext context, Object o) {
+	@Nonnull public CommandResult<Object, Object> execute(@Nonnull CommandContext context, @Nullable Object o) {
 		Binding binding = new Binding();
 		scriptingPlugin.injectVariables(binding, context.message);
 		binding.setVariable("input", o);
@@ -65,12 +67,12 @@ public class GroovyFactoidCommand extends AbstractFactoidCommand<Object, Object>
 		}
 	}
 
-	private void saveFactoidStore(CommandContext context, JSONObject json) {
+	private void saveFactoidStore(@Nonnull CommandContext context, @Nullable JSONObject json) {
 		factoid.setStoreObject(context.message.getJDA(), json);
 	}
 
 	@Override
-	public Message formatOutput(CommandContext context, Object input, Object output) {
+	@Nullable public Message formatOutput(@Nonnull CommandContext context, @Nullable Object input, @Nullable Object output) {
 		if (output instanceof EmbedBuilder)
 			return new MessageBuilder().setEmbed(((EmbedBuilder)output).build()).build();
 		else if (output instanceof MessageEmbed)

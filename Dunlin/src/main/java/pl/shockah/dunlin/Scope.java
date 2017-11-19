@@ -1,9 +1,12 @@
 package pl.shockah.dunlin;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public abstract class Scope {
-    public Scope downscope() {
+    @Nullable public Scope downscope() {
         return null;
     }
 
-    public abstract String name();
+    @Nonnull public abstract String name();
 }

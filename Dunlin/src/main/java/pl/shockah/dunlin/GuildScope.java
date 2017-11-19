@@ -2,20 +2,23 @@ package pl.shockah.dunlin;
 
 import net.dv8tion.jda.core.entities.Guild;
 
-public class GuildScope extends Scope {
-    public final Guild guild;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-    public GuildScope(Guild guild) {
+public class GuildScope extends Scope {
+    @Nonnull public final Guild guild;
+
+    public GuildScope(@Nonnull Guild guild) {
         this.guild = guild;
     }
 
     @Override
-    public Scope downscope() {
+    @Nullable public Scope downscope() {
         return new GlobalScope();
     }
 
     @Override
-    public String name() {
+    @Nonnull public String name() {
         return String.format("Guild: %s", guild.getName());
     }
 }
