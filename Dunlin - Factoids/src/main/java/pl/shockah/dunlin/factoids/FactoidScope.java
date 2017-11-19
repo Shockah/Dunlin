@@ -5,24 +5,26 @@ import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.Scope;
 import pl.shockah.dunlin.factoids.db.Factoid;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.sql.SQLException;
 
 public abstract class FactoidScope {
-    public final Scope scope;
+    @Nonnull public final Scope scope;
 
-    public FactoidScope(Scope scope) {
+    public FactoidScope(@Nonnull Scope scope) {
         this.scope = scope;
     }
 
-    public FactoidScope downscope() {
+    @Nullable public FactoidScope downscope() {
         return null;
     }
 
-    public final String getName() {
+    @Nonnull public final String getName() {
         return scope.name();
     }
 
-    public final Factoid getFactoid(FactoidsPlugin plugin, String name) {
+    @Nullable public final Factoid getFactoid(@Nonnull FactoidsPlugin plugin, @Nonnull String name) {
         return plugin.manager.app.getDatabaseManager().selectFirst(Factoid.class, qb -> {
             Where<Factoid, Integer> where = qb.where()
                     .eq(Factoid.FORGOTTEN, false).and()
@@ -32,7 +34,7 @@ public abstract class FactoidScope {
         });
     }
 
-    public final Factoid rememberFactoid(FactoidsPlugin plugin, FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory, String name, String content, Message message) {
+    @Nonnull public final Factoid rememberFactoid(@Nonnull FactoidsPlugin plugin, @Nonnull FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory, @Nonnull String name, @Nonnull String content, @Nonnull Message message) {
         return plugin.manager.app.getDatabaseManager().create(Factoid.class, obj -> {
             obj.setType(factory.type);
             obj.setName(name.toLowerCase());
@@ -42,7 +44,7 @@ public abstract class FactoidScope {
         });
     }
 
-    protected abstract void fillWhereClause(Where<Factoid, Integer> where) throws SQLException;
+    protected abstract void fillWhereClause(@Nonnull Where<Factoid, Integer> where) throws SQLException;
 
-    protected abstract void setupFactoidRemember(Factoid factoid, Message message);
+    protected abstract void setupFactoidRemember(@Nonnull Factoid factoid, @Nonnull Message message);
 }

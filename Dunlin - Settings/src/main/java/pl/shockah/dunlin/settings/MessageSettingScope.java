@@ -2,33 +2,48 @@ package pl.shockah.dunlin.settings;
 
 import net.dv8tion.jda.core.entities.Message;
 
-public class MessageSettingScope extends SettingScope {
-    public final Message message;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-    public MessageSettingScope(Message message) {
+public class MessageSettingScope extends SettingScope {
+    @Nonnull public final Message message;
+
+    public MessageSettingScope(@Nonnull Message message) {
         super(null);
         this.message = message;
     }
 
     @Override
-    protected Object getRaw(Setting<?> setting) {
-        Object value = downscopeToUser().getRaw(setting);
+    protected Object getRaw(@Nonnull Setting<?> setting) {
+        SettingScope scope;
+        Object value;
+
+        scope = downscopeToUser();
+        value = scope.getRaw(setting);
         if (value != null)
             return value;
-        return downscope().getRaw(setting);
+
+        scope = downscope();
+        if (scope != null) {
+            value = scope.getRaw(setting);
+            if (value != null)
+                return value;
+        }
+
+        throw new IllegalArgumentException();
     }
 
     @Override
-    protected void setRaw(Setting<?> setting, Object raw) {
+    protected void setRaw(@Nonnull Setting<?> setting, @Nullable Object raw) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public SettingScope downscope() {
+    @Nullable public SettingScope downscope() {
         return new TextChannelSettingScope(message.getTextChannel());
     }
 
-    private UserSettingScope downscopeToUser() {
+    @Nonnull private UserSettingScope downscopeToUser() {
         return new UserSettingScope(message.getAuthor());
     }
 }

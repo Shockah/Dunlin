@@ -12,6 +12,8 @@ import pl.shockah.dunlin.settings.SettingsPlugin;
 import pl.shockah.json.JSONList;
 import pl.shockah.plugin.PluginInfo;
 
+import javax.annotation.Nonnull;
+
 public class OwnerPlugin extends Plugin {
 	@Dependency
 	public CommandsPlugin commandsPlugin;
@@ -30,7 +32,7 @@ public class OwnerPlugin extends Plugin {
 
 	protected Setting<String> announceChannelSetting;
 	
-	public OwnerPlugin(PluginManager manager, PluginInfo info) {
+	public OwnerPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info) {
 		super(manager, info);
 	}
 	

@@ -6,6 +6,9 @@ import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.plugin.PluginInfo;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class FactoidsPlugin extends Plugin {
 	@Dependency
 	protected CommandsPlugin commandsPlugin;
@@ -14,19 +17,21 @@ public class FactoidsPlugin extends Plugin {
 	
 	private FactoidCommand factoidCommand;
 	
-	public FactoidsPlugin(PluginManager manager, PluginInfo info) {
+	public FactoidsPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info) {
 		super(manager, info);
 	}
 
-	public FactoidCommandProvider getFactoidCommandProvider() {
+	@Nonnull public FactoidCommandProvider getFactoidCommandProvider() {
+		if (commandProvider == null)
+			throw new IllegalStateException();
 		return commandProvider;
 	}
 
-	public void registerFactory(FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory) {
+	public void registerFactory(@Nonnull FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory) {
 		commandProvider.registerFactory(factory);
 	}
 
-	public void unregisterFactory(FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory) {
+	public void unregisterFactory(@Nonnull FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory) {
 		commandProvider.unregisterFactory(factory);
 	}
 	
@@ -50,17 +55,18 @@ public class FactoidsPlugin extends Plugin {
 		commandsPlugin.unregisterNamedCommand(factoidCommand);
 	}
 
-	public Factoid getMatchingFactoid(FactoidScope scope, String name) {
-		while (scope != null) {
-			Factoid factoid = getFactoid(scope, name);
+	@Nullable public Factoid getMatchingFactoid(@Nonnull FactoidScope scope, @Nonnull String name) {
+		FactoidScope currentScope = scope;
+		while (currentScope != null) {
+			Factoid factoid = getFactoid(currentScope, name);
 			if (factoid != null)
 				return factoid;
-			scope = scope.downscope();
+			currentScope = currentScope.downscope();
 		}
 		return null;
 	}
 
-	public Factoid getFactoid(FactoidScope scope, String name) {
+	@Nullable public Factoid getFactoid(@Nonnull FactoidScope scope, @Nonnull String name) {
 		return scope.getFactoid(this, name);
 	}
 }

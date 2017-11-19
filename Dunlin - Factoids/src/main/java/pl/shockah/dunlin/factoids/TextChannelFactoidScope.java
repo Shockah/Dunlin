@@ -6,25 +6,27 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import pl.shockah.dunlin.TextChannelScope;
 import pl.shockah.dunlin.factoids.db.Factoid;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.sql.SQLException;
 
 public class TextChannelFactoidScope extends FactoidScope {
-    public static final String SCOPE_TYPE = "TextChannel";
+    @Nonnull public static final String SCOPE_TYPE = "TextChannel";
 
-    public final TextChannelScope textChannelScope;
+    @Nonnull public final TextChannelScope textChannelScope;
 
-    public TextChannelFactoidScope(TextChannel textChannel) {
+    public TextChannelFactoidScope(@Nonnull TextChannel textChannel) {
         super(new TextChannelScope(textChannel));
         textChannelScope = (TextChannelScope)scope;
     }
 
     @Override
-    public FactoidScope downscope() {
+    @Nullable public FactoidScope downscope() {
         return new GuildFactoidScope(textChannelScope.textChannel.getGuild());
     }
 
     @Override
-    protected void fillWhereClause(Where<Factoid, Integer> where) throws SQLException {
+    protected void fillWhereClause(@Nonnull Where<Factoid, Integer> where) throws SQLException {
         where.and()
                 .eq(Factoid.SCOPE_TYPE, SCOPE_TYPE).and()
                 .eq(Factoid.GUILD_ID, textChannelScope.textChannel.getGuild().getIdLong()).and()
@@ -32,7 +34,7 @@ public class TextChannelFactoidScope extends FactoidScope {
     }
 
     @Override
-    protected void setupFactoidRemember(Factoid factoid, Message message) {
+    protected void setupFactoidRemember(@Nonnull Factoid factoid, @Nonnull Message message) {
         factoid.setScopeType(SCOPE_TYPE);
         factoid.setChannel(message.getTextChannel());
     }

@@ -12,6 +12,8 @@ import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.plugin.PluginInfo;
 
+import javax.annotation.Nonnull;
+
 public class ConsoleOutputPlugin extends ListenerPlugin {
 	public ConsoleOutputPlugin(PluginManager manager, PluginInfo info) {
 		super(manager, info);
@@ -27,7 +29,7 @@ public class ConsoleOutputPlugin extends ListenerPlugin {
 		logMessage(event.getMessage(), true);
 	}
 
-	protected void logMessage(Message message, boolean edit) {
+	protected void logMessage(@Nonnull Message message, boolean edit) {
 		Guild guild = message.getGuild();
 		TextChannel channel = message.getTextChannel();
 

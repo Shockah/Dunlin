@@ -13,6 +13,8 @@ import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.*;
 import pl.shockah.dunlin.util.TimeDuration;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -20,18 +22,18 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class UserCommand extends NamedCommand<User, User> {
-	public static final Pattern USER_MENTION = Pattern.compile("\\<\\@\\!?(\\d+)\\>");
-	public static final Pattern USER_DISCRIMINATOR = Pattern.compile("(.*?)\\#(\\d{4})");
+	@Nonnull public static final Pattern USER_MENTION = Pattern.compile("\\<\\@\\!?(\\d+)\\>");
+	@Nonnull public static final Pattern USER_DISCRIMINATOR = Pattern.compile("(.*?)\\#(\\d{4})");
 
-	protected final OwnerPlugin ownerPlugin;
+	@Nonnull protected final OwnerPlugin ownerPlugin;
 
-	public UserCommand(OwnerPlugin ownerPlugin) {
+	public UserCommand(@Nonnull OwnerPlugin ownerPlugin) {
 		super("user");
 		this.ownerPlugin = ownerPlugin;
 	}
 
 	@Override
-	public ParseResult<User> parseInput(CommandContext context, String textInput) {
+	@Nonnull public ParseResult<User> parseInput(@Nonnull CommandContext context, @Nonnull String textInput) {
 		User user = null;
 
 		if (StringUtils.isBlank(textInput)) {
@@ -39,12 +41,10 @@ public class UserCommand extends NamedCommand<User, User> {
 		} else {
 			Matcher matcher;
 
-			if (user == null) {
-				matcher = USER_MENTION.matcher(textInput);
-				if (matcher.find()) {
-					String userId = matcher.group(1);
-					user = ownerPlugin.manager.app.getShardManager().getUserById(userId);
-				}
+			matcher = USER_MENTION.matcher(textInput);
+			if (matcher.find()) {
+				String userId = matcher.group(1);
+				user = ownerPlugin.manager.app.getShardManager().getUserById(userId);
 			}
 
 			if (user == null) {
@@ -85,12 +85,14 @@ public class UserCommand extends NamedCommand<User, User> {
 	}
 
 	@Override
-	public CommandResult<User, User> execute(CommandContext context, User input) {
+	@Nonnull public CommandResult<User, User> execute(@Nonnull CommandContext context, @Nullable User input) {
 		return new ValueCommandResult<>(this, input);
 	}
 
 	@Override
-	public Message formatOutput(CommandContext context, User input, User output) {
+	@Nullable public Message formatOutput(@Nonnull CommandContext context, @Nullable User input, @Nullable User output) {
+		if (output == null)
+			throw new IllegalArgumentException();
 		Member member = context.message.getGuild().getMember(output);
 
 		EmbedBuilder embedBuilder = new EmbedBuilder();

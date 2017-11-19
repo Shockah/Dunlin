@@ -3,37 +3,39 @@ package pl.shockah.dunlin.settings;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.util.ReadWriteSet;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.math.BigInteger;
 import java.util.LinkedHashSet;
 
 public abstract class Setting<T> {
-    public final SettingsPlugin settingsPlugin;
-    public final Plugin plugin;
-    public final String name;
-    public final T defaultValue;
+    @Nonnull public final SettingsPlugin settingsPlugin;
+    @Nonnull public final Plugin plugin;
+    @Nonnull public final String name;
+    @Nullable public final T defaultValue;
 
-    protected final ReadWriteSet<SettingListener<T>> listeners = new ReadWriteSet<>(new LinkedHashSet<>());
+    @Nonnull protected final ReadWriteSet<SettingListener<T>> listeners = new ReadWriteSet<>(new LinkedHashSet<>());
 
-    protected Setting(SettingsPlugin settingsPlugin, Plugin plugin, String name, T defaultValue) {
+    protected Setting(@Nonnull SettingsPlugin settingsPlugin, @Nonnull Plugin plugin, @Nonnull String name, @Nullable T defaultValue) {
         this.settingsPlugin = settingsPlugin;
         this.plugin = plugin;
         this.name = name;
         this.defaultValue = defaultValue;
     }
 
-    public void registerListener(SettingListener<T> listener) {
+    public void registerListener(@Nonnull SettingListener<T> listener) {
         listeners.add(listener);
     }
 
-    public void unregisterListener(SettingListener<T> listener) {
+    public void unregisterListener(@Nonnull SettingListener<T> listener) {
         listeners.remove(listener);
     }
 
-    public final String getFullName() {
-        return String.format("%s.%s", plugin.info.packageName(), name);
+    @Nonnull public final String getFullName() {
+        return String.format("%s.%s", plugin.info.getPackageName(), name);
     }
 
-    public final T get(SettingScope scope) {
+    @Nullable public final T get(@Nonnull SettingScope scope) {
         do {
             T value = getForScope(scope);
             if (value != null)
@@ -43,7 +45,7 @@ public abstract class Setting<T> {
         return defaultValue;
     }
 
-    public final void set(SettingScope scope, T value) {
+    public final void set(@Nonnull SettingScope scope, @Nullable T value) {
         setForScope(scope, value);
         settingsPlugin.listeners.iterate(listener -> {
             listener.onSettingSet(getFullName(), scope, value);
@@ -54,30 +56,30 @@ public abstract class Setting<T> {
         settingsPlugin.onSettingChange(this);
     }
 
-    public abstract T getForScope(SettingScope scope);
+    @Nullable public abstract T getForScope(@Nonnull SettingScope scope);
 
-    public abstract void setForScope(SettingScope scope, T value);
+    public abstract void setForScope(@Nonnull SettingScope scope, @Nullable T value);
 
-    public abstract T parseValue(String textInput);
+    @Nonnull public abstract T parseValue(@Nonnull String textInput);
 
-    public final PrivateSetting<T> asPrivate() {
+    @Nonnull public final PrivateSetting<T> asPrivate() {
         return PrivateSetting.of(this);
     }
 
-    public static Setting<Boolean> ofBool(SettingsPlugin settingsPlugin, Plugin plugin, String name, boolean defaultValue) {
+    public static Setting<Boolean> ofBool(@Nonnull SettingsPlugin settingsPlugin, @Nonnull Plugin plugin, @Nonnull String name, boolean defaultValue) {
         return new Setting<Boolean>(settingsPlugin, plugin, name, defaultValue) {
             @Override
-            public Boolean getForScope(SettingScope scope) {
+            @Nullable public Boolean getForScope(@Nonnull SettingScope scope) {
                 return (Boolean)scope.getRaw(this);
             }
 
             @Override
-            public void setForScope(SettingScope scope, Boolean value) {
+            public void setForScope(@Nonnull SettingScope scope, @Nullable Boolean value) {
                 scope.setRaw(this, value);
             }
 
             @Override
-            public Boolean parseValue(String textInput) {
+            @Nonnull public Boolean parseValue(@Nonnull String textInput) {
                 if (textInput.equalsIgnoreCase("true") || textInput.equalsIgnoreCase("t") || textInput.equalsIgnoreCase("yes") || textInput.equalsIgnoreCase("y"))
                     return true;
                 else if (textInput.equalsIgnoreCase("false") || textInput.equalsIgnoreCase("f") || textInput.equalsIgnoreCase("no") || textInput.equalsIgnoreCase("n"))
@@ -88,20 +90,20 @@ public abstract class Setting<T> {
         };
     }
 
-    public static Setting<Integer> ofInt(SettingsPlugin settingsPlugin, Plugin plugin, String name, int defaultValue) {
+    public static Setting<Integer> ofInt(@Nonnull SettingsPlugin settingsPlugin, @Nonnull Plugin plugin, @Nonnull String name, int defaultValue) {
         return new Setting<Integer>(settingsPlugin, plugin, name, defaultValue) {
             @Override
-            public Integer getForScope(SettingScope scope) {
+            @Nullable public Integer getForScope(@Nonnull SettingScope scope) {
                 return ((BigInteger)scope.getRaw(this)).intValue();
             }
 
             @Override
-            public void setForScope(SettingScope scope, Integer value) {
+            public void setForScope(@Nonnull SettingScope scope, @Nullable Integer value) {
                 scope.setRaw(this, value);
             }
 
             @Override
-            public Integer parseValue(String textInput) {
+            @Nonnull public Integer parseValue(@Nonnull String textInput) {
                 return new BigInteger(textInput).intValue();
             }
         };
@@ -110,17 +112,17 @@ public abstract class Setting<T> {
     public static Setting<BigInteger> ofBigInteger(SettingsPlugin settingsPlugin, Plugin plugin, String name, BigInteger defaultValue) {
         return new Setting<BigInteger>(settingsPlugin, plugin, name, defaultValue) {
             @Override
-            public BigInteger getForScope(SettingScope scope) {
+            @Nullable public BigInteger getForScope(@Nonnull SettingScope scope) {
                 return (BigInteger)scope.getRaw(this);
             }
 
             @Override
-            public void setForScope(SettingScope scope, BigInteger value) {
+            public void setForScope(@Nonnull SettingScope scope, @Nullable BigInteger value) {
                 scope.setRaw(this, value);
             }
 
             @Override
-            public BigInteger parseValue(String textInput) {
+            @Nonnull public BigInteger parseValue(@Nonnull String textInput) {
                 return new BigInteger(textInput);
             }
         };
@@ -129,27 +131,27 @@ public abstract class Setting<T> {
     public static Setting<String> ofString(SettingsPlugin settingsPlugin, Plugin plugin, String name, String defaultValue) {
         return new Setting<String>(settingsPlugin, plugin, name, defaultValue) {
             @Override
-            public String getForScope(SettingScope scope) {
+            @Nullable public String getForScope(@Nonnull SettingScope scope) {
                 return (String)scope.getRaw(this);
             }
 
             @Override
-            public void setForScope(SettingScope scope, String value) {
+            public void setForScope(@Nonnull SettingScope scope, @Nullable String value) {
                 scope.setRaw(this, value);
             }
 
             @Override
-            public String parseValue(String textInput) {
+            @Nonnull public String parseValue(@Nonnull String textInput) {
                 return textInput;
             }
         };
     }
 
-    public static <E extends Enum<E>> Setting<E> ofEnum(SettingsPlugin settingsPlugin, Plugin plugin, String name, E defaultValue) {
+    @Nonnull public static <E extends Enum<E>> Setting<E> ofEnum(SettingsPlugin settingsPlugin, Plugin plugin, String name, E defaultValue) {
         return new EnumSetting<>(settingsPlugin, plugin, name, defaultValue);
     }
 
-    public static <E extends Enum<E>> Setting<E> ofEnum(SettingsPlugin settingsPlugin, Plugin plugin, String name, Class<E> clazz) {
+    @Nonnull public static <E extends Enum<E>> Setting<E> ofEnum(SettingsPlugin settingsPlugin, Plugin plugin, String name, Class<E> clazz) {
         return new EnumSetting<>(settingsPlugin, plugin, name, clazz);
     }
 }

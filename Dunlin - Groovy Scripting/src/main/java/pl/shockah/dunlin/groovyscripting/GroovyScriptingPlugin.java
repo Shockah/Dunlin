@@ -20,6 +20,8 @@ import pl.shockah.json.JSONObject;
 import pl.shockah.plugin.PluginInfo;
 import pl.shockah.util.func.Func1;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 
 public class GroovyScriptingPlugin extends Plugin {
@@ -33,7 +35,7 @@ public class GroovyScriptingPlugin extends Plugin {
 
 	private EvalCommand evalCommand;
 	
-	public GroovyScriptingPlugin(PluginManager manager, PluginInfo info) {
+	public GroovyScriptingPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info) {
 		super(manager, info);
 	}
 	
@@ -49,11 +51,11 @@ public class GroovyScriptingPlugin extends Plugin {
 		commandsPlugin.unregisterNamedCommand(evalCommand);
 	}
 
-	private Func1<String, Object> getEvalFunction(Binding binding, GroovyInterceptor sandbox) {
+	@Nonnull private Func1<String, Object> getEvalFunction(@Nonnull Binding binding, @Nullable GroovyInterceptor sandbox) {
 		return input -> getShell(binding, sandbox).evaluate(input);
 	}
 
-	public GroovyInterceptor getSandbox(User user) {
+	@Nullable public GroovyInterceptor getSandbox(@Nonnull User user) {
 		if (user.getJDA().getAccountType() == AccountType.CLIENT && user.equals(user.getJDA().getSelfUser()))
 			return null;
 		if (permissionsPlugin.hasPermission(user, this, "unrestricted"))
@@ -61,7 +63,7 @@ public class GroovyScriptingPlugin extends Plugin {
 		return new DunlinGroovySandboxFilter();
 	}
 
-	public void injectVariables(Binding binding, Message message) {
+	public void injectVariables(@Nonnull Binding binding, @Nonnull Message message) {
 		binding.setVariable("user", message.getAuthor());
 		binding.setVariable("channel", message.getTextChannel());
 
@@ -71,27 +73,27 @@ public class GroovyScriptingPlugin extends Plugin {
 		}
 	}
 
-	public GroovyShell getShell(User user) {
+	@Nonnull public GroovyShell getShell(@Nonnull User user) {
 		return getShell(getSandbox(user));
 	}
 
-	public GroovyShell getShell(Map<String, Object> variables, User user) {
+	@Nonnull public GroovyShell getShell(@Nonnull Map<String, Object> variables, @Nonnull User user) {
 		return getShell(variables, getSandbox(user));
 	}
 
-	public GroovyShell getShell(GroovyInterceptor sandbox) {
+	@Nonnull public GroovyShell getShell(@Nullable GroovyInterceptor sandbox) {
 		return getShell(new Binding(), sandbox);
 	}
 
-	public GroovyShell getShell(Map<String, Object> variables, GroovyInterceptor sandbox) {
+	@Nonnull public GroovyShell getShell(@Nonnull Map<String, Object> variables, @Nullable GroovyInterceptor sandbox) {
 		return getShell(new Binding(variables), sandbox);
 	}
 
-	public GroovyShell getShell(Binding binding, User user) {
+	@Nonnull public GroovyShell getShell(@Nonnull Binding binding, @Nonnull User user) {
 		return getShell(binding, getSandbox(user));
 	}
 
-	private GroovyShell getShell(Binding binding, GroovyInterceptor sandbox) {
+	@Nonnull private GroovyShell getShell(@Nonnull Binding binding, @Nullable GroovyInterceptor sandbox) {
 		binding.setVariable("eval", getEvalFunction(binding, sandbox));
 
 		CompilerConfiguration cc = new CompilerConfiguration();

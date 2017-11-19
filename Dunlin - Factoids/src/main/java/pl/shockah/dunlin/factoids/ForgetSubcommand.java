@@ -10,21 +10,26 @@ import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.*;
 import pl.shockah.dunlin.factoids.db.Factoid;
 
-public class ForgetSubcommand extends NamedCommand<ForgetSubcommand.Input, Factoid> {
-	public final FactoidsPlugin plugin;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-	public ForgetSubcommand(FactoidsPlugin plugin) {
+public class ForgetSubcommand extends NamedCommand<ForgetSubcommand.Input, Factoid> {
+	@Nonnull public final FactoidsPlugin plugin;
+
+	public ForgetSubcommand(@Nonnull FactoidsPlugin plugin) {
 		super("forget", "f");
 		this.plugin = plugin;
 	}
 
 	@Override
-	public ParseResult<Input> parseInput(CommandContext context, String textInput) {
+	@Nonnull public ParseResult<Input> parseInput(@Nonnull CommandContext context, @Nonnull String textInput) {
 		return new ValueParseResult<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(context.message));
 	}
 
 	@Override
-	public CommandResult<Input, Factoid> execute(CommandContext context, Input input) {
+	@Nonnull public CommandResult<Input, Factoid> execute(@Nonnull CommandContext context, @Nullable Input input) {
+		if (input == null)
+			throw new IllegalArgumentException();
 		Factoid factoid = plugin.getFactoid(input.scope, input.name);
 		if (factoid != null)
 			factoid.update(obj -> {
@@ -34,7 +39,7 @@ public class ForgetSubcommand extends NamedCommand<ForgetSubcommand.Input, Facto
 	}
 
 	@Override
-	public void output(CommandContext context, Input input, CommandResult<Input, Factoid> outputResult) {
+	public void output(@Nonnull CommandContext context, @Nullable Input input, @Nonnull CommandResult<Input, Factoid> outputResult) {
 		if (outputResult instanceof ValueCommandResult<?, ?> && ((ValueCommandResult<Input, Factoid>)outputResult).value == null)
 			context.message.addReaction("\uD83D\uDC4C").queue();
 		else
@@ -42,7 +47,9 @@ public class ForgetSubcommand extends NamedCommand<ForgetSubcommand.Input, Facto
 	}
 
 	@Override
-	public Message formatOutput(CommandContext context, Input input, Factoid factoid) {
+	@Nullable public Message formatOutput(@Nonnull CommandContext context, @Nullable Input input, @Nullable Factoid factoid) {
+		if (input == null)
+			throw new IllegalArgumentException();
 		return new MessageBuilder().setEmbed(new EmbedBuilder()
 				.setColor(ErrorCommandResult.EMBED_COLOR)
 				.setDescription(String.format("No factoid `%s` found in scope `%s`.", input.name, input.scope.getName()))
@@ -56,7 +63,7 @@ public class ForgetSubcommand extends NamedCommand<ForgetSubcommand.Input, Facto
 		@Argument
 		public String name;
 
-		public Input toInput(Message message) {
+		@Nonnull public Input toInput(@Nonnull Message message) {
 			FactoidScope factoidScope;
 			switch (scope) {
 				case Global:
@@ -77,10 +84,10 @@ public class ForgetSubcommand extends NamedCommand<ForgetSubcommand.Input, Facto
 	}
 
 	public static final class Input {
-		public final FactoidScope scope;
-		public final String name;
+		@Nonnull public final FactoidScope scope;
+		@Nonnull public final String name;
 
-		public Input(FactoidScope scope, String name) {
+		public Input(@Nonnull FactoidScope scope, @Nonnull String name) {
 			this.scope = scope;
 			this.name = name;
 		}
