@@ -43,13 +43,13 @@ public class RememberSubcommand extends NamedCommand<RememberSubcommand.Input, F
 
 	public static final class Arguments extends ArgumentSet {
 		@Argument
-		public Scope scope = Scope.Guild;
+		@Nonnull public Scope scope = Scope.Guild;
 
 		@Argument
 		public String name;
 
 		@Argument
-		public String type = PlainFactoidCommandFactory.TYPE;
+		@Nonnull public String type = PlainFactoidCommandFactory.TYPE;
 
 		@Argument(isDefault = true)
 		public String content;

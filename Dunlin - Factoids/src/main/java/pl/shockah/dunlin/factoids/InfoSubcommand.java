@@ -67,7 +67,7 @@ public class InfoSubcommand extends NamedCommand<InfoSubcommand.Input, Factoid> 
 
 	public static final class Arguments extends ArgumentSet {
 		@Argument
-		public Scope scope = Scope.Channel;
+		@Nonnull public Scope scope = Scope.Channel;
 
 		@Argument
 		public String name;
