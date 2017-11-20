@@ -11,25 +11,27 @@ import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.*;
 import pl.shockah.dunlin.settings.GuildSettingScope;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class AnnounceCommand extends NamedCommand<String, List<TextChannel>> {
-    protected final OwnerPlugin ownerPlugin;
+    @Nonnull protected final OwnerPlugin ownerPlugin;
 
-    public AnnounceCommand(OwnerPlugin ownerPlugin) {
+    public AnnounceCommand(@Nonnull OwnerPlugin ownerPlugin) {
         super("announce");
         this.ownerPlugin = ownerPlugin;
     }
 
     @Override
-    public ParseResult<String> parseInput(CommandContext context, String textInput) {
+    @Nonnull public ParseResult<String> parseInput(@Nonnull CommandContext context, @Nonnull String textInput) {
         return new ValueParseResult<>(this, textInput);
     }
 
     @Override
-    public CommandResult<String, List<TextChannel>> execute(CommandContext context, String input) {
+    @Nonnull public CommandResult<String, List<TextChannel>> execute(@Nonnull CommandContext context, @Nullable String input) {
         if (!ownerPlugin.permissionsPlugin.hasPermission(context.message, ownerPlugin, names[0]))
             return new ErrorCommandResult<>(this, ownerPlugin.permissionsPlugin.buildMissingPermissionMessage(ownerPlugin, names[0]));
 
@@ -71,7 +73,9 @@ public class AnnounceCommand extends NamedCommand<String, List<TextChannel>> {
     }
 
     @Override
-    public Message formatOutput(List<TextChannel> channels) {
+    @Nullable public Message formatOutput(@Nullable List<TextChannel> channels) {
+        if (channels == null)
+            throw new IllegalArgumentException();
         return new MessageBuilder().setEmbed(new EmbedBuilder()
                 .setColor(ValueCommandResult.EMBED_COLOR)
                 .setDescription(String.format("Announced in %d channel%s.", channels.size(), channels.size() == 1 ? "" : "s"))

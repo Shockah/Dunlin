@@ -2,21 +2,23 @@ package pl.shockah.dunlin.commands;
 
 import pl.shockah.dunlin.settings.MessageSettingScope;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class ChainCommandPattern extends CommandPattern<ChainCommand> {
-	public static final String PARAMETERIZED_PATTERN = "^[%s]([^\\s]*?)(?:\\s(.*))?$";
+	@Nonnull public static final String PARAMETERIZED_PATTERN = "^[%s]([^\\s]*?)(?:\\s(.*))?$";
 	
-	protected final DefaultCommandPattern defaultCommandPattern;
+	@Nonnull protected final DefaultCommandPattern defaultCommandPattern;
 	
-	public ChainCommandPattern(DefaultCommandPattern defaultCommandPattern) {
+	public ChainCommandPattern(@Nonnull DefaultCommandPattern defaultCommandPattern) {
 		this.defaultCommandPattern = defaultCommandPattern;
 	}
 	
 	@Override
-	public boolean matches(CommandContext context) {
+	public boolean matches(@Nonnull CommandContext context) {
 		String content = context.message.getRawContent();
 		for (String prefix : defaultCommandPattern.plugin.prefixesSetting.get(new MessageSettingScope(context.message)).split("\\s")) {
 			Matcher m = Pattern.compile(String.format(PARAMETERIZED_PATTERN, prefix), Pattern.DOTALL | Pattern.MULTILINE).matcher(content);
@@ -27,7 +29,7 @@ public class ChainCommandPattern extends CommandPattern<ChainCommand> {
 	}
 
 	@Override
-	public CommandPatternMatch<ChainCommand> getCommand(CommandContext context) {
+	@Nullable public CommandPatternMatch<ChainCommand> getCommand(@Nonnull CommandContext context) {
 		String commandNamesString = null;
 		String input = null;
 		String content = context.message.getRawContent();
@@ -39,6 +41,9 @@ public class ChainCommandPattern extends CommandPattern<ChainCommand> {
 				break;
 			}
 		}
+
+		if (commandNamesString == null)
+			return null;
 		
 		Command<?, ?>[] commands = Stream.of(commandNamesString.split(">"))
 			.map(commandName ->

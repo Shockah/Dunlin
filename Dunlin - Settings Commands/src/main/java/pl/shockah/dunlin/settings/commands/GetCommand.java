@@ -13,26 +13,33 @@ import pl.shockah.dunlin.commands.result.ValueCommandResult;
 import pl.shockah.dunlin.commands.result.ValueParseResult;
 import pl.shockah.dunlin.settings.*;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output> {
-	private final SettingsPlugin settingsPlugin;
+	@Nonnull private final SettingsPlugin settingsPlugin;
 	
-	public GetCommand(SettingsPlugin settingsPlugin) {
+	public GetCommand(@Nonnull SettingsPlugin settingsPlugin) {
 		super("get");
 		this.settingsPlugin = settingsPlugin;
 	}
 	
 	@Override
-	public ParseResult<Input> parseInput(CommandContext context, String textInput) {
+	@Nonnull public ParseResult<Input> parseInput(@Nonnull CommandContext context, @Nonnull String textInput) {
 		return new ValueParseResult<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(settingsPlugin, context.message));
 	}
 	
 	@Override
-	public CommandResult<Input, Output> execute(CommandContext context, Input input) {
+	@Nonnull public CommandResult<Input, Output> execute(@Nonnull CommandContext context, @Nullable Input input) {
+		if (input == null)
+			throw new IllegalArgumentException();
 		return new ValueCommandResult<>(this, input.getOutput(context.message));
 	}
 
 	@Override
-	public Message formatOutput(CommandContext context, Input input, Output output) {
+	@Nullable public Message formatOutput(@Nonnull CommandContext context, @Nullable Input input, @Nullable Output output) {
+		if (output == null)
+			throw new IllegalArgumentException();
 		return new MessageBuilder().setEmbed(new EmbedBuilder()
 				.setTitle(String.format("%s in scope %s", output.setting.getFullName(), output.scope.getName()), null)
 				.setDescription(String.valueOf(output.value))
@@ -41,12 +48,12 @@ public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output
 
 	public static final class Arguments extends ArgumentSet {
 		@Argument
-		public Scope scope = Scope.Channel;
+		@Nonnull public Scope scope = Scope.Channel;
 		
 		@Argument("setting")
-		public String settingName;
+		@Nonnull public String settingName;
 		
-		public Input toInput(SettingsPlugin settingsPlugin, Message message) {
+		public Input toInput(@Nonnull SettingsPlugin settingsPlugin, @Nonnull Message message) {
 			Setting<?> setting = settingsPlugin.getSettingByName(settingName);
 			SettingScope settingScope = null;
 			switch (scope) {
@@ -70,25 +77,25 @@ public class GetCommand extends NamedCommand<GetCommand.Input, GetCommand.Output
 	}
 
 	public static final class Input {
-		public final SettingScope scope;
-		public final Setting<?> setting;
+		@Nonnull public final SettingScope scope;
+		@Nonnull public final Setting<?> setting;
 		
-		public Input(SettingScope scope, Setting<?> setting) {
+		public Input(@Nonnull SettingScope scope, @Nonnull Setting<?> setting) {
 			this.scope = scope;
 			this.setting = setting;
 		}
 
-		public Output getOutput(Message message) {
+		public Output getOutput(@Nonnull Message message) {
 			return new Output(scope, setting, setting.get(scope));
 		}
 	}
 
 	public static final class Output {
-		public final SettingScope scope;
-		public final Setting<?> setting;
-		public final Object value;
+		@Nonnull public final SettingScope scope;
+		@Nonnull public final Setting<?> setting;
+		@Nullable public final Object value;
 
-		public Output(SettingScope scope, Setting<?> setting, Object value) {
+		public Output(@Nonnull SettingScope scope, @Nonnull Setting<?> setting, @Nullable Object value) {
 			this.scope = scope;
 			this.setting = setting;
 			this.value = value;

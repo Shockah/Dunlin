@@ -4,21 +4,23 @@ import net.dv8tion.jda.core.entities.Message;
 import pl.shockah.dunlin.commands.Command;
 import pl.shockah.dunlin.commands.CommandContext;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 
 public final class ValueCommandResult<Input, Output> extends CommandResult<Input, Output> {
-	public static final Color EMBED_COLOR = new Color(0.5f, 0.9f, 0.5f);
+	@Nonnull public static final Color EMBED_COLOR = new Color(0.5f, 0.9f, 0.5f);
 
-	public final Output value;
+	@Nullable public final Output value;
 
-	public ValueCommandResult(Command<Input, Output> command, Output value) {
+	public ValueCommandResult(@Nonnull Command<Input, Output> command, @Nullable Output value) {
 		super(command);
 		this.value = value;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Message getMessage(CommandContext context, Input input) {
+	@Nonnull public Message getMessage(@Nonnull CommandContext context, @Nullable Input input) {
 		return command.formatOutput(context, input, value);
 	}
 }

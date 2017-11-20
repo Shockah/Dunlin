@@ -1,8 +1,10 @@
 package pl.shockah.dunlin;
 
+import javax.annotation.Nonnull;
+
 public class GlobalScope extends Scope {
     @Override
-    public String name() {
+    @Nonnull public String name() {
         return "Global";
     }
 }

@@ -1,25 +1,28 @@
 package pl.shockah.dunlin.settings;
 
-public class PrivateSetting<T> extends Setting<T> {
-	public final Setting<T> baseSetting;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-	public PrivateSetting(Setting<T> baseSetting) {
+public class PrivateSetting<T> extends Setting<T> {
+	@Nonnull public final Setting<T> baseSetting;
+
+	public PrivateSetting(@Nonnull Setting<T> baseSetting) {
 		super(baseSetting.settingsPlugin, baseSetting.plugin, baseSetting.name, baseSetting.defaultValue);
 		this.baseSetting = baseSetting;
 	}
 
 	@Override
-	public T getForScope(SettingScope scope) {
+	@Nullable public T getForScope(@Nonnull SettingScope scope) {
 		return baseSetting.getForScope(scope);
 	}
 
 	@Override
-	public void setForScope(SettingScope scope, T value) {
+	public void setForScope(@Nonnull SettingScope scope, @Nullable T value) {
 		baseSetting.setForScope(scope, value);
 	}
 
 	@Override
-	public T parseValue(String textInput) {
+	@Nonnull public T parseValue(@Nonnull String textInput) {
 		return baseSetting.parseValue(textInput);
 	}
 

@@ -1,12 +1,12 @@
 apply plugin: 'application'
 
 dependencies {
-	compile 'com.github.Shockah:pl.shockah.util:1.0'
-	compile 'com.github.Shockah:pl.shockah.json:1.0.2'
-	compile 'com.github.Shockah:pl.shockah.plugin:1.5'
+	compile 'com.github.Shockah:pl.shockah.util:1.0.2'
+	compile 'com.github.Shockah:Jay:1.1'
+	compile 'com.github.Shockah:Pintail:1.6'
 	
 	//Discord
-	compile 'net.dv8tion:JDA:3.2.0_226'
+	compile 'net.dv8tion:JDA:3.3.1_305'
 	
 	//Database / ORM
 	compile group: 'com.h2database', name: 'h2', version: '1.4.193'
@@ -16,6 +16,7 @@ dependencies {
 	//Utils
 	//compile 'com.github.kevinsawicki:http-request:6.0'
 	compile group: 'org.jsoup', name: 'jsoup', version: '1.10.2'
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
 }
 
 mainClassName = 'pl.shockah.dunlin.App'

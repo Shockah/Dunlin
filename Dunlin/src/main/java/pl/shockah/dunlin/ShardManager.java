@@ -8,16 +8,18 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
-import pl.shockah.json.JSONObject;
+import pl.shockah.jay.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.security.auth.login.LoginException;
 
 public class ShardManager {
-	public final App app;
-	public final ThreadedEventListenerManager eventListenerManager = new ThreadedEventListenerManager();
-	public final JDA[] shards;
+	@Nonnull public final App app;
+	@Nonnull public final ThreadedEventListenerManager eventListenerManager = new ThreadedEventListenerManager();
+	@Nonnull public final JDA[] shards;
 
-	public ShardManager(App app) {
+	public ShardManager(@Nonnull App app) {
 		this.app = app;
 		this.shards = new JDA[app.getConfig().getObject("api").getInt("shards", 1)];
 	}
@@ -31,7 +33,7 @@ public class ShardManager {
 		}
 	}
 
-	private JDABuilder createBuilder() {
+	@Nonnull private JDABuilder createBuilder() {
 		JSONObject apiConfig = app.getConfig().getObject("api");
 
 		String accountTypeStr = apiConfig.getString("accountType", "BOT");
@@ -52,19 +54,15 @@ public class ShardManager {
 		return builder;
 	}
 
-	public Guild getGuildById(String guildId) {
-		if (shards.length == 0)
-			return shards[0].getGuildById(guildId);
+	@Nullable public Guild getGuildById(@Nonnull String guildId) {
 		return shards[(int)((Long.parseLong(guildId) >>> 22) % shards.length)].getGuildById(guildId);
 	}
 
-	public Guild getGuildById(long guildId) {
-		if (shards.length == 0)
-			return shards[0].getGuildById(guildId);
+	@Nullable public Guild getGuildById(long guildId) {
 		return shards[(int)((guildId >>> 22) % shards.length)].getGuildById(guildId);
 	}
 
-	public User getUserById(String userId) {
+	@Nullable public User getUserById(@Nonnull String userId) {
 		for (JDA jda : shards) {
 			User user = jda.getUserById(userId);
 			if (user != null)
@@ -73,7 +71,7 @@ public class ShardManager {
 		return null;
 	}
 
-	public User getUserById(long userId) {
+	@Nullable public User getUserById(long userId) {
 		for (JDA jda : shards) {
 			User user = jda.getUserById(userId);
 			if (user != null)
@@ -82,7 +80,7 @@ public class ShardManager {
 		return null;
 	}
 
-	public TextChannel getTextChannelById(String textChannelId) {
+	@Nullable public TextChannel getTextChannelById(@Nonnull String textChannelId) {
 		for (JDA jda : shards) {
 			TextChannel textChannel = jda.getTextChannelById(textChannelId);
 			if (textChannel != null)
@@ -91,7 +89,7 @@ public class ShardManager {
 		return null;
 	}
 
-	public TextChannel getTextChannelById(long textChannelId) {
+	@Nullable public TextChannel getTextChannelById(long textChannelId) {
 		for (JDA jda : shards) {
 			TextChannel textChannel = jda.getTextChannelById(textChannelId);
 			if (textChannel != null)

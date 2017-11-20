@@ -8,39 +8,38 @@ import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.dunlin.settings.Setting;
 import pl.shockah.dunlin.settings.SettingsPlugin;
-import pl.shockah.plugin.PluginInfo;
+import pl.shockah.pintail.PluginInfo;
 import pl.shockah.util.Box;
 import pl.shockah.util.ReadWriteSet;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedHashSet;
 
 public class CommandsPlugin extends ListenerPlugin {
-	@Dependency
-	private SettingsPlugin settingsPlugin;
+	@Nonnull private final SettingsPlugin settingsPlugin;
 	
-	protected Setting<String> prefixesSetting;
+	@Nonnull protected final Setting<String> prefixesSetting;
 
-	protected final ReadWriteSet<CommandListener> listeners = new ReadWriteSet<>(new LinkedHashSet<>());
-	protected final ReadWriteSet<CommandPattern<? extends Command<Object, Object>>> patterns = new ReadWriteSet<>(new LinkedHashSet<>());
-	protected DefaultCommandPattern defaultCommandPattern;
-	protected ChainCommandPattern chainCommandPattern;
-	protected DefaultNamedCommandProvider defaultNamedCommandProvider;
+	@Nonnull protected final ReadWriteSet<CommandListener> listeners = new ReadWriteSet<>(new LinkedHashSet<>());
+	@Nonnull protected final ReadWriteSet<CommandPattern<? extends Command<Object, Object>>> patterns = new ReadWriteSet<>(new LinkedHashSet<>());
+	@Nonnull protected final DefaultCommandPattern defaultCommandPattern;
+	@Nonnull protected final ChainCommandPattern chainCommandPattern;
+	@Nonnull protected final DefaultNamedCommandProvider defaultNamedCommandProvider;
 	
-	public CommandsPlugin(PluginManager manager, PluginInfo info) {
+	public CommandsPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info, @Nonnull @RequiredDependency SettingsPlugin settingsPlugin) {
 		super(manager, info);
-	}
-	
-	@Override
-	protected void onLoad() {
+		this.settingsPlugin = settingsPlugin;
+
 		settingsPlugin.register(
-			prefixesSetting = Setting.ofString(settingsPlugin, this, "prefixes", ".")
+				prefixesSetting = Setting.ofString(settingsPlugin, this, "prefixes", ".")
 		);
-		
+
 		defaultCommandPattern = new DefaultCommandPattern(this);
 		chainCommandPattern = new ChainCommandPattern(defaultCommandPattern);
 		registerPattern(chainCommandPattern);
 		registerPattern(defaultCommandPattern);
-		
+
 		defaultNamedCommandProvider = new DefaultNamedCommandProvider();
 		registerNamedCommandProvider(defaultNamedCommandProvider);
 	}
@@ -50,38 +49,38 @@ public class CommandsPlugin extends ListenerPlugin {
 		settingsPlugin.unregister(prefixesSetting);
 	}
 
-	public void registerListener(CommandListener listener) {
+	public void registerListener(@Nonnull CommandListener listener) {
 		listeners.add(listener);
 	}
 
-	public void unregisterListener(CommandListener listener) {
+	public void unregisterListener(@Nonnull CommandListener listener) {
 		listeners.remove(listener);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void registerPattern(CommandPattern<? extends Command<?, ?>> pattern) {
+	public void registerPattern(@Nonnull CommandPattern<? extends Command<?, ?>> pattern) {
 		patterns.add((CommandPattern<? extends Command<Object, Object>>)pattern);
 	}
-	
-	public void unregisterPattern(CommandPattern<? extends Command<?, ?>> pattern) {
+
+	public void unregisterPattern(@Nonnull CommandPattern<? extends Command<?, ?>> pattern) {
 		patterns.remove(pattern);
 	}
 	
-	public void registerNamedCommandProvider(NamedCommandProvider<?, ?> namedCommandProvider) {
+	public void registerNamedCommandProvider(@Nonnull NamedCommandProvider<?, ?> namedCommandProvider) {
 		defaultCommandPattern.registerNamedCommandProvider(namedCommandProvider);
 	}
 	
-	public void unregisterNamedCommandProvider(NamedCommandProvider<?, ?> namedCommandProvider) {
+	public void unregisterNamedCommandProvider(@Nonnull NamedCommandProvider<?, ?> namedCommandProvider) {
 		defaultCommandPattern.unregisterNamedCommandProvider(namedCommandProvider);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void registerNamedCommand(NamedCommand<?, ?> namedCommand) {
+	public void registerNamedCommand(@Nonnull NamedCommand<?, ?> namedCommand) {
 		defaultNamedCommandProvider.registerNamedCommand((NamedCommand<Object, Object>)namedCommand);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void unregisterNamedCommand(NamedCommand<?, ?> namedCommand) {
+	public void unregisterNamedCommand(@Nonnull NamedCommand<?, ?> namedCommand) {
 		defaultNamedCommandProvider.unregisterNamedCommand((NamedCommand<Object, Object>)namedCommand);
 	}
 
@@ -116,7 +115,7 @@ public class CommandsPlugin extends ListenerPlugin {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void callCommand(CommandPattern<?> pattern, Command<?, ?> command, String textInput, CommandContext context) {
+	public void callCommand(@Nonnull CommandPattern<?> pattern, @Nonnull Command<?, ?> command, @Nonnull String textInput, @Nonnull CommandContext context) {
 		Command<Object, Object> plainCommand = (Command<Object, Object>)command;
 		try {
 			ParseResult<?> input = plainCommand.parseInput(context, textInput);
@@ -134,7 +133,7 @@ public class CommandsPlugin extends ListenerPlugin {
 		}
 	}
 
-	protected void respond(CommandContext context, Message response) {
+	protected void respond(@Nonnull CommandContext context, @Nullable Message response) {
 		if (response != null)
 			context.message.getChannel().sendMessage(response).queue();
 	}

@@ -9,18 +9,20 @@ import pl.shockah.dunlin.db.DbObject;
 import pl.shockah.dunlin.db.DbObject.TableVersion;
 import pl.shockah.dunlin.db.ForeignCollectionWrapper;
 import pl.shockah.dunlin.plugin.Plugin;
-import pl.shockah.json.JSONList;
+import pl.shockah.jay.JSONList;
+
+import javax.annotation.Nonnull;
 
 @DatabaseTable(tableName = "pl_shockah_dunlin_permissions_db_PermissionGroup")
 @TableVersion(1)
 public class PermissionGroup extends DbObject<PermissionGroup> {
 	@DatabaseField(columnName = NAME, canBeNull = false)
 	private String name;
-	public static final String NAME = "name";
+	@Nonnull public static final String NAME = "name";
 	
 	@DatabaseField(columnName = PERMISSIONS, canBeNull = false)
-	private JSONList<String> permissions = new JSONList<>();
-	public static final String PERMISSIONS = "permissions";
+	@Nonnull private JSONList<String> permissions = new JSONList<>();
+	@Nonnull public static final String PERMISSIONS = "permissions";
 	
 	@ForeignCollectionField(foreignFieldName = PermissionRole.GROUP)
 	private ForeignCollection<PermissionRole> roles;
@@ -33,7 +35,7 @@ public class PermissionGroup extends DbObject<PermissionGroup> {
 		super();
 	}
 	
-	public PermissionGroup(Dao<PermissionGroup, Integer> dao) {
+	public PermissionGroup(@Nonnull Dao<PermissionGroup, Integer> dao) {
 		super(dao);
 	}
 	
@@ -41,31 +43,31 @@ public class PermissionGroup extends DbObject<PermissionGroup> {
 		return name;
 	}
 	
-	public void setName(String name) {
+	public void setName(@Nonnull String name) {
 		this.name = name;
 	}
 	
-	public JSONList<String> getPermissions() {
+	@Nonnull public JSONList<String> getPermissions() {
 		return permissions;
 	}
 	
-	public void setPermissions(JSONList<String> permissions) {
+	public void setPermissions(@Nonnull JSONList<String> permissions) {
 		this.permissions = permissions;
 	}
 	
-	public ForeignCollectionWrapper<PermissionRole> getRoles() {
+	@Nonnull public ForeignCollectionWrapper<PermissionRole> getRoles() {
 		return new ForeignCollectionWrapper<>(roles);
 	}
 	
-	public ForeignCollectionWrapper<PermissionUser> getUsers() {
+	@Nonnull public ForeignCollectionWrapper<PermissionUser> getUsers() {
 		return new ForeignCollectionWrapper<>(users);
 	}
 
-	public boolean hasPermission(Plugin plugin, String permission) {
-		return hasPermission(String.format("%s.%s", plugin.info.packageName(), permission));
+	public boolean hasPermission(@Nonnull Plugin plugin, @Nonnull String permission) {
+		return hasPermission(String.format("%s.%s", plugin.info.getPackageName(), permission));
 	}
 
-	public boolean hasPermission(String permission) {
+	public boolean hasPermission(@Nonnull String permission) {
 		L: for (String myPermission : permissions) {
 			String[] spl = myPermission.split("\\.");
 			String[] splArg = permission.split("\\.");

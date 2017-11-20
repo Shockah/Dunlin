@@ -1,26 +1,28 @@
 package pl.shockah.dunlin.commands;
 
-import org.apache.commons.lang3.StringUtils;
 import pl.shockah.util.Box;
 import pl.shockah.util.UnexpectedException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class ArgumentSetParser<T extends ArgumentSet> {
-	public static final String SPLIT_PATTERN = "(?m)(?<=\\s+)(?!\\s)|(?<!\\s)(?=\\s+)";
-	public static final Pattern ARGUMENT_NAME_PATTERN = Pattern.compile("\\-(\\S+)");
+	@Nonnull public static final String SPLIT_PATTERN = "(?m)(?<=\\s+)(?!\\s)|(?<!\\s)(?=\\s+)";
+	@Nonnull public static final Pattern ARGUMENT_NAME_PATTERN = Pattern.compile("\\-(\\S+)");
 	
-	public final Class<T> clazz;
+	@Nonnull public final Class<T> clazz;
 	
-	public ArgumentSetParser(Class<T> clazz) {
+	public ArgumentSetParser(@Nonnull Class<T> clazz) {
 		this.clazz = clazz;
 	}
 	
-	public T parse(String textInput) {
+	@Nonnull public T parse(@Nonnull String textInput) {
 		try {
 			T argumentSet = clazz.newInstance();
 			ArgumentSetParseProcess process = new ArgumentSetParseProcess(argumentSet);
@@ -46,7 +48,7 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 					}
 					
 					if (process.defaultArgument != null) {
-						String rawValue = StringUtils.join(split, "", i, split.length);
+						String rawValue = Arrays.stream(split).skip(i).collect(Collectors.joining(""));
 						putArgumentValue(process.defaultArgument, rawValue);
 						break;
 					}
@@ -60,7 +62,7 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 		}
 	}
 	
-	protected String parseRawValue(String[] split, Box<Integer> index) {
+	protected String parseRawValue(@Nonnull String[] split, @Nonnull Box<Integer> index) {
 		if (split[index.value].charAt(0) == '"') {
 			StringBuilder sb = new StringBuilder();
 			String[] copy = Arrays.copyOf(split, split.length);
@@ -85,7 +87,7 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 		}
 	}
 	
-	public static boolean parseBoolean(String rawValue) {
+	public static boolean parseBoolean(@Nonnull String rawValue) {
 		if (rawValue.equalsIgnoreCase("true") || rawValue.equalsIgnoreCase("t") || rawValue.equalsIgnoreCase("yes") || rawValue.equalsIgnoreCase("y"))
 			return true;
 		else if (rawValue.equalsIgnoreCase("false") || rawValue.equalsIgnoreCase("f") || rawValue.equalsIgnoreCase("no") || rawValue.equalsIgnoreCase("n"))
@@ -95,7 +97,7 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T extends Enum<?>> T parseEnum(Class<T> clazz, String rawValue) {
+	public static <T extends Enum<?>> T parseEnum(@Nonnull Class<T> clazz, @Nonnull String rawValue) {
 		for (Object obj : clazz.getEnumConstants()) {
 			Enum<?> enumConst = (Enum<?>)obj;
 			if (enumConst.name().equalsIgnoreCase(rawValue)) {
@@ -118,7 +120,7 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected void putArgumentValue(ArgumentSetParseProcess.Argument argument, String rawValue) {
+	protected void putArgumentValue(@Nonnull ArgumentSetParseProcess.Argument argument, @Nonnull String rawValue) {
 		Class<?> clazz = argument.field.getType();
 		switch (argument.type) {
 			case Bool: {
@@ -178,7 +180,7 @@ public class ArgumentSetParser<T extends ArgumentSet> {
 		throw new IllegalArgumentException(String.format("Cannot handle argument `%s` of type `%s`.", argument.name, argument.type.name()));
 	}
 	
-	private void putArgumentValueInternal(ArgumentSetParseProcess.Argument argument, Object value) {
+	private void putArgumentValueInternal(@Nonnull ArgumentSetParseProcess.Argument argument, @Nullable Object value) {
 		if (!argument.argumentSet.isValueValid(argument.field, value))
 			throw new IllegalArgumentException(String.format("Invalid value for argument `%s`.", argument.name));
 		argument.put(value);

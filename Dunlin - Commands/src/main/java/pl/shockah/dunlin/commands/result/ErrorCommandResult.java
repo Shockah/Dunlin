@@ -9,27 +9,29 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import pl.shockah.dunlin.commands.Command;
 import pl.shockah.dunlin.commands.CommandContext;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 
 public final class ErrorCommandResult<Input, Output> extends CommandResult<Input, Output> {
 	public static final int MAX_MESSAGE_LENGTH = 2000;
-	public static final String MESSAGE_FORMAT = "```\n%s\n```";
-	public static final Color EMBED_COLOR = new Color(1f, 0.35f, 0.35f);
+	@Nonnull public static final String MESSAGE_FORMAT = "```\n%s\n```";
+	@Nonnull public static final Color EMBED_COLOR = new Color(1f, 0.35f, 0.35f);
 
-	public final Message message;
+	@Nonnull public final Message message;
 
 	@SuppressWarnings("unchecked")
-	public ErrorCommandResult(Command<Input, ?> command, Message message) {
+	public ErrorCommandResult(@Nonnull Command<Input, ?> command, @Nonnull Message message) {
 		super((Command<Input, Output>)command);
 		this.message = message;
 	}
 
 	@Override
-	public Message getMessage(CommandContext context, Input input) {
+	@Nonnull public Message getMessage(@Nonnull CommandContext context, @Nullable Input input) {
 		return message;
 	}
 
-	public static Message messageFromThrowable(Throwable throwable) {
+	@Nonnull public static Message messageFromThrowable(@Nonnull Throwable throwable) {
 		String message = ExceptionUtils.getMessage(throwable);
 		String[] stackFrames = ExceptionUtils.getStackFrames(throwable);
 		for (int i = 0; i < stackFrames.length; i++) {

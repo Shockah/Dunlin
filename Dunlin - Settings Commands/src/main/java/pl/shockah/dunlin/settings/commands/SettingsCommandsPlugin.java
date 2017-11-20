@@ -5,32 +5,29 @@ import pl.shockah.dunlin.permissions.PermissionsPlugin;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.dunlin.settings.SettingsPlugin;
-import pl.shockah.plugin.PluginInfo;
+import pl.shockah.pintail.PluginInfo;
+
+import javax.annotation.Nonnull;
 
 public class SettingsCommandsPlugin extends Plugin {
-	@Dependency
-	protected SettingsPlugin settingsPlugin;
+	@Nonnull protected final SettingsPlugin settingsPlugin;
+	@Nonnull protected final CommandsPlugin commandsPlugin;
+	@Nonnull protected final PermissionsPlugin permissionsPlugin;
 	
-	@Dependency
-	protected CommandsPlugin commandsPlugin;
-
-	@Dependency
-	protected PermissionsPlugin permissionsPlugin;
+	@Nonnull private final SetCommand setCommand;
+	@Nonnull private final GetCommand getCommand;
 	
-	private SetCommand setCommand;
-	private GetCommand getCommand;
-	
-	public SettingsCommandsPlugin(PluginManager manager, PluginInfo info) {
+	public SettingsCommandsPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info, @Nonnull @RequiredDependency SettingsPlugin settingsPlugin, @Nonnull @RequiredDependency CommandsPlugin commandsPlugin, @Nonnull @RequiredDependency PermissionsPlugin permissionsPlugin) {
 		super(manager, info);
-	}
-	
-	@Override
-	protected void onLoad() {
+		this.settingsPlugin = settingsPlugin;
+		this.commandsPlugin = commandsPlugin;
+		this.permissionsPlugin = permissionsPlugin;
+
 		commandsPlugin.registerNamedCommand(
-			setCommand = new SetCommand(this)
+				setCommand = new SetCommand(this)
 		);
 		commandsPlugin.registerNamedCommand(
-			getCommand = new GetCommand(settingsPlugin)
+				getCommand = new GetCommand(settingsPlugin)
 		);
 	}
 	

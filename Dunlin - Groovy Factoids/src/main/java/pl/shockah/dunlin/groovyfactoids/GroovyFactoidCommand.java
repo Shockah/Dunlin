@@ -12,6 +12,9 @@ import pl.shockah.dunlin.factoids.AbstractFactoidCommand;
 import pl.shockah.dunlin.factoids.db.Factoid;
 import pl.shockah.dunlin.groovyscripting.GroovyScriptingPlugin;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class GroovyFactoidCommand extends AbstractFactoidCommand<Object, Object> {
 	public final GroovyScriptingPlugin scriptingPlugin;
 
@@ -21,12 +24,12 @@ public class GroovyFactoidCommand extends AbstractFactoidCommand<Object, Object>
 	}
 
 	@Override
-	public ParseResult<Object> parseInput(CommandContext context, String textInput) {
+	@Nonnull public ParseResult<Object> parseInput(@Nonnull CommandContext context, @Nonnull String textInput) {
 		return new ValueParseResult<>(this, textInput);
 	}
 
 	@Override
-	public CommandResult<Object, Object> execute(CommandContext context, Object o) {
+	@Nonnull public CommandResult<Object, Object> execute(@Nonnull CommandContext context, @Nullable Object o) {
 		try {
 			Binding binding = new Binding();
 			scriptingPlugin.injectVariables(binding, context.message);
@@ -38,7 +41,7 @@ public class GroovyFactoidCommand extends AbstractFactoidCommand<Object, Object>
 	}
 
 	@Override
-	public Message formatOutput(CommandContext context, Object input, Object output) {
+	@Nullable public Message formatOutput(@Nonnull CommandContext context, @Nullable Object input, @Nullable Object output) {
 		if (output instanceof EmbedBuilder)
 			return new MessageBuilder().setEmbed(((EmbedBuilder)output).build()).build();
 		else if (output instanceof MessageEmbed)

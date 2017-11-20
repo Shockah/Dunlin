@@ -16,29 +16,27 @@ import pl.shockah.dunlin.commands.CommandsPlugin;
 import pl.shockah.dunlin.permissions.PermissionsPlugin;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
-import pl.shockah.json.JSONObject;
-import pl.shockah.plugin.PluginInfo;
+import pl.shockah.jay.JSONObject;
+import pl.shockah.pintail.PluginInfo;
 import pl.shockah.util.func.Func1;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 
 public class GroovyScriptingPlugin extends Plugin {
 	public static final int DEFAULT_TIMEOUT = 30;
 
-	@Dependency
-	public CommandsPlugin commandsPlugin;
+	@Nonnull public final CommandsPlugin commandsPlugin;
+	@Nonnull public final PermissionsPlugin permissionsPlugin;
 
-	@Dependency
-	public PermissionsPlugin permissionsPlugin;
-
-	private EvalCommand evalCommand;
+	@Nonnull private final EvalCommand evalCommand;
 	
-	public GroovyScriptingPlugin(PluginManager manager, PluginInfo info) {
+	public GroovyScriptingPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info, @Nonnull @RequiredDependency CommandsPlugin commandsPlugin, @Nonnull @RequiredDependency PermissionsPlugin permissionsPlugin) {
 		super(manager, info);
-	}
-	
-	@Override
-	protected void onLoad() {
+		this.commandsPlugin = commandsPlugin;
+		this.permissionsPlugin = permissionsPlugin;
+
 		commandsPlugin.registerNamedCommand(
 				evalCommand = new EvalCommand(this)
 		);
@@ -49,11 +47,11 @@ public class GroovyScriptingPlugin extends Plugin {
 		commandsPlugin.unregisterNamedCommand(evalCommand);
 	}
 
-	private Func1<String, Object> getEvalFunction(Binding binding, GroovyInterceptor sandbox) {
+	@Nonnull private Func1<String, Object> getEvalFunction(@Nonnull Binding binding, @Nullable GroovyInterceptor sandbox) {
 		return input -> getShell(binding, sandbox).evaluate(input);
 	}
 
-	public GroovyInterceptor getSandbox(User user) {
+	@Nullable public GroovyInterceptor getSandbox(@Nonnull User user) {
 		if (user.getJDA().getAccountType() == AccountType.CLIENT && user.equals(user.getJDA().getSelfUser()))
 			return null;
 		if (permissionsPlugin.hasPermission(user, this, "unrestricted"))
@@ -61,7 +59,7 @@ public class GroovyScriptingPlugin extends Plugin {
 		return new DunlinGroovySandboxFilter();
 	}
 
-	public void injectVariables(Binding binding, Message message) {
+	public void injectVariables(@Nonnull Binding binding, @Nonnull Message message) {
 		binding.setVariable("user", message.getAuthor());
 		binding.setVariable("channel", message.getTextChannel());
 
@@ -71,27 +69,27 @@ public class GroovyScriptingPlugin extends Plugin {
 		}
 	}
 
-	public GroovyShell getShell(User user) {
+	@Nonnull public GroovyShell getShell(@Nonnull User user) {
 		return getShell(getSandbox(user));
 	}
 
-	public GroovyShell getShell(Map<String, Object> variables, User user) {
+	@Nonnull public GroovyShell getShell(@Nonnull Map<String, Object> variables, @Nonnull User user) {
 		return getShell(variables, getSandbox(user));
 	}
 
-	public GroovyShell getShell(GroovyInterceptor sandbox) {
+	@Nonnull public GroovyShell getShell(@Nullable GroovyInterceptor sandbox) {
 		return getShell(new Binding(), sandbox);
 	}
 
-	public GroovyShell getShell(Map<String, Object> variables, GroovyInterceptor sandbox) {
+	@Nonnull public GroovyShell getShell(@Nonnull Map<String, Object> variables, @Nullable GroovyInterceptor sandbox) {
 		return getShell(new Binding(variables), sandbox);
 	}
 
-	public GroovyShell getShell(Binding binding, User user) {
+	@Nonnull public GroovyShell getShell(@Nonnull Binding binding, @Nonnull User user) {
 		return getShell(binding, getSandbox(user));
 	}
 
-	private GroovyShell getShell(Binding binding, GroovyInterceptor sandbox) {
+	@Nonnull private GroovyShell getShell(@Nonnull Binding binding, @Nullable GroovyInterceptor sandbox) {
 		binding.setVariable("eval", getEvalFunction(binding, sandbox));
 
 		CompilerConfiguration cc = new CompilerConfiguration();
@@ -161,7 +159,7 @@ public class GroovyScriptingPlugin extends Plugin {
 		if (sandbox != null)
 			cc.addCompilationCustomizers(new SandboxTransformer());
 
-		GroovyShell shell = new GroovyShell(manager.pluginClassLoader, binding, cc);
+		GroovyShell shell = new GroovyShell(getClass().getClassLoader(), binding, cc);
 		if (sandbox != null)
 			sandbox.register();
 		return shell;

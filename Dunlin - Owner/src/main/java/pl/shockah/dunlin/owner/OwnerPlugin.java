@@ -9,40 +9,37 @@ import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.dunlin.settings.Setting;
 import pl.shockah.dunlin.settings.SettingsPlugin;
-import pl.shockah.json.JSONList;
-import pl.shockah.plugin.PluginInfo;
+import pl.shockah.jay.JSONList;
+import pl.shockah.pintail.PluginInfo;
+
+import javax.annotation.Nonnull;
 
 public class OwnerPlugin extends Plugin {
-	@Dependency
-	public CommandsPlugin commandsPlugin;
+	@Nonnull public final CommandsPlugin commandsPlugin;
+	@Nonnull public final PermissionsPlugin permissionsPlugin;
+	@Nonnull public final SettingsPlugin settingsPlugin;
 
-	@Dependency
-	public PermissionsPlugin permissionsPlugin;
+	@Nonnull private final ReloadCommand reloadCommand;
+	@Nonnull private final PingCommand pingCommand;
+	@Nonnull private final AnnounceCommand announceCommand;
+	@Nonnull private final StatusCommand statusCommand;
+	@Nonnull private final UserCommand userCommand;
 
-	@Dependency
-	public SettingsPlugin settingsPlugin;
-
-	private ReloadCommand reloadCommand;
-	private PingCommand pingCommand;
-	private AnnounceCommand announceCommand;
-	private StatusCommand statusCommand;
-	private UserCommand userCommand;
-
-	protected Setting<String> announceChannelSetting;
+	@Nonnull protected final Setting<String> announceChannelSetting;
 	
-	public OwnerPlugin(PluginManager manager, PluginInfo info) {
+	public OwnerPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info, @Nonnull @RequiredDependency CommandsPlugin commandsPlugin, @Nonnull @RequiredDependency PermissionsPlugin permissionsPlugin, @Nonnull @RequiredDependency SettingsPlugin settingsPlugin) {
 		super(manager, info);
-	}
-	
-	@Override
-	protected void onLoad() {
+		this.commandsPlugin = commandsPlugin;
+		this.permissionsPlugin = permissionsPlugin;
+		this.settingsPlugin = settingsPlugin;
+
 		DatabaseManager db = manager.app.getDatabaseManager();
 		if (db.selectFirst(PermissionGroup.class, q -> q.where().eq(PermissionGroup.NAME, "owner")) == null) {
 			PermissionGroup group = db.create(PermissionGroup.class, obj -> {
 				obj.setName("owner");
 				obj.setPermissions(JSONList.of("*"));
 			});
-			
+
 			db.create(PermissionUser.class, obj -> {
 				obj.setUserId(getConfig().getLong("ownerUserId"));
 				obj.setGroup(group);

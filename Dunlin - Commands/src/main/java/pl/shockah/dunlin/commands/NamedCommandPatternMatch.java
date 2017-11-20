@@ -1,10 +1,12 @@
 package pl.shockah.dunlin.commands;
 
+import javax.annotation.Nonnull;
+
 public final class NamedCommandPatternMatch {
-	public final String name;
-	public final String input;
+	@Nonnull public final String name;
+	@Nonnull public final String input;
 	
-	public NamedCommandPatternMatch(String name, String input) {
+	public NamedCommandPatternMatch(@Nonnull String name, @Nonnull String input) {
 		this.name = name;
 		this.input = input;
 	}

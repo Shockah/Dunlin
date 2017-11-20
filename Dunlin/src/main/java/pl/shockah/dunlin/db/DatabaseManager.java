@@ -1,5 +1,23 @@
 package pl.shockah.dunlin.db;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.field.DataPersisterManager;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.DatabaseTable;
+import com.j256.ormlite.table.TableUtils;
+import pl.shockah.dunlin.App;
+import pl.shockah.jay.JSONObject;
+import pl.shockah.jay.JSONParser;
+import pl.shockah.jay.JSONPrettyPrinter;
+import pl.shockah.util.UnexpectedException;
+import pl.shockah.util.func.Action1;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -11,33 +29,18 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.field.DataPersisterManager;
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.stmt.DeleteBuilder;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.DatabaseTable;
-import com.j256.ormlite.table.TableUtils;
-import pl.shockah.dunlin.App;
-import pl.shockah.json.JSONObject;
-import pl.shockah.json.JSONParser;
-import pl.shockah.json.JSONPrettyPrinter;
-import pl.shockah.util.UnexpectedException;
-import pl.shockah.util.func.Action1;
 
 public class DatabaseManager implements Closeable {
-	public static final Path TABLE_VERSIONS_PATH = Paths.get("dbTableVersions.json");
+	@Nonnull public static final Path TABLE_VERSIONS_PATH = Paths.get("dbTableVersions.json");
 	
-	public final App app;
-	protected final ConnectionSource connection;
+	@Nonnull public final App app;
+	@Nonnull protected final ConnectionSource connection;
 	
 	private final Object lock = new Object();
 	private final List<Class<?>> createdTables = new ArrayList<>();
 	private final JSONObject tableVersions;
 	
-	public DatabaseManager(App app) {
+	public DatabaseManager(@Nonnull App app) {
 		this.app = app;
 		try {
 			connection = new JdbcConnectionSource("jdbc:" + app.getConfig().getObject("database").getString("path"));
@@ -54,7 +57,7 @@ public class DatabaseManager implements Closeable {
 		}
 	}
 	
-	public <T extends DbObject<T>> Dao<T, Integer> getDao(Class<T> clazz) {
+	@Nonnull public <T extends DbObject<T>> Dao<T, Integer> getDao(@Nonnull Class<T> clazz) {
 		try {
 			synchronized (lock) {
 				Dao<T, Integer> dao = DaoManager.lookupDao(connection, clazz);
@@ -68,7 +71,7 @@ public class DatabaseManager implements Closeable {
 		}
 	}
 	
-	private <T extends DbObject<T>> void createTableIfNeeded(Dao<T, Integer> dao, Class<T> clazz) {
+	private <T extends DbObject<T>> void createTableIfNeeded(@Nonnull Dao<T, Integer> dao, @Nonnull Class<T> clazz) {
 		synchronized (lock) {
 			if (createdTables.contains(clazz))
 				return;
@@ -98,12 +101,12 @@ public class DatabaseManager implements Closeable {
 		}
 	}
 	
-	private <T extends DbObject<T>> String getDatabaseTable(Class<T> clazz) {
+	@Nonnull private <T extends DbObject<T>> String getDatabaseTable(@Nonnull Class<T> clazz) {
 		DatabaseTable databaseTable = clazz.getAnnotation(DatabaseTable.class);
 		return databaseTable == null ? clazz.getSimpleName().toLowerCase() : databaseTable.tableName();
 	}
 	
-	private <T extends DbObject<T>> int getTableVersion(Class<T> clazz) {
+	private <T extends DbObject<T>> int getTableVersion(@Nonnull Class<T> clazz) {
 		DbObject.TableVersion tableVersion = clazz.getAnnotation(DbObject.TableVersion.class);
 		return tableVersion == null ? 1 : tableVersion.value();
 	}
@@ -116,7 +119,7 @@ public class DatabaseManager implements Closeable {
 		}
 	}
 	
-	private <T extends DbObject<T>> T createInternal(Class<T> clazz) {
+	@Nonnull private <T extends DbObject<T>> T createInternal(@Nonnull Class<T> clazz) {
 		try {
 			T obj = clazz.getConstructor(Dao.class).newInstance(getDao(clazz));
 			obj.manager = new WeakReference<>(this);
@@ -126,7 +129,7 @@ public class DatabaseManager implements Closeable {
 		}
 	}
 	
-	public <T extends DbObject<T>> T create(Class<T> clazz) {
+	@Nonnull public <T extends DbObject<T>> T create(@Nonnull Class<T> clazz) {
 		try {
 			T obj = createInternal(clazz);
 			obj.create();
@@ -136,7 +139,7 @@ public class DatabaseManager implements Closeable {
 		}
 	}
 	
-	public <T extends DbObject<T>> T create(Class<T> clazz, Action1<T> f) {
+	@Nonnull public <T extends DbObject<T>> T create(@Nonnull Class<T> clazz, @Nonnull Action1<T> f) {
 		try {
 			T obj = createInternal(clazz);
 			f.call(obj);
@@ -147,7 +150,7 @@ public class DatabaseManager implements Closeable {
 		}
 	}
 	
-	public <T extends DbObject<T>> T select(Class<T> clazz, int id) {
+	@Nullable public <T extends DbObject<T>> T select(@Nonnull Class<T> clazz, int id) {
 		try {
 			T obj = getDao(clazz).queryForId(id);
 			if (obj != null)
@@ -158,7 +161,7 @@ public class DatabaseManager implements Closeable {
 		}
 	}
 	
-	public <T extends DbObject<T>> List<T> select(Class<T> clazz, SQLExceptionWrappedAction1<QueryBuilder<T, Integer>> f) {
+	@Nonnull public <T extends DbObject<T>> List<T> select(@Nonnull Class<T> clazz, @Nullable SQLExceptionWrappedAction1<QueryBuilder<T, Integer>> f) {
 		try {
 			QueryBuilder<T, Integer> q = getDao(clazz).queryBuilder();
 			if (f != null)
@@ -169,7 +172,7 @@ public class DatabaseManager implements Closeable {
 		}
 	}
 	
-	public <T extends DbObject<T>> T selectFirst(Class<T> clazz, SQLExceptionWrappedAction1<QueryBuilder<T, Integer>> f) {
+	@Nullable public <T extends DbObject<T>> T selectFirst(@Nonnull Class<T> clazz, @Nullable SQLExceptionWrappedAction1<QueryBuilder<T, Integer>> f) {
 		try {
 			QueryBuilder<T, Integer> q = getDao(clazz).queryBuilder();
 			if (f != null)
@@ -180,7 +183,7 @@ public class DatabaseManager implements Closeable {
 		}
 	}
 	
-	public int delete(DbObject<?> obj) {
+	public int delete(@Nonnull DbObject<?> obj) {
 		try {
 			return obj.delete();
 		} catch (SQLException e) {
@@ -188,7 +191,7 @@ public class DatabaseManager implements Closeable {
 		}
 	}
 	
-	public <T extends DbObject<T>> int delete(Class<T> clazz, SQLExceptionWrappedAction1<DeleteBuilder<T, Integer>> f) {
+	public <T extends DbObject<T>> int delete(@Nonnull Class<T> clazz, @Nullable SQLExceptionWrappedAction1<DeleteBuilder<T, Integer>> f) {
 		try {
 			DeleteBuilder<T, Integer> q = getDao(clazz).deleteBuilder();
 			if (f != null)
@@ -199,7 +202,7 @@ public class DatabaseManager implements Closeable {
 		}
 	}
 	
-	public <T extends DbObject<T>> long count(Class<T> clazz) {
+	public <T extends DbObject<T>> long count(@Nonnull Class<T> clazz) {
 		try {
 			return getDao(clazz).countOf();
 		} catch (SQLException e) {

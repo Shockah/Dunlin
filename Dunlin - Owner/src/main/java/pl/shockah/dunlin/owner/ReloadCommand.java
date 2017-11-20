@@ -4,21 +4,24 @@ import pl.shockah.dunlin.commands.CommandContext;
 import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.*;
 
-public class ReloadCommand extends NamedCommand<Void, Void> {
-    protected final OwnerPlugin ownerPlugin;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-    public ReloadCommand(OwnerPlugin ownerPlugin) {
+public class ReloadCommand extends NamedCommand<Void, Void> {
+    @Nonnull protected final OwnerPlugin ownerPlugin;
+
+    public ReloadCommand(@Nonnull OwnerPlugin ownerPlugin) {
         super("reload");
         this.ownerPlugin = ownerPlugin;
     }
 
     @Override
-    public ParseResult<Void> parseInput(CommandContext context, String textInput) {
+    @Nonnull public ParseResult<Void> parseInput(@Nonnull CommandContext context, @Nonnull String textInput) {
         return new ValueParseResult<>(this, null);
     }
 
     @Override
-    public CommandResult<Void, Void> execute(CommandContext context, Void aVoid) {
+    @Nonnull public CommandResult<Void, Void> execute(@Nonnull CommandContext context, @Nullable Void aVoid) {
 	    if (!ownerPlugin.permissionsPlugin.hasPermission(context.message, ownerPlugin, names[0]))
             return new ErrorCommandResult<>(this, ownerPlugin.permissionsPlugin.buildMissingPermissionMessage(ownerPlugin, names[0]));
 
@@ -27,7 +30,7 @@ public class ReloadCommand extends NamedCommand<Void, Void> {
     }
 
     @Override
-    public void output(CommandContext context, Void aVoid, CommandResult<Void, Void> outputResult) {
+    public void output(@Nonnull CommandContext context, @Nullable Void aVoid, @Nonnull CommandResult<Void, Void> outputResult) {
         context.message.addReaction("\uD83D\uDC4C").queue();
     }
 }
