@@ -12,9 +12,9 @@ import pl.shockah.dunlin.factoids.FactoidScope;
 import pl.shockah.dunlin.factoids.GlobalFactoidScope;
 import pl.shockah.dunlin.factoids.GuildFactoidScope;
 import pl.shockah.dunlin.factoids.TextChannelFactoidScope;
-import pl.shockah.json.JSONObject;
-import pl.shockah.json.JSONParser;
-import pl.shockah.json.JSONPrinter;
+import pl.shockah.jay.JSONObject;
+import pl.shockah.jay.JSONParser;
+import pl.shockah.jay.JSONPrinter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

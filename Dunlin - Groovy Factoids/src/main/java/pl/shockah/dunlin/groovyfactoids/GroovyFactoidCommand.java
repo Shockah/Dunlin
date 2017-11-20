@@ -11,8 +11,8 @@ import pl.shockah.dunlin.commands.result.*;
 import pl.shockah.dunlin.factoids.AbstractFactoidCommand;
 import pl.shockah.dunlin.factoids.db.Factoid;
 import pl.shockah.dunlin.groovyscripting.GroovyScriptingPlugin;
-import pl.shockah.json.JSONObject;
-import pl.shockah.json.JSONPrinter;
+import pl.shockah.jay.JSONObject;
+import pl.shockah.jay.JSONPrinter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

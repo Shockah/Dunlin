@@ -13,7 +13,7 @@ import pl.shockah.dunlin.factoids.FactoidScope;
 import pl.shockah.dunlin.factoids.GlobalFactoidScope;
 import pl.shockah.dunlin.factoids.GuildFactoidScope;
 import pl.shockah.dunlin.factoids.TextChannelFactoidScope;
-import pl.shockah.json.JSONObject;
+import pl.shockah.jay.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
