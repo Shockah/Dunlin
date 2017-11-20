@@ -4,27 +4,37 @@ import pl.shockah.dunlin.commands.CommandsPlugin;
 import pl.shockah.dunlin.factoids.db.Factoid;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
-import pl.shockah.plugin.PluginInfo;
+import pl.shockah.pintail.PluginInfo;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class FactoidsPlugin extends Plugin {
-	@Dependency
-	protected CommandsPlugin commandsPlugin;
+	@Nonnull protected final CommandsPlugin commandsPlugin;
 
-	private FactoidCommandProvider commandProvider;
+	@Nonnull public final FactoidCommandProvider commandProvider;
+	@Nonnull private final FactoidCommand factoidCommand;
 	
-	private FactoidCommand factoidCommand;
-	
-	public FactoidsPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info) {
+	public FactoidsPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info, @Nonnull @RequiredDependency CommandsPlugin commandsPlugin) {
 		super(manager, info);
+		this.commandsPlugin = commandsPlugin;
+
+		commandsPlugin.registerNamedCommandProvider(
+				commandProvider = new FactoidCommandProvider(this)
+		);
+
+		commandsPlugin.registerNamedCommand(
+				factoidCommand = new FactoidCommand(this)
+		);
+
+		registerFactory(new PlainFactoidCommandFactory());
 	}
 
-	@Nonnull public FactoidCommandProvider getFactoidCommandProvider() {
-		if (commandProvider == null)
-			throw new IllegalStateException();
-		return commandProvider;
+	@Override
+	protected void onUnload() {
+		commandsPlugin.unregisterNamedCommandProvider(commandProvider);
+
+		commandsPlugin.unregisterNamedCommand(factoidCommand);
 	}
 
 	public void registerFactory(@Nonnull FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory) {
@@ -33,26 +43,6 @@ public class FactoidsPlugin extends Plugin {
 
 	public void unregisterFactory(@Nonnull FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory) {
 		commandProvider.unregisterFactory(factory);
-	}
-	
-	@Override
-	protected void onLoad() {
-		commandsPlugin.registerNamedCommandProvider(
-				commandProvider = new FactoidCommandProvider(this)
-		);
-
-		commandsPlugin.registerNamedCommand(
-			factoidCommand = new FactoidCommand(this)
-		);
-
-		registerFactory(new PlainFactoidCommandFactory());
-	}
-	
-	@Override
-	protected void onUnload() {
-		commandsPlugin.unregisterNamedCommandProvider(commandProvider);
-
-		commandsPlugin.unregisterNamedCommand(factoidCommand);
 	}
 
 	@Nullable public Factoid getMatchingFactoid(@Nonnull FactoidScope scope, @Nonnull String name) {

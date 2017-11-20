@@ -70,7 +70,7 @@ public class RememberSubcommand extends NamedCommand<RememberSubcommand.Input, F
 					throw new IllegalArgumentException();
 			}
 
-			FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory = plugin.getFactoidCommandProvider().factories.get(type);
+			FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory = plugin.commandProvider.factories.get(type);
 
 			String content = this.content.trim();
 			if (factory.codeHighlighting != null) {

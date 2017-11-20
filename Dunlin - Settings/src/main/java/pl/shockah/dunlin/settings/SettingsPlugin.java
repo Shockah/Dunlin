@@ -2,14 +2,15 @@ package pl.shockah.dunlin.settings;
 
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
-import pl.shockah.json.JSONObject;
-import pl.shockah.json.JSONParser;
-import pl.shockah.json.JSONPrettyPrinter;
-import pl.shockah.plugin.PluginInfo;
+import pl.shockah.jay.JSONObject;
+import pl.shockah.jay.JSONParser;
+import pl.shockah.jay.JSONPrettyPrinter;
+import pl.shockah.pintail.PluginInfo;
 import pl.shockah.util.ReadWriteMap;
 import pl.shockah.util.ReadWriteSet;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,9 +28,9 @@ public class SettingsPlugin extends Plugin {
 	@Nonnull public static final long DELAY_UNITS = 3;
 	
 	@Nonnull protected final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-	protected ScheduledFuture<?> scheduledSaveSettings;
+	@Nullable protected ScheduledFuture<?> scheduledSaveSettings;
 	
-	protected JSONObject settingsJson;
+	@Nonnull protected final JSONObject settingsJson;
 	protected boolean dirty = false;
 	
 	@Nonnull protected final ReadWriteMap<String, Setting<?>> settings = new ReadWriteMap<>(new HashMap<>());
@@ -37,13 +38,10 @@ public class SettingsPlugin extends Plugin {
 	
 	public SettingsPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info) {
 		super(manager, info);
-	}
-	
-	@Override
-	protected void onLoad() {
-		settingsJson = new JSONObject();
+
+		JSONObject settingsJson = new JSONObject();
 		dirty = true;
-		
+
 		if (Files.exists(SETTINGS_PATH)) {
 			try {
 				settingsJson = new JSONParser().parseObject(new String(Files.readAllBytes(SETTINGS_PATH), "UTF-8"));
@@ -52,6 +50,8 @@ public class SettingsPlugin extends Plugin {
 				e.printStackTrace();
 			}
 		}
+
+		this.settingsJson = settingsJson;
 	}
 	
 	@Override

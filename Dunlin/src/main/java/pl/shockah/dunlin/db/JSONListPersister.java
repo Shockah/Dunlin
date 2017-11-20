@@ -1,13 +1,14 @@
 package pl.shockah.dunlin.db;
 
-import java.sql.SQLException;
 import com.j256.ormlite.field.FieldType;
 import com.j256.ormlite.field.SqlType;
 import com.j256.ormlite.field.types.BaseDataType;
 import com.j256.ormlite.support.DatabaseResults;
-import pl.shockah.json.JSONList;
-import pl.shockah.json.JSONParser;
-import pl.shockah.json.JSONPrinter;
+import pl.shockah.jay.JSONList;
+import pl.shockah.jay.JSONParser;
+import pl.shockah.jay.JSONPrinter;
+
+import java.sql.SQLException;
 
 public class JSONListPersister extends BaseDataType {
 	public JSONListPersister() {

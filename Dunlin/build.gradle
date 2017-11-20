@@ -2,8 +2,8 @@ apply plugin: 'application'
 
 dependencies {
 	compile 'com.github.Shockah:pl.shockah.util:1.0.2'
-	compile 'com.github.Shockah:pl.shockah.json:1.0.3'
-	compile 'com.github.Shockah:pl.shockah.plugin:1.5.1'
+	compile 'com.github.Shockah:Jay:1.1'
+	compile 'com.github.Shockah:Pintail:1.6'
 	
 	//Discord
 	compile 'net.dv8tion:JDA:3.3.1_305'

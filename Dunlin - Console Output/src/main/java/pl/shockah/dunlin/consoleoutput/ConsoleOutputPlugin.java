@@ -10,7 +10,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageUpdateEvent;
 import org.apache.commons.lang3.StringUtils;
 import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
-import pl.shockah.plugin.PluginInfo;
+import pl.shockah.pintail.PluginInfo;
 
 import javax.annotation.Nonnull;
 

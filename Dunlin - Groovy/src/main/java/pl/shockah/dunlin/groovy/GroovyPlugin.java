@@ -3,7 +3,7 @@ package pl.shockah.dunlin.groovy;
 import groovy.lang.GroovyClassLoader;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
-import pl.shockah.plugin.PluginInfo;
+import pl.shockah.pintail.PluginInfo;
 
 import javax.annotation.Nonnull;
 import java.net.URL;

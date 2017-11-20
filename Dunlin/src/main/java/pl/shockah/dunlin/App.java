@@ -3,8 +3,8 @@ package pl.shockah.dunlin;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import pl.shockah.dunlin.db.DatabaseManager;
 import pl.shockah.dunlin.plugin.PluginManager;
-import pl.shockah.json.JSONObject;
-import pl.shockah.json.JSONParser;
+import pl.shockah.jay.JSONObject;
+import pl.shockah.jay.JSONParser;
 
 import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;

@@ -16,8 +16,8 @@ import pl.shockah.dunlin.commands.CommandsPlugin;
 import pl.shockah.dunlin.permissions.PermissionsPlugin;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
-import pl.shockah.json.JSONObject;
-import pl.shockah.plugin.PluginInfo;
+import pl.shockah.jay.JSONObject;
+import pl.shockah.pintail.PluginInfo;
 import pl.shockah.util.func.Func1;
 
 import javax.annotation.Nonnull;
@@ -27,20 +27,16 @@ import java.util.Map;
 public class GroovyScriptingPlugin extends Plugin {
 	public static final int DEFAULT_TIMEOUT = 30;
 
-	@Dependency
-	public CommandsPlugin commandsPlugin;
+	@Nonnull public final CommandsPlugin commandsPlugin;
+	@Nonnull public final PermissionsPlugin permissionsPlugin;
 
-	@Dependency
-	public PermissionsPlugin permissionsPlugin;
-
-	private EvalCommand evalCommand;
+	@Nonnull private final EvalCommand evalCommand;
 	
-	public GroovyScriptingPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info) {
+	public GroovyScriptingPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info, @Nonnull @RequiredDependency CommandsPlugin commandsPlugin, @Nonnull @RequiredDependency PermissionsPlugin permissionsPlugin) {
 		super(manager, info);
-	}
-	
-	@Override
-	protected void onLoad() {
+		this.commandsPlugin = commandsPlugin;
+		this.permissionsPlugin = permissionsPlugin;
+
 		commandsPlugin.registerNamedCommand(
 				evalCommand = new EvalCommand(this)
 		);
@@ -163,7 +159,7 @@ public class GroovyScriptingPlugin extends Plugin {
 		if (sandbox != null)
 			cc.addCompilationCustomizers(new SandboxTransformer());
 
-		GroovyShell shell = new GroovyShell(manager.pluginClassLoader, binding, cc);
+		GroovyShell shell = new GroovyShell(getClass().getClassLoader(), binding, cc);
 		if (sandbox != null)
 			sandbox.register();
 		return shell;

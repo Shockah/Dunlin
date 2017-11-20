@@ -8,7 +8,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
-import pl.shockah.json.JSONObject;
+import pl.shockah.jay.JSONObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

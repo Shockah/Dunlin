@@ -9,7 +9,7 @@ import pl.shockah.dunlin.db.DbObject;
 import pl.shockah.dunlin.db.DbObject.TableVersion;
 import pl.shockah.dunlin.db.ForeignCollectionWrapper;
 import pl.shockah.dunlin.plugin.Plugin;
-import pl.shockah.json.JSONList;
+import pl.shockah.jay.JSONList;
 
 import javax.annotation.Nonnull;
 

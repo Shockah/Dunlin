@@ -1,11 +1,11 @@
 package pl.shockah.dunlin.plugin;
 
 import pl.shockah.dunlin.App;
-import pl.shockah.plugin.PluginInfo;
+import pl.shockah.pintail.PluginInfo;
 
 import javax.annotation.Nonnull;
 
-public class PluginManager extends pl.shockah.plugin.PluginManager<PluginInfo, PluginManager, Plugin> {
+public class PluginManager extends pl.shockah.pintail.PluginManager<PluginInfo, PluginManager, Plugin> {
 	@Nonnull public final App app;
 	
 	public PluginManager(@Nonnull App app) {
