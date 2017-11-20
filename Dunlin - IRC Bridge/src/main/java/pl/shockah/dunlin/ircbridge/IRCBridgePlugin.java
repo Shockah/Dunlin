@@ -16,11 +16,12 @@ import pl.shockah.dunlin.commands.*;
 import pl.shockah.dunlin.commands.result.CommandResult;
 import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
-import pl.shockah.json.JSONObject;
-import pl.shockah.json.JSONParser;
-import pl.shockah.plugin.PluginInfo;
+import pl.shockah.jay.JSONObject;
+import pl.shockah.jay.JSONParser;
+import pl.shockah.pintail.PluginInfo;
 import pl.shockah.util.ReadWriteList;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -32,10 +33,9 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
-	@Dependency
-	public CommandsPlugin commandsPlugin;
+	@Nonnull public final CommandsPlugin commandsPlugin;
 
-	public final ReadWriteList<IRCBot> ircBots = new ReadWriteList<>(new ArrayList<>());
+	@Nonnull public final ReadWriteList<IRCBot> ircBots = new ReadWriteList<>(new ArrayList<>());
 
 	public net.dv8tion.jda.core.entities.User singleUser;
 	private Guild guild;
@@ -46,14 +46,12 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 	private int avatarVariations;
 	private String awayMessage;
 
-	private OnlineCommand onlineCommand;
+	@Nonnull private final OnlineCommand onlineCommand;
 
-	public IRCBridgePlugin(PluginManager manager, PluginInfo info) {
+	public IRCBridgePlugin(PluginManager manager, PluginInfo info, @Nonnull @RequiredDependency CommandsPlugin commandsPlugin) {
 		super(manager, info);
-	}
+		this.commandsPlugin = commandsPlugin;
 
-	@Override
-	protected void onLoad() {
 		commandsPlugin.registerListener(this);
 
 		commandsPlugin.registerNamedCommand(
@@ -103,10 +101,17 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 
 				builder.setEncoding(Charset.forName("UTF-8"));
 				builder.setAutoReconnect(true);
-				builder.setName(jServer.getString("nick", global.getOptionalString("nick")));
+
+				String nick = jServer.getOptionalString("nick");
+				if (nick == null)
+					nick = global.getOptionalString("nick");
+				if (nick != null)
+					builder.setName(nick);
 				builder.setAutoNickChange(true);
 
-				String realName = jServer.getString("realName", global.getOptionalString("realName"));
+				String realName = jServer.getOptionalString("realName");
+				if (realName == null)
+					realName = global.getOptionalString("realName");
 				if (realName != null)
 					builder.setRealName(realName);
 

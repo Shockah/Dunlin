@@ -10,7 +10,9 @@ import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.*;
+import org.pircbotx.snapshot.UserChannelDaoSnapshot;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.time.Instant;
 import java.util.Collections;
@@ -20,15 +22,15 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 public class IRCBot extends PircBotX {
-	public static final Color PLUGIN_INFO_COLOR = new Color(0.7f, 0.7f, 1.0f);
+	@Nonnull public static final Color PLUGIN_INFO_COLOR = new Color(0.7f, 0.7f, 1.0f);
 
-	public final IRCBridgePlugin plugin;
-	public final Listener listener;
-	public final Map<String, TextChannel> channelMap;
-	public final Map<TextChannel, String> reverseChannelMap;
-	public final List<RelayBotInfo> relayBots;
+	@Nonnull public final IRCBridgePlugin plugin;
+	@Nonnull public final Listener listener;
+	@Nonnull public final Map<String, TextChannel> channelMap;
+	@Nonnull public final Map<TextChannel, String> reverseChannelMap;
+	@Nonnull public final List<RelayBotInfo> relayBots;
 
-	public IRCBot(IRCBridgePlugin plugin, Configuration configuration, Map<String, TextChannel> channelMap, List<RelayBotInfo> relayBots) {
+	public IRCBot(@Nonnull IRCBridgePlugin plugin, @Nonnull Configuration configuration, @Nonnull Map<String, TextChannel> channelMap, @Nonnull List<RelayBotInfo> relayBots) {
 		super(configuration);
 		this.plugin = plugin;
 		listener = new IRCBotListener();
@@ -82,7 +84,11 @@ public class IRCBot extends PircBotX {
 
 		@Override
 		public void onDisconnect(DisconnectEvent event) throws Exception {
-			for (Channel ircChannel : event.getUserChannelDaoSnapshot().getAllChannels()) {
+			UserChannelDaoSnapshot snapshot = event.getUserChannelDaoSnapshot();
+			if (snapshot == null)
+				return;
+
+			for (Channel ircChannel : snapshot.getAllChannels()) {
 				TextChannel channel = channelMap.get(ircChannel.getName());
 				if (channel == null)
 					return;
@@ -97,6 +103,9 @@ public class IRCBot extends PircBotX {
 
 		@Override
 		public void onMessage(MessageEvent event) throws Exception {
+			if (event.getUser() == null)
+				return;
+
 			TextChannel channel = channelMap.get(event.getChannel().getName());
 			if (channel == null)
 				return;
@@ -110,6 +119,9 @@ public class IRCBot extends PircBotX {
 
 		@Override
 		public void onAction(ActionEvent event) throws Exception {
+			if (event.getChannel() == null || event.getUser() == null)
+				return;
+
 			TextChannel channel = channelMap.get(event.getChannel().getName());
 			if (channel == null)
 				return;
@@ -125,6 +137,8 @@ public class IRCBot extends PircBotX {
 		public void onPrivateMessage(PrivateMessageEvent event) throws Exception {
 			if (plugin.singleUser == null)
 				return;
+			if (event.getUser() == null)
+				return;
 
 			String nick = event.getUser().getNick();
 			String message = event.getMessage();
@@ -137,6 +151,9 @@ public class IRCBot extends PircBotX {
 
 		@Override
 		public void onNotice(NoticeEvent event) throws Exception {
+			if (event.getUser() == null)
+				return;
+
 			if (event.getChannel() == null) {
 				if (plugin.singleUser == null)
 					return;
