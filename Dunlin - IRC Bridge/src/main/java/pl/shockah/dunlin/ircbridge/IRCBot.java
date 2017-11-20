@@ -13,6 +13,7 @@ import org.pircbotx.hooks.events.*;
 import org.pircbotx.snapshot.UserChannelDaoSnapshot;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.time.Instant;
 import java.util.Collections;
@@ -45,7 +46,7 @@ public class IRCBot extends PircBotX {
 	}
 
 	private class IRCBotListener extends ListenerAdapter {
-		private void sendMessage(MessageChannel channel, String nick, String nickFormat, String message, String avatar) {
+		private void sendMessage(@Nonnull MessageChannel channel, @Nonnull String nick, @Nonnull String nickFormat, @Nonnull String message, @Nonnull String avatar) {
 			for (RelayBotInfo relayBot : relayBots) {
 				if (nick.equalsIgnoreCase(relayBot.nick)) {
 					Matcher m = relayBot.pattern.matcher(message);
@@ -179,7 +180,7 @@ public class IRCBot extends PircBotX {
 		}
 	}
 
-	public void setIrcAway(String awayMessage) {
+	public void setIrcAway(@Nullable String awayMessage) {
 		if (StringUtils.isEmpty(awayMessage)) {
 			sendRaw().rawLine("AWAY");
 		} else {

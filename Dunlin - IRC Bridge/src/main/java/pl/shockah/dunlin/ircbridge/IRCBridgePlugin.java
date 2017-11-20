@@ -22,6 +22,7 @@ import pl.shockah.pintail.PluginInfo;
 import pl.shockah.util.ReadWriteList;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -48,7 +49,7 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 
 	@Nonnull private final OnlineCommand onlineCommand;
 
-	public IRCBridgePlugin(PluginManager manager, PluginInfo info, @Nonnull @RequiredDependency CommandsPlugin commandsPlugin) {
+	public IRCBridgePlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info, @Nonnull @RequiredDependency CommandsPlugin commandsPlugin) {
 		super(manager, info);
 		this.commandsPlugin = commandsPlugin;
 
@@ -170,15 +171,15 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 		}
 	}
 
-	public String getAvatarUrl(User user, Channel channel) {
+	public String getAvatarUrl(@Nonnull User user, @Nullable Channel channel) {
 		return getAvatarUrl(user.getNick(), getReplacement(user, channel));
 	}
 
-	public String getAvatarUrl(String nick) {
+	public String getAvatarUrl(@Nonnull String nick) {
 		return getAvatarUrl(nick, "normal");
 	}
 
-	public String getAvatarUrl(String nick, String replacement) {
+	public String getAvatarUrl(@Nonnull String nick, @Nonnull String replacement) {
 		int variation = (Math.abs(nick.hashCode()) % avatarVariations) + 1;
 		String url = avatarUrlFormat;
 		url = url.replace("{$replacement}", replacement);
@@ -186,7 +187,7 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 		return url;
 	}
 
-	private String getReplacement(User user, Channel channel) {
+	private String getReplacement(@Nonnull User user, @Nullable Channel channel) {
 		if (channel == null)
 			return normalAvatarReplacement;
 		if (channel.isOp(user))
@@ -197,7 +198,7 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 			return normalAvatarReplacement;
 	}
 
-	protected void setIrcAway(IRCBot bot) {
+	protected void setIrcAway(@Nonnull IRCBot bot) {
 		if (singleUser == null)
 			return;
 
@@ -210,7 +211,7 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 		}
 	}
 
-	private void sendMessageToIrcChannel(Message message, Channel channel) {
+	private void sendMessageToIrcChannel(@Nonnull Message message, @Nonnull Channel channel) {
 		String content = message.getContent();
 		if (!StringUtils.isEmpty(content)) {
 			String[] split = content.split("\\r?\\n|\\r");
@@ -247,15 +248,15 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 	}
 
 	@Override
-	public void onCommandReceived(CommandContext context, CommandPattern<?> pattern, Command<?, ?> command, String textInput) {
+	public void onCommandReceived(@Nonnull CommandContext context, @Nonnull CommandPattern<?> pattern, @Nonnull Command<?, ?> command, @Nonnull String textInput) {
 	}
 
 	@Override
-	public void onCommandExecuted(CommandContext context, CommandPattern<?> pattern, Command<?, ?> command, String textInput, CommandResult<?, ?> result) {
+	public void onCommandExecuted(@Nonnull CommandContext context, @Nonnull CommandPattern<?> pattern, @Nonnull Command<?, ?> command, @Nonnull String textInput, @Nonnull CommandResult<?, ?> result) {
 	}
 
 	@Override
-	public void onNonCommandMessageReceived(MessageReceivedEvent event) {
+	public void onNonCommandMessageReceived(@Nonnull MessageReceivedEvent event) {
 		if (event.getAuthor() == event.getJDA().getSelfUser())
 			return;
 		if (singleUser != null && event.getAuthor() != singleUser)
@@ -266,7 +267,7 @@ public class IRCBridgePlugin extends ListenerPlugin implements CommandListener {
 			sendMessageToIrcChannel(event.getMessage(), channel);
 	}
 
-	public Channel getIrcChannel(TextChannel discordChannel) {
+	public Channel getIrcChannel(@Nonnull TextChannel discordChannel) {
 		return ircBots.readOperation(ircBots -> {
 			for (IRCBot bot : ircBots) {
 				String channelName = bot.reverseChannelMap.get(discordChannel);
