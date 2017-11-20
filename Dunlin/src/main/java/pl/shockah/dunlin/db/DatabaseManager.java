@@ -10,9 +10,9 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTable;
 import com.j256.ormlite.table.TableUtils;
 import pl.shockah.dunlin.App;
-import pl.shockah.json.JSONObject;
-import pl.shockah.json.JSONParser;
-import pl.shockah.json.JSONPrettyPrinter;
+import pl.shockah.jay.JSONObject;
+import pl.shockah.jay.JSONParser;
+import pl.shockah.jay.JSONPrettyPrinter;
 import pl.shockah.util.UnexpectedException;
 import pl.shockah.util.func.Action1;
 

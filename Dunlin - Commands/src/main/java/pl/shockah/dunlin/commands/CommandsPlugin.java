@@ -8,7 +8,7 @@ import pl.shockah.dunlin.plugin.ListenerPlugin;
 import pl.shockah.dunlin.plugin.PluginManager;
 import pl.shockah.dunlin.settings.Setting;
 import pl.shockah.dunlin.settings.SettingsPlugin;
-import pl.shockah.plugin.PluginInfo;
+import pl.shockah.pintail.PluginInfo;
 import pl.shockah.util.Box;
 import pl.shockah.util.ReadWriteSet;
 
@@ -17,32 +17,29 @@ import javax.annotation.Nullable;
 import java.util.LinkedHashSet;
 
 public class CommandsPlugin extends ListenerPlugin {
-	@Dependency
-	private SettingsPlugin settingsPlugin;
+	@Nonnull private final SettingsPlugin settingsPlugin;
 	
-	protected Setting<String> prefixesSetting;
+	@Nonnull protected final Setting<String> prefixesSetting;
 
 	@Nonnull protected final ReadWriteSet<CommandListener> listeners = new ReadWriteSet<>(new LinkedHashSet<>());
 	@Nonnull protected final ReadWriteSet<CommandPattern<? extends Command<Object, Object>>> patterns = new ReadWriteSet<>(new LinkedHashSet<>());
-	protected DefaultCommandPattern defaultCommandPattern;
-	protected ChainCommandPattern chainCommandPattern;
-	protected DefaultNamedCommandProvider defaultNamedCommandProvider;
+	@Nonnull protected final DefaultCommandPattern defaultCommandPattern;
+	@Nonnull protected final ChainCommandPattern chainCommandPattern;
+	@Nonnull protected final DefaultNamedCommandProvider defaultNamedCommandProvider;
 	
-	public CommandsPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info) {
+	public CommandsPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info, @Nonnull @RequiredDependency SettingsPlugin settingsPlugin) {
 		super(manager, info);
-	}
-	
-	@Override
-	protected void onLoad() {
+		this.settingsPlugin = settingsPlugin;
+
 		settingsPlugin.register(
-			prefixesSetting = Setting.ofString(settingsPlugin, this, "prefixes", ".")
+				prefixesSetting = Setting.ofString(settingsPlugin, this, "prefixes", ".")
 		);
-		
+
 		defaultCommandPattern = new DefaultCommandPattern(this);
 		chainCommandPattern = new ChainCommandPattern(defaultCommandPattern);
 		registerPattern(chainCommandPattern);
 		registerPattern(defaultCommandPattern);
-		
+
 		defaultNamedCommandProvider = new DefaultNamedCommandProvider();
 		registerNamedCommandProvider(defaultNamedCommandProvider);
 	}

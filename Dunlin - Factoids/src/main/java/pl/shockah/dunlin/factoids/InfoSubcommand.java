@@ -52,7 +52,7 @@ public class InfoSubcommand extends NamedCommand<InfoSubcommand.Input, Factoid> 
 		String authorName = member == null ? author.getName() : member.getEffectiveName();
 
 		String content = factoid.getContent();
-		FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory = plugin.getFactoidCommandProvider().factories.get(factoid.getType());
+		FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory = plugin.commandProvider.factories.get(factoid.getType());
 		if (factory.codeHighlighting != null)
 			content = String.format("```%s\n%s\n```", factory.codeHighlighting, content);
 
