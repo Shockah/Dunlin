@@ -3,35 +3,36 @@ package pl.shockah.dunlin.groovyscripting;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.groovy.sandbox.GroovyInterceptor;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 public abstract class AbstractGroovySandbox extends GroovyInterceptor {
-	public boolean isConstructorAllowed(Class<?> clazz, Object... args) {
+	public boolean isConstructorAllowed(@Nonnull Class<?> clazz, @Nonnull Object... args) {
 		return true;
 	}
 
-	public boolean isInstanceMethodAllowed(Object obj, String method, Object... args) {
+	public boolean isInstanceMethodAllowed(@Nonnull Object obj, @Nonnull String method, @Nonnull Object... args) {
 		return true;
 	}
 
-	public boolean isClassMethodAllowed(Class<?> clazz, String method, Object... args) {
+	public boolean isClassMethodAllowed(@Nonnull Class<?> clazz, @Nonnull String method, @Nonnull Object... args) {
 		return true;
 	}
 
-	public boolean isInstanceFieldGetAllowed(Object obj, String field) {
+	public boolean isInstanceFieldGetAllowed(@Nonnull Object obj, @Nonnull String field) {
 		return true;
 	}
 
-	public boolean isInstanceFieldSetAllowed(Object obj, String field, Object value) {
+	public boolean isInstanceFieldSetAllowed(@Nonnull Object obj, @Nonnull String field, @Nonnull Object value) {
 		return true;
 	}
 
-	public boolean isClassFieldGetAllowed(Class<?> clazz, String field) {
+	public boolean isClassFieldGetAllowed(@Nonnull Class<?> clazz, @Nonnull String field) {
 		return true;
 	}
 
-	public boolean isClassFieldSetAllowed(Class<?> clazz, String field, Object value) {
+	public boolean isClassFieldSetAllowed(@Nonnull Class<?> clazz, @Nonnull String field, @Nonnull Object value) {
 		return true;
 	}
 

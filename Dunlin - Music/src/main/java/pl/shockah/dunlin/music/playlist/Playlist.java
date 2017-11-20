@@ -6,17 +6,18 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import pl.shockah.dunlin.music.GuildAudioManager;
 import pl.shockah.util.ReadWriteList;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 
 public abstract class Playlist {
-	public final GuildAudioManager manager;
-	public final ReadWriteList<AudioTrack> tracks = new ReadWriteList<>(new ArrayList<>());
+	@Nonnull public final GuildAudioManager manager;
+	@Nonnull public final ReadWriteList<AudioTrack> tracks = new ReadWriteList<>(new ArrayList<>());
 
-	public Playlist(GuildAudioManager manager) {
+	public Playlist(@Nonnull GuildAudioManager manager) {
 		this.manager = manager;
 	}
 
-	public void queue(AudioItem item) {
+	public void queue(@Nonnull AudioItem item) {
 		if (item instanceof AudioTrack) {
 			tracks.add((AudioTrack) item);
 			onQueue(item);
@@ -27,7 +28,7 @@ public abstract class Playlist {
 		}
 	}
 
-	public void dequeue(AudioTrack track) {
+	public void dequeue(@Nonnull AudioTrack track) {
 		if (tracks.remove(track))
 			onDequeue(track);
 	}
@@ -49,7 +50,7 @@ public abstract class Playlist {
 		});
 	}
 
-	public abstract void onQueue(AudioItem item);
+	public abstract void onQueue(@Nonnull AudioItem item);
 
-	public abstract void onDequeue(AudioTrack track);
+	public abstract void onDequeue(@Nonnull AudioTrack track);
 }

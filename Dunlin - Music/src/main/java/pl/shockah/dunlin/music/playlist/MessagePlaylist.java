@@ -10,20 +10,21 @@ import org.apache.commons.lang3.StringUtils;
 import pl.shockah.dunlin.music.GuildAudioManager;
 import pl.shockah.dunlin.settings.GuildSettingScope;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MessagePlaylist extends Playlist {
-	public final Message message;
-	public AtomicInteger page = new AtomicInteger();
+	@Nonnull public final Message message;
+	@Nonnull public AtomicInteger page = new AtomicInteger();
 
-	public MessagePlaylist(GuildAudioManager manager, Message message) {
+	public MessagePlaylist(@Nonnull GuildAudioManager manager, @Nonnull Message message) {
 		super(manager);
 		this.message = message;
 	}
 
 	@Override
-	public void onQueue(AudioItem item) {
+	public void onQueue(@Nonnull AudioItem item) {
 		synchronized (manager.lock) {
 			if (manager.getCurrentVoiceChannel() != null && manager.audioPlayer.getPlayingTrack() == null)
 				playNext();
@@ -32,11 +33,11 @@ public class MessagePlaylist extends Playlist {
 	}
 
 	@Override
-	public void onDequeue(AudioTrack track) {
+	public void onDequeue(@Nonnull AudioTrack track) {
 		updatePlaylistMessage();
 	}
 
-	public void onReaction(Member member, String emoji) {
+	public void onReaction(@Nonnull Member member, @Nonnull String emoji) {
 		synchronized (manager.lock) {
 			if (emoji.equals(GuildAudioManager.EMOJI_PLAY_PAUSE)) {
 				VoiceChannel channel = manager.getCurrentVoiceChannel();
@@ -54,16 +55,19 @@ public class MessagePlaylist extends Playlist {
 				VoiceChannel channel = manager.getCurrentVoiceChannel();
 				VoiceChannel userVoiceChannel = member.getVoiceState().getChannel();
 
-				if (channel != null || channel == userVoiceChannel)
+				if (channel != null || userVoiceChannel == null)
 					playNext();
 			} else if (emoji.equals(GuildAudioManager.EMOJI_ARROW_LEFT)) {
 				page.set(Math.max(page.get() - 1, 0));
 				updatePlaylistMessage();
 			} else if (emoji.equals(GuildAudioManager.EMOJI_ARROW_RIGHT)) {
-				int perPage = manager.plugin.entriesPerPageSetting.get(new GuildSettingScope(message.getGuild()));
-				int pages = (int)Math.ceil(1.0 * tracks.size() / perPage);
-				page.set(Math.min(page.get() + 1, Math.max(pages - 1, 0)));
-				updatePlaylistMessage();
+				Integer settingValue = manager.plugin.entriesPerPageSetting.get(new GuildSettingScope(message.getGuild()));
+				if (settingValue != null) {
+					int perPage = settingValue;
+					int pages = (int)Math.ceil(1.0 * tracks.size() / perPage);
+					page.set(Math.min(page.get() + 1, Math.max(pages - 1, 0)));
+					updatePlaylistMessage();
+				}
 			}
 		}
 	}
@@ -76,7 +80,10 @@ public class MessagePlaylist extends Playlist {
 
 	protected void updatePlaylistMessage() {
 		tracks.readOperation(tracks -> {
-			int perPage = manager.plugin.entriesPerPageSetting.get(new GuildSettingScope(message.getGuild()));
+			Integer settingValue = manager.plugin.entriesPerPageSetting.get(new GuildSettingScope(message.getGuild()));
+			if (settingValue == null)
+				return;
+			int perPage = settingValue;
 			if (!tracks.isEmpty()) {
 				while (page.get() * perPage > tracks.size())
 					page.decrementAndGet();

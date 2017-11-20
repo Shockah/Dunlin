@@ -1,27 +1,26 @@
 package pl.shockah.dunlin.commands;
 
+import pl.shockah.util.UnexpectedException;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import pl.shockah.util.UnexpectedException;
+import java.util.*;
 
 public final class ArgumentSetParseProcess {
-	public final ArgumentSet argumentSet;
+	@Nonnull public final ArgumentSet argumentSet;
 	
-	protected final Map<Field, Argument> modifiableFieldToArgument = new HashMap<>();
-	protected final Map<String, Argument> modifiableNameToArgument = new HashMap<>();
+	@Nonnull protected final Map<Field, Argument> modifiableFieldToArgument = new HashMap<>();
+	@Nonnull protected final Map<String, Argument> modifiableNameToArgument = new HashMap<>();
 	
-	public final Map<Field, Argument> fieldToArgument = Collections.unmodifiableMap(modifiableFieldToArgument);
-	public final Map<String, Argument> nameToArgument = Collections.unmodifiableMap(modifiableNameToArgument);
-	public final Argument defaultArgument;
+	@Nonnull public final Map<Field, Argument> fieldToArgument = Collections.unmodifiableMap(modifiableFieldToArgument);
+	@Nonnull public final Map<String, Argument> nameToArgument = Collections.unmodifiableMap(modifiableNameToArgument);
+	@Nullable public final Argument defaultArgument;
 	
 	@SuppressWarnings("deprecation")
-	public ArgumentSetParseProcess(ArgumentSet argumentSet) {
+	public ArgumentSetParseProcess(@Nonnull ArgumentSet argumentSet) {
 		this.argumentSet = argumentSet;
 		Argument defaultArgument = null;
 		
@@ -58,7 +57,7 @@ public final class ArgumentSetParseProcess {
 		this.defaultArgument = defaultArgument;
 	}
 	
-	private ArgumentSet.ArgumentType findType(Field field) {
+	private ArgumentSet.ArgumentType findType(@Nonnull Field field) {
 		Class<?> clazz = field.getType();
 		if (clazz == String.class)
 			return ArgumentSet.ArgumentType.String;
@@ -74,12 +73,12 @@ public final class ArgumentSetParseProcess {
 	}
 	
 	protected static abstract class Argument {
-		public final Field field;
-		public final ArgumentSet argumentSet;
-		public final String name;
-		public final ArgumentSet.ArgumentType type;
+		@Nonnull public final Field field;
+		@Nonnull public final ArgumentSet argumentSet;
+		@Nonnull public final String name;
+		@Nonnull public final ArgumentSet.ArgumentType type;
 		
-		public Argument(Field field, ArgumentSet argumentSet, String name, ArgumentSet.ArgumentType type) {
+		public Argument(@Nonnull Field field, @Nonnull ArgumentSet argumentSet, @Nonnull String name, @Nonnull ArgumentSet.ArgumentType type) {
 			this.field = field;
 			this.argumentSet = argumentSet;
 			this.name = name;
@@ -87,16 +86,16 @@ public final class ArgumentSetParseProcess {
 			field.setAccessible(true);
 		}
 		
-		public abstract void put(Object value);
+		public abstract void put(@Nullable Object value);
 	}
 	
 	protected static class ValueArgument extends Argument {
-		public ValueArgument(Field field, ArgumentSet argumentSet, String name, ArgumentSet.ArgumentType type) {
+		public ValueArgument(@Nonnull Field field, @Nonnull ArgumentSet argumentSet, @Nonnull String name, @Nonnull ArgumentSet.ArgumentType type) {
 			super(field, argumentSet, name, type);
 		}
 		
 		@Override
-		public void put(Object value) {
+		public void put(@Nullable Object value) {
 			try {
 				field.set(argumentSet, value);
 			} catch (Exception e) {
@@ -106,29 +105,38 @@ public final class ArgumentSetParseProcess {
 	}
 	
 	protected static class CollectionArgument extends Argument {
-		private Collection<Object> collection = null;
-		
+		@Nonnull private final Collection<Object> collection;
+		private boolean first = true;
+
+		@SuppressWarnings("unchecked")
 		public CollectionArgument(Field field, ArgumentSet argumentSet, String name, ArgumentSet.ArgumentType type) {
 			super(field, argumentSet, name, type);
-		}
-		
-		@SuppressWarnings("unchecked")
-		@Override
-		public void put(Object value) {
+
+			Collection<Object> collection = null;
+			try {
+				collection = (Collection<Object>)field.get(argumentSet);
+			} catch (Exception ignored) {
+			}
+
 			if (collection == null) {
+				collection = new ArrayList<>();
 				try {
-					collection = (Collection<Object>)field.get(argumentSet);
-					if (collection == null) {
-						collection = new ArrayList<>();
-						field.set(argumentSet, collection);
-					} else {
-						collection.clear();
-					}
-				} catch (Exception e) {
-					throw new UnexpectedException(e);
+					field.set(argumentSet, collection);
+				} catch (Exception ignored) {
 				}
 			}
-			collection.add(value);
+			this.collection = collection;
+		}
+
+		@Override
+		public void put(@Nullable Object value) {
+			if (first) {
+				first = false;
+				collection.clear();
+			}
+
+			if (value != null)
+				collection.add(value);
 		}
 	}
 }

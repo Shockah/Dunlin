@@ -13,20 +13,21 @@ import pl.shockah.dunlin.permissions.db.PermissionRole;
 import pl.shockah.dunlin.permissions.db.PermissionUser;
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
-import pl.shockah.plugin.PluginInfo;
+import pl.shockah.pintail.PluginInfo;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PermissionsPlugin extends Plugin {
-	public static final Color MISSING_PERMISSION_EMBED_COLOR = new Color(1.0f, 0.35f, 0.35f);
+	@Nonnull public static final Color MISSING_PERMISSION_EMBED_COLOR = new Color(1.0f, 0.35f, 0.35f);
 
-	public PermissionsPlugin(PluginManager manager, PluginInfo info) {
+	public PermissionsPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info) {
 		super(manager, info);
 	}
 
-	public List<PermissionGroup> getPermissionGroupsForUser(User user) {
+	@Nonnull public List<PermissionGroup> getPermissionGroupsForUser(@Nonnull User user) {
 		DatabaseManager db = manager.app.getDatabaseManager();
 		return db.select(PermissionGroup.class, q -> {
 			QueryBuilder<PermissionUser, Integer> qPermissionUser = db.getDao(PermissionUser.class).queryBuilder();
@@ -35,7 +36,7 @@ public class PermissionsPlugin extends Plugin {
 		});
 	}
 
-	public List<PermissionGroup> getPermissionGroupsForRole(Role role) {
+	@Nonnull public List<PermissionGroup> getPermissionGroupsForRole(@Nonnull Role role) {
 		DatabaseManager db = manager.app.getDatabaseManager();
 		return db.select(PermissionGroup.class, q -> {
 			QueryBuilder<PermissionRole, Integer> qPermissionRole = db.getDao(PermissionRole.class).queryBuilder();
@@ -46,7 +47,7 @@ public class PermissionsPlugin extends Plugin {
 		});
 	}
 
-	public List<PermissionGroup> getPermissionGroupsForMember(Member member) {
+	@Nonnull public List<PermissionGroup> getPermissionGroupsForMember(@Nonnull Member member) {
 		List<PermissionGroup> groups = new ArrayList<>();
 		groups.addAll(getPermissionGroupsForUser(member.getUser()));
 		for (Role role : member.getRoles()) {
@@ -55,53 +56,53 @@ public class PermissionsPlugin extends Plugin {
 		return groups;
 	}
 
-	public void checkPermission(User user, Plugin plugin, String permission) {
+	public void checkPermission(@Nonnull User user, @Nonnull Plugin plugin, @Nonnull String permission) {
 		if (!hasPermission(user, plugin, permission))
 			checkPermissionThrowSecurityException(permission);
 	}
 
-	public void checkPermission(User user, String permission) {
+	public void checkPermission(@Nonnull User user, @Nonnull String permission) {
 		if (!hasPermission(user, permission))
 			checkPermissionThrowSecurityException(permission);
 	}
 
-	public void checkPermission(Message message, Plugin plugin, String permission) {
+	public void checkPermission(@Nonnull Message message, @Nonnull Plugin plugin, @Nonnull String permission) {
 		if (!hasPermission(message, plugin, permission))
 			checkPermissionThrowSecurityException(permission);
 	}
 
-	public void checkPermission(Message message, String permission) {
+	public void checkPermission(@Nonnull Message message, @Nonnull String permission) {
 		if (!hasPermission(message, permission))
 			checkPermissionThrowSecurityException(permission);
 	}
 
-	public void checkPermission(Member member, Plugin plugin, String permission) {
+	public void checkPermission(@Nonnull Member member, @Nonnull Plugin plugin, @Nonnull String permission) {
 		if (!hasPermission(member, plugin, permission))
 			checkPermissionThrowSecurityException(permission);
 	}
 
-	public void checkPermission(Member member, String permission) {
+	public void checkPermission(@Nonnull Member member, @Nonnull String permission) {
 		if (!hasPermission(member, permission))
 			checkPermissionThrowSecurityException(permission);
 	}
 
-	private void checkPermissionThrowSecurityException(String permission) {
+	private void checkPermissionThrowSecurityException(@Nonnull String permission) {
 		throw new SecurityException(getMissingPermissionMessage(permission));
 	}
 
-	public String getMissingPermissionMessage(Plugin plugin, String permission) {
-		return getMissingPermissionMessage(String.format("%s.%s", plugin.info.packageName(), permission));
+	@Nonnull public String getMissingPermissionMessage(@Nonnull Plugin plugin, @Nonnull String permission) {
+		return getMissingPermissionMessage(String.format("%s.%s", plugin.info.getPackageName(), permission));
 	}
 
-	public String getMissingPermissionMessage(String permission) {
+	@Nonnull public String getMissingPermissionMessage(@Nonnull String permission) {
 		return String.format("Missing permission: `%s`.", permission);
 	}
 
-	public Message buildMissingPermissionMessage(Plugin plugin, String permission) {
-		return buildMissingPermissionMessage(String.format("%s.%s", plugin.info.packageName(), permission));
+	@Nonnull public Message buildMissingPermissionMessage(@Nonnull Plugin plugin, @Nonnull String permission) {
+		return buildMissingPermissionMessage(String.format("%s.%s", plugin.info.getPackageName(), permission));
 	}
 
-	public Message buildMissingPermissionMessage(String permission) {
+	@Nonnull public Message buildMissingPermissionMessage(@Nonnull String permission) {
 		return new MessageBuilder().setEmbed(new EmbedBuilder()
 				.setColor(MISSING_PERMISSION_EMBED_COLOR)
 				.setDescription(getMissingPermissionMessage(permission))
@@ -109,11 +110,11 @@ public class PermissionsPlugin extends Plugin {
 		.build();
 	}
 
-	public boolean hasPermission(User user, Plugin plugin, String permission) {
-		return hasPermission(user, String.format("%s.%s", plugin.info.packageName(), permission));
+	public boolean hasPermission(@Nonnull User user, @Nonnull Plugin plugin, @Nonnull String permission) {
+		return hasPermission(user, String.format("%s.%s", plugin.info.getPackageName(), permission));
 	}
 
-	public boolean hasPermission(User user, String permission) {
+	public boolean hasPermission(@Nonnull User user, @Nonnull String permission) {
 		for (PermissionGroup group : getPermissionGroupsForUser(user)) {
 			if (group.hasPermission(permission))
 				return true;
@@ -121,19 +122,19 @@ public class PermissionsPlugin extends Plugin {
 		return false;
 	}
 
-	public boolean hasPermission(Message message, Plugin plugin, String permission) {
+	public boolean hasPermission(@Nonnull Message message, @Nonnull Plugin plugin, @Nonnull String permission) {
 		return hasPermission(message.getGuild().getMember(message.getAuthor()), plugin, permission);
 	}
 
-	public boolean hasPermission(Message message, String permission) {
+	public boolean hasPermission(@Nonnull Message message, @Nonnull String permission) {
 		return hasPermission(message.getGuild().getMember(message.getAuthor()), permission);
 	}
 
-	public boolean hasPermission(Member member, Plugin plugin, String permission) {
-		return hasPermission(member, String.format("%s.%s", plugin.info.packageName(), permission));
+	public boolean hasPermission(@Nonnull Member member, @Nonnull Plugin plugin, @Nonnull String permission) {
+		return hasPermission(member, String.format("%s.%s", plugin.info.getPackageName(), permission));
 	}
 
-	public boolean hasPermission(Member member, String permission) {
+	public boolean hasPermission(@Nonnull Member member, @Nonnull String permission) {
 		for (PermissionGroup group : getPermissionGroupsForMember(member)) {
 			if (group.hasPermission(permission))
 				return true;

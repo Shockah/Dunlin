@@ -5,6 +5,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.misc.BaseDaoEnabled;
 import pl.shockah.util.func.Action1;
 
+import javax.annotation.Nonnull;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -22,7 +23,7 @@ public class DbObject<T> extends BaseDaoEnabled<T, Integer> {
 	protected DbObject() {
 	}
 	
-	public DbObject(Dao<T, Integer> dao) {
+	public DbObject(@Nonnull Dao<T, Integer> dao) {
 		setDao(dao);
 	}
 	
@@ -36,16 +37,19 @@ public class DbObject<T> extends BaseDaoEnabled<T, Integer> {
 		return id == obj.id;
 	}
 	
-	public int getId() {
+	public final int getId() {
 		return id;
 	}
 	
-	public DatabaseManager getDatabaseManager() {
-		return manager.get();
+	@Nonnull public final DatabaseManager getDatabaseManager() {
+		DatabaseManager manager = this.manager.get();
+		if (manager == null)
+			throw new IllegalStateException();
+		return manager;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void update(Action1<T> func) {
+	public final void update(@Nonnull Action1<T> func) {
 		try {
 			func.call((T)this);
 			update();
@@ -54,7 +58,7 @@ public class DbObject<T> extends BaseDaoEnabled<T, Integer> {
 		}
 	}
 	
-	public int refresh() {
+	public final int refresh() {
 		try {
 			return super.refresh();
 		} catch (Exception e) {

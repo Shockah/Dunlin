@@ -2,22 +2,25 @@ package pl.shockah.dunlin.settings;
 
 import pl.shockah.dunlin.Scope;
 
-public abstract class SettingScope {
-    public final Scope scope;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-    public SettingScope(Scope scope) {
+public abstract class SettingScope {
+    @Nullable public final Scope scope;
+
+    public SettingScope(@Nonnull Scope scope) {
         this.scope = scope;
     }
 
-    public SettingScope downscope() {
+    @Nullable public SettingScope downscope() {
         return null;
     }
 
-    protected abstract Object getRaw(Setting<?> setting);
+    @Nullable protected abstract Object getRaw(@Nonnull Setting<?> setting);
 
-    protected abstract void setRaw(Setting<?> setting, Object raw);
+    protected abstract void setRaw(@Nonnull Setting<?> setting, @Nullable Object raw);
 
-    public final String getName() {
+    @Nonnull public final String getName() {
         return scope.name();
     }
 }

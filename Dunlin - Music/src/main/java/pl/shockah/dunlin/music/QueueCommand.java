@@ -16,20 +16,22 @@ import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.*;
 import pl.shockah.util.Box;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 
 public class QueueCommand extends NamedCommand<AudioItem, AudioItem> {
-    protected final MusicPlugin plugin;
+    @Nonnull protected final MusicPlugin plugin;
 
-    public QueueCommand(MusicPlugin plugin) {
+    public QueueCommand(@Nonnull MusicPlugin plugin) {
         super("queue");
         this.plugin = plugin;
     }
 
     @Override
-    public ParseResult<AudioItem> parseInput(CommandContext context, String textInput) {
+    @Nonnull public ParseResult<AudioItem> parseInput(@Nonnull CommandContext context, @Nonnull String textInput) {
     	Box<AudioItem> item = new Box<>();
 	    CountDownLatch latch = new CountDownLatch(1);
 
@@ -83,7 +85,7 @@ public class QueueCommand extends NamedCommand<AudioItem, AudioItem> {
     }
 
     @Override
-    public CommandResult<AudioItem, AudioItem> execute(CommandContext context, AudioItem input) {
+    @Nonnull public CommandResult<AudioItem, AudioItem> execute(@Nonnull CommandContext context, @Nullable AudioItem input) {
     	if (input == null)
 			return new ValueCommandResult<>(this, null);
 
@@ -94,7 +96,7 @@ public class QueueCommand extends NamedCommand<AudioItem, AudioItem> {
     }
 
 	@Override
-	public Message formatOutput(AudioItem output) {
+	@Nullable public Message formatOutput(@Nullable AudioItem output) {
     	if (output == null)
     		return new MessageBuilder().setEmbed(new EmbedBuilder()
 				    .setColor(ErrorCommandResult.EMBED_COLOR)

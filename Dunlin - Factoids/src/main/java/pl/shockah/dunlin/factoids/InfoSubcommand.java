@@ -12,27 +12,34 @@ import pl.shockah.dunlin.commands.NamedCommand;
 import pl.shockah.dunlin.commands.result.*;
 import pl.shockah.dunlin.factoids.db.Factoid;
 
-public class InfoSubcommand extends NamedCommand<InfoSubcommand.Input, Factoid> {
-	public final FactoidsPlugin plugin;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-	public InfoSubcommand(FactoidsPlugin plugin) {
+public class InfoSubcommand extends NamedCommand<InfoSubcommand.Input, Factoid> {
+	@Nonnull public final FactoidsPlugin plugin;
+
+	public InfoSubcommand(@Nonnull FactoidsPlugin plugin) {
 		super("info", "i");
 		this.plugin = plugin;
 	}
 
 	@Override
-	public ParseResult<Input> parseInput(CommandContext context, String textInput) {
+	@Nonnull public ParseResult<Input> parseInput(@Nonnull CommandContext context, @Nonnull String textInput) {
 		return new ValueParseResult<>(this, new ArgumentSetParser<>(Arguments.class).parse(textInput).toInput(context.message));
 	}
 
 	@Override
-	public CommandResult<Input, Factoid> execute(CommandContext context, Input input) {
+	@Nonnull public CommandResult<Input, Factoid> execute(@Nonnull CommandContext context, @Nullable Input input) {
+		if (input == null)
+			throw new IllegalArgumentException();
 		Factoid factoid = plugin.getMatchingFactoid(input.scope, input.name);
 		return new ValueCommandResult<>(this, factoid);
 	}
 
 	@Override
-	public Message formatOutput(CommandContext context, Input input, Factoid factoid) {
+	@Nullable public Message formatOutput(@Nonnull CommandContext context, @Nullable Input input, @Nullable Factoid factoid) {
+		if (input == null)
+			throw new IllegalArgumentException();
 		if (factoid == null) {
 			return new MessageBuilder().setEmbed(new EmbedBuilder()
 					.setColor(ErrorCommandResult.EMBED_COLOR)
@@ -45,7 +52,7 @@ public class InfoSubcommand extends NamedCommand<InfoSubcommand.Input, Factoid> 
 		String authorName = member == null ? author.getName() : member.getEffectiveName();
 
 		String content = factoid.getContent();
-		FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory = plugin.getFactoidCommandProvider().factories.get(factoid.getType());
+		FactoidCommandFactory<? extends AbstractFactoidCommand<?, ?>> factory = plugin.commandProvider.factories.get(factoid.getType());
 		if (factory.codeHighlighting != null)
 			content = String.format("```%s\n%s\n```", factory.codeHighlighting, content);
 
@@ -65,8 +72,8 @@ public class InfoSubcommand extends NamedCommand<InfoSubcommand.Input, Factoid> 
 		@Argument
 		public String name;
 
-		public Input toInput(Message message) {
-			FactoidScope factoidScope = null;
+		@Nonnull public Input toInput(@Nonnull Message message) {
+			FactoidScope factoidScope;
 			switch (scope) {
 				case Global:
 					factoidScope = new GlobalFactoidScope();
@@ -86,10 +93,10 @@ public class InfoSubcommand extends NamedCommand<InfoSubcommand.Input, Factoid> 
 	}
 
 	public static final class Input {
-		public final FactoidScope scope;
-		public final String name;
+		@Nonnull public final FactoidScope scope;
+		@Nonnull public final String name;
 
-		public Input(FactoidScope scope, String name) {
+		public Input(@Nonnull FactoidScope scope, @Nonnull String name) {
 			this.scope = scope;
 			this.name = name;
 		}

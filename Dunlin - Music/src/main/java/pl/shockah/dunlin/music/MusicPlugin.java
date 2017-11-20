@@ -25,39 +25,35 @@ import pl.shockah.dunlin.settings.GuildSettingScope;
 import pl.shockah.dunlin.settings.Setting;
 import pl.shockah.dunlin.settings.SettingListener;
 import pl.shockah.dunlin.settings.SettingsPlugin;
-import pl.shockah.plugin.PluginInfo;
+import pl.shockah.pintail.PluginInfo;
 import pl.shockah.util.ReadWriteMap;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.HashMap;
 
 public class MusicPlugin extends ListenerPlugin {
-	@Dependency
-	public CommandsPlugin commandsPlugin;
+	@Nonnull public final CommandsPlugin commandsPlugin;
+	@Nonnull public final PermissionsPlugin permissionsPlugin;
+	@Nonnull public final SettingsPlugin settingsPlugin;
 
-	@Dependency
-	public PermissionsPlugin permissionsPlugin;
+	@Nonnull private final QueueCommand queueCommand;
+	@Nonnull public final Setting<PlaylistDisplayMode> playlistDisplayModeSetting;
+	@Nonnull public final Setting<String> dedicatedChannelSetting;
+	@Nonnull public final Setting<Integer> entriesPerPageSetting;
+	@Nonnull public final Setting<Integer> volumeSetting;
 
-	@Dependency
-	public SettingsPlugin settingsPlugin;
+	@Nonnull protected final SettingListener<Integer> volumeSettingListener;
 
-	private QueueCommand queueCommand;
-	public Setting<PlaylistDisplayMode> playlistDisplayModeSetting;
-	public Setting<String> dedicatedChannelSetting;
-	public Setting<Integer> entriesPerPageSetting;
-	public Setting<Integer> volumeSetting;
-
-	protected SettingListener<Integer> volumeSettingListener;
-
-	public AudioPlayerManager audioPlayerManager;
-	protected final ReadWriteMap<Guild, GuildAudioManager> guildAudioManagers = new ReadWriteMap<>(new HashMap<>());
+	@Nonnull public final AudioPlayerManager audioPlayerManager;
+	@Nonnull protected final ReadWriteMap<Guild, GuildAudioManager> guildAudioManagers = new ReadWriteMap<>(new HashMap<>());
 	
-	public MusicPlugin(PluginManager manager, PluginInfo info) {
+	public MusicPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info, @Nonnull @RequiredDependency CommandsPlugin commandsPlugin, @Nonnull @RequiredDependency PermissionsPlugin permissionsPlugin, @Nonnull @RequiredDependency SettingsPlugin settingsPlugin) {
 		super(manager, info);
-	}
-	
-	@Override
-	protected void onLoad() {
+		this.commandsPlugin = commandsPlugin;
+		this.permissionsPlugin = permissionsPlugin;
+		this.settingsPlugin = settingsPlugin;
+
 		commandsPlugin.registerNamedCommand(
 				queueCommand = new QueueCommand(this)
 		);
@@ -80,7 +76,10 @@ public class MusicPlugin extends ListenerPlugin {
 					if (!(scope instanceof GuildSettingScope))
 						return;
 					GuildSettingScope guildScope = (GuildSettingScope)scope;
-					getGuildAudioManager(guildScope.guildScope.guild).audioPlayer.setVolume(setting.get(guildScope));
+
+					Integer settingValue = setting.get(guildScope);
+					if (settingValue != null)
+						getGuildAudioManager(guildScope.guildScope.guild).audioPlayer.setVolume(settingValue);
 				}
 		);
 
@@ -107,15 +106,17 @@ public class MusicPlugin extends ListenerPlugin {
 		guildAudioManagers.iterateValues(guildAudioManager -> {
 			try {
 				guildAudioManager.close();
-			} catch (IOException e) {
+			} catch (IOException ignored) {
 			}
 		});
 	}
 
-	public GuildAudioManager getGuildAudioManager(Guild guild) {
+	@Nonnull public GuildAudioManager getGuildAudioManager(@Nonnull Guild guild) {
 		return guildAudioManagers.writeOperation(guildAudioManagers -> {
 			GuildAudioManager guildAudioManager = guildAudioManagers.computeIfAbsent(guild, k -> new GuildAudioManager(this, k));
-			guildAudioManager.audioPlayer.setVolume(volumeSetting.get(new GuildSettingScope(guild)));
+			Integer settingValue = volumeSetting.get(new GuildSettingScope(guild));
+			if (settingValue != null)
+				guildAudioManager.audioPlayer.setVolume(settingValue);
 			return guildAudioManager;
 		});
 	}
@@ -130,15 +131,15 @@ public class MusicPlugin extends ListenerPlugin {
 		handleReactionChange(event.getUser(), event.getReaction(), event.getChannel());
 	}
 
-	private void handleReactionChange(User user, MessageReaction reaction, MessageChannel channel) {
+	private void handleReactionChange(@Nonnull User user, @Nonnull MessageReaction reaction, @Nonnull MessageChannel channel) {
 		if (user.isBot() || user.isFake())
 			return;
-		if (reaction.getEmote().isEmote())
+		if (reaction.getReactionEmote().isEmote())
 			return;
 		if (channel.getType() != ChannelType.TEXT)
 			return;
 
-		String emoji = reaction.getEmote().getName();
+		String emoji = reaction.getReactionEmote().getName();
 		if (!GuildAudioManager.EMOJIS.contains(emoji))
 			return;
 
@@ -148,7 +149,7 @@ public class MusicPlugin extends ListenerPlugin {
 				return;
 
 			GuildAudioManager guildAudioManager = getGuildAudioManager(textChannel.getGuild());
-			Playlist playlist = guildAudioManager.getPlaylist(null);
+			Playlist playlist = guildAudioManager.getPlaylist(new GuildSettingScope(textChannel.getGuild()));
 			if (playlist == null)
 				return;
 
@@ -172,7 +173,7 @@ public class MusicPlugin extends ListenerPlugin {
 				return;
 
 			GuildAudioManager guildAudioManager = getGuildAudioManager(textChannel.getGuild());
-			Playlist playlist = guildAudioManager.getPlaylist(null);
+			Playlist playlist = guildAudioManager.getPlaylist(new GuildSettingScope(event.getGuild()));
 			if (playlist == null)
 				return;
 

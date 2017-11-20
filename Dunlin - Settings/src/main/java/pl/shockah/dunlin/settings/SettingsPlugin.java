@@ -2,13 +2,15 @@ package pl.shockah.dunlin.settings;
 
 import pl.shockah.dunlin.plugin.Plugin;
 import pl.shockah.dunlin.plugin.PluginManager;
-import pl.shockah.json.JSONObject;
-import pl.shockah.json.JSONParser;
-import pl.shockah.json.JSONPrettyPrinter;
-import pl.shockah.plugin.PluginInfo;
+import pl.shockah.jay.JSONObject;
+import pl.shockah.jay.JSONParser;
+import pl.shockah.jay.JSONPrettyPrinter;
+import pl.shockah.pintail.PluginInfo;
 import pl.shockah.util.ReadWriteMap;
 import pl.shockah.util.ReadWriteSet;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,28 +23,25 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class SettingsPlugin extends Plugin {
-	public static final Path SETTINGS_PATH = Paths.get("pluginSettings.json");
-	public static final TimeUnit DELAY_UNIT = TimeUnit.SECONDS;
-	public static final long DELAY_UNITS = 3;
+	@Nonnull public static final Path SETTINGS_PATH = Paths.get("pluginSettings.json");
+	@Nonnull public static final TimeUnit DELAY_UNIT = TimeUnit.SECONDS;
+	@Nonnull public static final long DELAY_UNITS = 3;
 	
-	protected final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-	protected ScheduledFuture<?> scheduledSaveSettings;
+	@Nonnull protected final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+	@Nullable protected ScheduledFuture<?> scheduledSaveSettings;
 	
-	protected JSONObject settingsJson;
+	@Nonnull protected final JSONObject settingsJson;
 	protected boolean dirty = false;
 	
-	protected final ReadWriteMap<String, Setting<?>> settings = new ReadWriteMap<>(new HashMap<>());
-	protected final ReadWriteSet<SettingsListener> listeners = new ReadWriteSet<>(new LinkedHashSet<>());
+	@Nonnull protected final ReadWriteMap<String, Setting<?>> settings = new ReadWriteMap<>(new HashMap<>());
+	@Nonnull protected final ReadWriteSet<SettingsListener> listeners = new ReadWriteSet<>(new LinkedHashSet<>());
 	
-	public SettingsPlugin(PluginManager manager, PluginInfo info) {
+	public SettingsPlugin(@Nonnull PluginManager manager, @Nonnull PluginInfo info) {
 		super(manager, info);
-	}
-	
-	@Override
-	protected void onLoad() {
-		settingsJson = new JSONObject();
+
+		JSONObject settingsJson = new JSONObject();
 		dirty = true;
-		
+
 		if (Files.exists(SETTINGS_PATH)) {
 			try {
 				settingsJson = new JSONParser().parseObject(new String(Files.readAllBytes(SETTINGS_PATH), "UTF-8"));
@@ -51,40 +50,41 @@ public class SettingsPlugin extends Plugin {
 				e.printStackTrace();
 			}
 		}
+
+		this.settingsJson = settingsJson;
 	}
 	
 	@Override
 	protected void onUnload() {
-		if (dirty) {
+		if (dirty)
 			saveSettings();
-		}
 	}
 	
-	public void register(Setting<?> setting) {
+	public void register(@Nonnull Setting<?> setting) {
 		settings.put(setting.getFullName().toLowerCase(), setting);
 	}
 	
-	public void unregister(Setting<?> setting) {
+	public void unregister(@Nonnull Setting<?> setting) {
 		settings.remove(setting.getFullName().toLowerCase());
 	}
 
-	public void registerListener(SettingsListener listener) {
+	public void registerListener(@Nonnull SettingsListener listener) {
 		listeners.add(listener);
 	}
 
-	public void unregisterListener(SettingsListener listener) {
+	public void unregisterListener(@Nonnull SettingsListener listener) {
 		listeners.remove(listener);
 	}
 	
-	public Setting<?> getSetting(Plugin plugin, String name) {
-		return getSettingByName(String.format("%s.%s", plugin.info.packageName(), name));
+	@Nonnull public Setting<?> getSetting(@Nonnull Plugin plugin, @Nonnull String name) {
+		return getSettingByName(String.format("%s.%s", plugin.info.getPackageName(), name));
 	}
 	
-	public Setting<?> getSettingByName(String name) {
+	@Nonnull public Setting<?> getSettingByName(@Nonnull String name) {
 		return settings.get(name.toLowerCase());
 	}
 	
-	protected synchronized void onSettingChange(Setting<?> setting) {
+	protected synchronized void onSettingChange(@Nonnull Setting<?> setting) {
 		if (scheduledSaveSettings != null)
 			scheduledSaveSettings.cancel(false);
 		scheduledSaveSettings = executor.schedule(this::saveSettings, DELAY_UNITS, DELAY_UNIT);

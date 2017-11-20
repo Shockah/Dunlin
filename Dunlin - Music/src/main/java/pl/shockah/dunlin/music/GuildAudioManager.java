@@ -15,28 +15,31 @@ import pl.shockah.dunlin.music.playlist.DedicatedChannelPlaylist;
 import pl.shockah.dunlin.music.playlist.MessagePlaylist;
 import pl.shockah.dunlin.music.playlist.Playlist;
 import pl.shockah.dunlin.settings.GuildSettingScope;
+import pl.shockah.dunlin.settings.SettingScope;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 public class GuildAudioManager extends AudioEventAdapter implements AudioSendHandler, Closeable {
-    public static final String EMOJI_PLAY_PAUSE = "\u23EF";
-    public static final String EMOJI_NEXT_TRACK = "\u23ED";
-    public static final String EMOJI_ARROW_LEFT = "\u2B05";
-    public static final String EMOJI_ARROW_RIGHT = "\u27A1";
-    public static final List<String> EMOJIS = Arrays.asList(EMOJI_PLAY_PAUSE, EMOJI_NEXT_TRACK, EMOJI_ARROW_LEFT, EMOJI_ARROW_RIGHT);
+    @Nonnull public static final String EMOJI_PLAY_PAUSE = "\u23EF";
+    @Nonnull public static final String EMOJI_NEXT_TRACK = "\u23ED";
+    @Nonnull public static final String EMOJI_ARROW_LEFT = "\u2B05";
+    @Nonnull public static final String EMOJI_ARROW_RIGHT = "\u27A1";
+    @Nonnull public static final List<String> EMOJIS = Arrays.asList(EMOJI_PLAY_PAUSE, EMOJI_NEXT_TRACK, EMOJI_ARROW_LEFT, EMOJI_ARROW_RIGHT);
 
-    public final MusicPlugin plugin;
-    public final Guild guild;
-    public final AudioPlayer audioPlayer;
-    public final Object lock = new Object();
+    @Nonnull public final MusicPlugin plugin;
+    @Nonnull public final Guild guild;
+    @Nonnull public final AudioPlayer audioPlayer;
+    @Nonnull public final Object lock = new Object();
     protected VoiceChannel channel;
     protected AudioFrame lastFrame;
     protected Playlist playlist;
 
-    public GuildAudioManager(MusicPlugin plugin, Guild guild) {
+    public GuildAudioManager(@Nonnull MusicPlugin plugin, @Nonnull Guild guild) {
         this.plugin = plugin;
         this.guild = guild;
         audioPlayer = plugin.audioPlayerManager.createPlayer();
@@ -66,23 +69,33 @@ public class GuildAudioManager extends AudioEventAdapter implements AudioSendHan
         playlist.playNext();
     }
 
-    public Playlist getPlaylist(Message message) {
+    public Playlist getPlaylist(@Nonnull SettingScope scope) {
         synchronized (lock) {
             if (playlist != null)
                 return playlist;
-            return (playlist = createPlaylistImplementation(message));
+            return (playlist = createPlaylistImplementation(scope, null));
         }
     }
 
-    private Playlist createPlaylistImplementation(Message message) {
+    public Playlist getPlaylist(@Nonnull Message message) {
         synchronized (lock) {
-            PlaylistDisplayMode playlistDisplayMode = plugin.playlistDisplayModeSetting.get(new GuildSettingScope(message.getGuild()));
+            if (playlist != null)
+                return playlist;
+            return (playlist = createPlaylistImplementation(new GuildSettingScope(message.getGuild()), message));
+        }
+    }
+
+    private Playlist createPlaylistImplementation(@Nonnull SettingScope scope, @Nullable Message message) {
+        synchronized (lock) {
+            PlaylistDisplayMode playlistDisplayMode = plugin.playlistDisplayModeSetting.get(scope);
+            if (playlistDisplayMode == null)
+                throw new IllegalStateException();
             switch (playlistDisplayMode) {
                 case DedicatedChannel:
                 case PinnedMessage: {
                     DatabaseManager db = plugin.manager.app.getDatabaseManager();
                     MessagePlaylistEntry entry = db.selectFirst(MessagePlaylistEntry.class, q -> q.where().eq(MessagePlaylistEntry.GUILD_ID, guild.getId()));
-                    Message playlistMessage = null;
+                    Message playlistMessage;
 
                     if (entry == null) {
                         if (message == null)
@@ -90,7 +103,7 @@ public class GuildAudioManager extends AudioEventAdapter implements AudioSendHan
 
                         playlistMessage = createPlaylistMessage(getDedicatedChannel(message));
                         final Message f_playlistMessage = playlistMessage;
-                        entry = db.create(MessagePlaylistEntry.class, obj -> {
+                        /*entry = */db.create(MessagePlaylistEntry.class, obj -> {
                             obj.setMessage(f_playlistMessage);
                         });
 
@@ -112,7 +125,7 @@ public class GuildAudioManager extends AudioEventAdapter implements AudioSendHan
         throw new UnsupportedOperationException();
     }
 
-    private Message createPlaylistMessage(TextChannel channel) {
+    private Message createPlaylistMessage(@Nonnull TextChannel channel) {
         Message message = channel.sendMessage(new EmbedBuilder().setDescription("Preparing playlist...").build()).complete();
         message.addReaction(EMOJI_PLAY_PAUSE).queue();
         message.addReaction(EMOJI_NEXT_TRACK).queue();
@@ -121,7 +134,7 @@ public class GuildAudioManager extends AudioEventAdapter implements AudioSendHan
         return message;
     }
 
-    private TextChannel getDedicatedChannel(Message message) {
+    private TextChannel getDedicatedChannel(@Nonnull Message message) {
         String channelName = plugin.dedicatedChannelSetting.get(new GuildSettingScope(message.getGuild()));
         if (channelName == null)
             return message.getTextChannel();
@@ -132,7 +145,7 @@ public class GuildAudioManager extends AudioEventAdapter implements AudioSendHan
         return channel;
     }
 
-    public void openAudioConnection(VoiceChannel channel, Member member) {
+    public void openAudioConnection(@Nonnull VoiceChannel channel, @Nonnull Member member) {
         synchronized (lock) {
             if (this.channel == channel)
                 return;
@@ -155,7 +168,7 @@ public class GuildAudioManager extends AudioEventAdapter implements AudioSendHan
         }
     }
 
-    private void checkChangeVoiceChannelPermission(Member member) {
+    private void checkChangeVoiceChannelPermission(@Nonnull Member member) {
         if (audioPlayer.getPlayingTrack() == null)
             return;
         if (member.hasPermission(Permission.VOICE_MOVE_OTHERS))

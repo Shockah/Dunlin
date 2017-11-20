@@ -1,18 +1,20 @@
 package pl.shockah.dunlin.plugin;
 
 import pl.shockah.dunlin.App;
-import pl.shockah.plugin.PluginInfo;
+import pl.shockah.pintail.PluginInfo;
 
-public class PluginManager extends pl.shockah.plugin.PluginManager<PluginInfo, PluginManager, Plugin> {
-	public final App app;
+import javax.annotation.Nonnull;
+
+public class PluginManager extends pl.shockah.pintail.PluginManager<PluginInfo, PluginManager, Plugin> {
+	@Nonnull public final App app;
 	
-	public PluginManager(App app) {
+	public PluginManager(@Nonnull App app) {
 		super(PluginInfo.class, Plugin.class);
 		this.app = app;
 	}
 	
 	@Override
-	protected void onPluginLoad(Plugin plugin) {
+	protected void onPluginLoad(@Nonnull Plugin plugin) {
 		super.onPluginLoad(plugin);
 		
 		if (plugin instanceof ListenerPlugin)
@@ -20,7 +22,7 @@ public class PluginManager extends pl.shockah.plugin.PluginManager<PluginInfo, P
 	}
 	
 	@Override
-	protected void onPluginUnload(Plugin plugin) {
+	protected void onPluginUnload(@Nonnull Plugin plugin) {
 		super.onPluginUnload(plugin);
 		
 		if (plugin instanceof ListenerPlugin)

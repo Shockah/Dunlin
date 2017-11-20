@@ -11,27 +11,29 @@ import pl.shockah.dunlin.ShardManager;
 import pl.shockah.dunlin.db.DbObject;
 import pl.shockah.dunlin.db.DbObject.TableVersion;
 
+import javax.annotation.Nonnull;
+
 @DatabaseTable(tableName = "pl_shockah_dunlin_music_db_MessagePlaylistEntry")
 @TableVersion(1)
 public class MessagePlaylistEntry extends DbObject<MessagePlaylistEntry> {
     @DatabaseField(columnName = GUILD_ID, canBeNull = false)
     private String guildId;
-    public static final String GUILD_ID = "guildId";
+    @Nonnull public static final String GUILD_ID = "guildId";
 
     @DatabaseField(columnName = CHANNEL_ID, canBeNull = false)
     private String channelId;
-    public static final String CHANNEL_ID = "channelId";
+    @Nonnull public static final String CHANNEL_ID = "channelId";
 
     @DatabaseField(columnName = MESSAGE_ID, canBeNull = false)
     private String messageId;
-    public static final String MESSAGE_ID = "messageId";
+    @Nonnull public static final String MESSAGE_ID = "messageId";
 
     @Deprecated //ORMLite-only
     MessagePlaylistEntry() {
         super();
     }
 
-    public MessagePlaylistEntry(Dao<MessagePlaylistEntry, Integer> dao) {
+    public MessagePlaylistEntry(@Nonnull Dao<MessagePlaylistEntry, Integer> dao) {
         super(dao);
     }
 
@@ -39,7 +41,7 @@ public class MessagePlaylistEntry extends DbObject<MessagePlaylistEntry> {
         return guildId;
     }
 
-    public void setGuildId(String guildId) {
+    public void setGuildId(@Nonnull String guildId) {
         this.guildId = guildId;
     }
 
@@ -47,7 +49,7 @@ public class MessagePlaylistEntry extends DbObject<MessagePlaylistEntry> {
         return channelId;
     }
 
-    public void setChannelId(String channelId) {
+    public void setChannelId(@Nonnull String channelId) {
         this.channelId = channelId;
     }
 
@@ -55,23 +57,23 @@ public class MessagePlaylistEntry extends DbObject<MessagePlaylistEntry> {
         return messageId;
     }
 
-    public void setMessageId(String messageId) {
+    public void setMessageId(@Nonnull String messageId) {
         this.messageId = messageId;
     }
 
-    public Guild getGuild(ShardManager manager) {
+    public Guild getGuild(@Nonnull ShardManager manager) {
         return manager.getGuildById(guildId);
     }
 
-    public TextChannel getChannel(ShardManager manager) {
+    public TextChannel getChannel(@Nonnull ShardManager manager) {
         return getGuild(manager).getTextChannelById(channelId);
     }
 
-    public RestAction<Message> getMessage(ShardManager manager) {
+    public RestAction<Message> getMessage(@Nonnull ShardManager manager) {
         return getChannel(manager).getMessageById(messageId);
     }
 
-    public void setMessage(Message message) {
+    public void setMessage(@Nonnull Message message) {
         guildId = message.getGuild().getId();
         channelId = message.getTextChannel().getId();
         messageId = message.getId();

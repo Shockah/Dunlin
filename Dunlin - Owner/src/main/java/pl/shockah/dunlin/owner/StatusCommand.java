@@ -13,26 +13,28 @@ import pl.shockah.dunlin.commands.result.ParseResult;
 import pl.shockah.dunlin.commands.result.ValueCommandResult;
 import pl.shockah.dunlin.commands.result.ValueParseResult;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
-    protected final OwnerPlugin ownerPlugin;
+    @Nonnull protected final OwnerPlugin ownerPlugin;
 
-    public StatusCommand(OwnerPlugin ownerPlugin) {
+    public StatusCommand(@Nonnull OwnerPlugin ownerPlugin) {
         super("status");
         this.ownerPlugin = ownerPlugin;
     }
 
     @Override
-    public ParseResult<Void> parseInput(CommandContext context, String textInput) {
+    @Nonnull public ParseResult<Void> parseInput(@Nonnull CommandContext context, @Nonnull String textInput) {
         return new ValueParseResult<>(this, null);
     }
 
     @Override
-    public CommandResult<Void, Output> execute(CommandContext context, Void aVoid) {
+    @Nonnull public CommandResult<Void, Output> execute(@Nonnull CommandContext context, @Nullable Void aVoid) {
         Output output = new Output();
         ShardManager shardManager = ownerPlugin.manager.app.getShardManager();
 
@@ -98,7 +100,9 @@ public class StatusCommand extends NamedCommand<Void, StatusCommand.Output> {
     }
 
     @Override
-    public Message formatOutput(CommandContext context, Void input, Output output) {
+    @Nullable public Message formatOutput(@Nonnull CommandContext context, @Nullable Void input, @Nullable Output output) {
+        if (output == null)
+            throw new IllegalArgumentException();
         SelfUser selfUser = context.message.getJDA().getSelfUser();
         return new MessageBuilder().setEmbed(new EmbedBuilder()
                 .setAuthor(selfUser.getName(), null, selfUser.getEffectiveAvatarUrl())
