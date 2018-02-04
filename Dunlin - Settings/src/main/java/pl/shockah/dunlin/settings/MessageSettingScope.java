@@ -30,7 +30,7 @@ public class MessageSettingScope extends SettingScope {
                 return value;
         }
 
-        throw new IllegalArgumentException();
+        return null;
     }
 
     @Override
