@@ -1,0 +1,7 @@
+dependencies {
+	compileOnly project(':Dunlin')
+	compileOnly project(':Dunlin - Commands')
+	compileOnly project(':Dunlin - Settings')
+
+	compile 'com.github.Shockah:tinder-api:1.0.1'
+}

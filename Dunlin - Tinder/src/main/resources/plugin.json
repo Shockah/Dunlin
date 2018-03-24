@@ -1,0 +1,12 @@
+{
+	"packageName": "pl.shockah.dunlin.tinder",
+	"baseClass": "pl.shockah.dunlin.tinder.TinderPlugin",
+	"enabledByDefault": true,
+	"dependsOn": [
+		"pl.shockah.dunlin.commands"
+	],
+
+	"name": "Tinder",
+	"author": "Shockah",
+	"description": ""
+}

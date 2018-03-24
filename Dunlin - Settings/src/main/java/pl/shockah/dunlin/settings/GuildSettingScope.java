@@ -21,7 +21,7 @@ public class GuildSettingScope extends SettingScope {
 
     @Override
     protected void setRaw(@Nonnull Setting<?> setting, @Nullable Object raw) {
-        setting.settingsPlugin.settingsJson.getObjectOrNew("guild").getObjectOrEmpty(guildScope.guild.getId()).put(setting.getFullName(), raw);
+        setting.settingsPlugin.settingsJson.getObjectOrNew("guild").getObjectOrNew(guildScope.guild.getId()).put(setting.getFullName(), raw);
     }
 
     @Override
